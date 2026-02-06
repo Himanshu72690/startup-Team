@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit Profile | StartupTeam</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    :root {
+      --sidebar-bg: #1a1c23;
+      --main-bg: #2d313c;
+      --card-bg: #ffffff;
+      --primary-gradient: linear-gradient(90deg, #4facfe 0%, #a29bfe 100%);
+      --text-main: #111827;
+      --text-muted: #6b7280;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+
+    body { background: var(--main-bg); display: flex; min-height: 100vh; }
+
+    /* Sidebar - Same as Founder Panel */
+    .sidebar {
+      width: 260px;
+      background: var(--sidebar-bg);
+      padding: 30px 20px;
+      display: flex;
+      flex-direction: column;
+      color: #94a3b8;
+      position: fixed;
+      height: 100vh;
+    }
+
+    .logo { font-size: 24px; font-weight: 700; color: white; margin-bottom: 40px; display: flex; align-items: center; gap: 10px; }
+    .logo span { color: #f87171; }
+
+    .nav-links a {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 15px;
+      text-decoration: none;
+      color: #94a3b8;
+      border-radius: 10px;
+      margin-bottom: 8px;
+      transition: 0.3s;
+      font-size: 14px;
+    }
+
+    .nav-links a:hover, .nav-links a.active { background: #2d313c; color: white; }
+    .nav-links a.active .status-tag { background: #22c55e; color: white; padding: 2px 8px; border-radius: 20px; font-size: 10px; margin-left: auto; }
+
+    .logout-btn {
+      margin-top: auto;
+      background: #374151;
+      border: none;
+      color: white;
+      padding: 12px;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    /* Centered Content */
+    .main {
+      flex: 1;
+      margin-left: 260px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      width: 100%;
+      max-width: 850px;
+      padding: 40px 50px;
+      border-radius: 24px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    }
+
+    .card h1 { font-size: 32px; font-weight: 700; color: var(--text-main); margin-bottom: 8px; }
+    .card p { color: var(--text-muted); font-size: 14px; margin-bottom: 30px; }
+
+    /* Form Styling */
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+    .input-group { margin-bottom: 15px; }
+    .input-group label { display: block; font-weight: 600; font-size: 13px; margin-bottom: 6px; color: var(--text-main); }
+    
+    .input-wrapper { position: relative; }
+    .input-wrapper i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #94a3b8; width: 18px; }
+    
+    .input-wrapper input, .input-wrapper textarea {
+      width: 100%;
+      padding: 12px 12px 12px 45px;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      background: #f9fafb;
+      font-size: 14px;
+      transition: 0.2s;
+    }
+
+    .input-wrapper input:focus { border-color: #a29bfe; outline: none; background: #fff; }
+
+    .btn-container { display: flex; flex-direction: column; align-items: center; margin-top: 25px; }
+    
+    .save-btn {
+      background: var(--primary-gradient);
+      color: white;
+      padding: 14px 60px;
+      border: none;
+      border-radius: 50px;
+      font-weight: 700;
+      font-size: 16px;
+      cursor: pointer;
+      box-shadow: 0 10px 20px rgba(79, 172, 254, 0.3);
+      transition: 0.3s;
+    }
+
+    .save-btn:hover { transform: translateY(-2px); box-shadow: 0 15px 25px rgba(79, 172, 254, 0.4); }
+
+    @media (max-width: 900px) {
+      .sidebar { display: none; }
+      .main { margin-left: 0; }
+      .form-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="logo"><i data-lucide="layers"></i> Startup<span>Team</span></div>
+  <nav class="nav-links">
+    <a href="founder-dashboard.html"><i data-lucide="layout-dashboard"></i> Dashboard</a>
+    <a href="founder-profile.html" class="active"><i data-lucide="user"></i> Founder Profile <span class="status-tag">active</span></a>
+    <a href="startup-profile.html"><i data-lucide="rocket"></i> Startup Profile</a>
+    <a href="post-role.html"><i data-lucide="plus-square"></i> Post Role</a>
+    <a href="roles-list.html"><i data-lucide="briefcase"></i> Roles</a>
+    <a href="members-requests.html"><i data-lucide="users"></i> Member Requests</a>
+  </nav>
+  <button class="logout-btn" onclick="logout()">Logout</button>
+</aside>
+
+<main class="main">
+  <div class="card">
+    <h1>Edit Profile</h1>
+    <form onsubmit="saveFounderProfile(event)">
+      <div class="form-grid">
+        <div class="input-group">
+          <label>Full Name</label>
+          <div class="input-wrapper">
+            <i data-lucide="user"></i>
+            <input id="fname" placeholder="Rahul Sharma">
+          </div>
+        </div>
+        <div class="input-group">
+          <label>Years of Experience</label>
+          <div class="input-wrapper">
+            <i data-lucide="award"></i>
+            <input id="experience" placeholder="5 Years in Web Dev">
+          </div>
+        </div>
+      </div>
+
+      <div class="form-grid">
+        <div class="input-group">
+          <label>Skills</label>
+          <div class="input-wrapper">
+            <i data-lucide="zap"></i>
+            <input id="skills" placeholder="React, Node.js">
+          </div>
+        </div>
+        <div class="input-group">
+          <label>LinkedIn Profile</label>
+          <div class="input-wrapper">
+            <i data-lucide="linkedin"></i>
+            <input id="linkedin" type="url" placeholder="https://linkedin.com/in/username">
+          </div>
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label>Portfolio / Website</label>
+        <div class="input-wrapper">
+          <i data-lucide="globe"></i>
+          <input id="portfolio" type="url" placeholder="https://yourportfolio.com">
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label>Bio (About You)</label>
+        <div class="input-wrapper">
+          <i data-lucide="file-text" style="top: 20px; transform: none;"></i>
+          <textarea id="bio" rows="4" style="padding-top: 15px;" placeholder="Tell us about your startup journey"></textarea>
+        </div>
+      </div>
+
+      <div class="btn-container">
+        <button type="submit" class="save-btn">Save Profile Details</button>
+        <span style="font-size: 10px; color: #3b82f6; margin-top: 10px;">20 0 auto</span>
+      </div>
+    </form>
+  </div>
+</main>
+
+<script src="../assets/js/founder.js"></script>
+<script src="../assets/js/auth.js"></script>
+<script>
+  lucide.createIcons();
+  
+  // Pre-fill data logic
+  window.onload = () => {
+    const p = JSON.parse(localStorage.getItem("founderProfile")) || {};
+    if(p.fname || p.name) document.getElementById('fname').value = p.fname || p.name;
+    if(p.experience) document.getElementById('experience').value = p.experience;
+    if(p.skills) document.getElementById('skills').value = p.skills;
+    if(p.bio) document.getElementById('bio').value = p.bio;
+    if(p.linkedin) document.getElementById('linkedin').value = p.linkedin;
+    if(p.portfolio) document.getElementById('portfolio').value = p.portfolio;
+  }
+</script>
+</body>
+</html>

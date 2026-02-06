@@ -1,0 +1,102 @@
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Poppins', sans-serif; /* Ab font nahi bhagega */
+  background: #f8fafc;
+  color: #1e293b;
+}
+
+.app { display: flex; min-height: 100vh; }
+
+/* SIDEBAR REFINED */
+.sidebar {
+  width: 260px;
+  background: #0f172a;
+  color: #fff;
+  padding: 30px 20px;
+  display: flex;
+  flex-direction: column;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+}
+
+.logo {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 40px;
+  padding-left: 10px;
+}
+.logo span { color: #6366f1; }
+
+.sidebar a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #94a3b8;
+  text-decoration: none;
+  padding: 12px 15px;
+  border-radius: 8px;
+  margin-bottom: 5px;
+  transition: 0.3s;
+  font-size: 14px;
+}
+
+.sidebar a:hover, .sidebar a.active {
+  background: rgba(255,255,255,0.05);
+  color: #fff;
+}
+
+.sidebar a.active { background: #6366f1; color: white; }
+
+.logout-btn {
+  margin-top: auto;
+  background: #ef4444;
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-weight: 600;
+}
+
+/* MAIN CONTENT */
+.main { flex: 1; padding: 40px; }
+
+.header-section { margin-bottom: 30px; }
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px;
+}
+
+.card {
+  background: #fff;
+  padding: 25px;
+  border-radius: 16px;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);
+  border: 1px solid #f1f5f9;
+}
+
+.stat-card { display: flex; align-items: center; gap: 20px; }
+
+.card-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card-icon.blue { background: #eff6ff; color: #3b82f6; }
+.card-icon.purple { background: #f5f3ff; color: #8b5cf6; }
+.card-icon.orange { background: #fff7ed; color: #f97316; }
+
+small { color: #64748b; font-weight: 500; font-size: 13px; }
+h2 { font-size: 22px; margin-top: 2px; }

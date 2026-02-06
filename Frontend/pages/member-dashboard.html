@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Member Dashboard | StartupTeam</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+
+    /* CONSISTENT PREMIUM THEME */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Poppins', sans-serif; background: #f8fafc; color: #1e293b; }
+    .app { display: flex; min-height: 100vh; }
+
+    /* SIDEBAR */
+    .sidebar { width: 260px; background: #0f172a; color: #fff; padding: 30px 20px; display: flex; flex-direction: column; position: sticky; top: 0; height: 100vh; }
+    .logo { font-size: 24px; font-weight: 700; margin-bottom: 40px; padding-left: 10px; }
+    .logo span { color: #6366f1; }
+    .sidebar a { display: flex; align-items: center; gap: 12px; color: #94a3b8; text-decoration: none; padding: 12px 15px; border-radius: 8px; margin-bottom: 5px; transition: 0.3s; font-size: 14px; }
+    .sidebar a:hover, .sidebar a.active { background: rgba(255,255,255,0.05); color: #fff; }
+    .sidebar a.active { background: #6366f1; color: white; }
+    .logout-btn { margin-top: auto; background: #ef4444; color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 600; }
+
+    /* MAIN CONTENT */
+    .main { flex: 1; padding: 40px; }
+    .header-section { margin-bottom: 35px; }
+    .header-section h2 { font-size: 28px; font-weight: 700; color: #0f172a; }
+
+    /* STATS GRID */
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 25px; margin-bottom: 40px; }
+    .stat-card { background: #fff; padding: 25px; border-radius: 16px; border: 1px solid #f1f5f9; display: flex; align-items: center; gap: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); transition: 0.3s; }
+    .stat-card:hover { transform: translateY(-5px); }
+
+    .icon-box { width: 54px; height: 54px; border-radius: 12px; display: flex; align-items: center; justify-content: center; }
+    .bg-blue { background: #eff6ff; color: #3b82f6; }
+    .bg-purple { background: #f5f3ff; color: #8b5cf6; }
+    .bg-green { background: #f0fdf4; color: #22c55e; }
+
+    .stat-info h3 { font-size: 24px; font-weight: 700; }
+    .stat-info p { font-size: 12px; color: #64748b; font-weight: 600; text-transform: uppercase; }
+
+    /* RECENT ACTIVITY & LISTS */
+    .grid-layout { display: grid; grid-template-columns: 2fr 1fr; gap: 30px; }
+    .content-box { background: #fff; padding: 30px; border-radius: 16px; border: 1px solid #f1f5f9; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+    .box-title { font-size: 18px; font-weight: 700; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+
+    .list-item { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid #f1f5f9; }
+    .list-item:last-child { border-bottom: none; }
+    
+    .status-badge { padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 700; text-transform: uppercase; }
+    .pending { background: #fff7ed; color: #f97316; }
+    .accepted { background: #f0fdf4; color: #22c55e; }
+
+    .startup-mini-card { display: flex; align-items: center; gap: 12px; margin-bottom: 15px; }
+    .mini-logo { width: 40px; height: 40px; background: #f1f5f9; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 700; color: #6366f1; }
+  </style>
+</head>
+<body>
+
+<div class="app">
+  <aside class="sidebar">
+    <div class="logo">Startup<span>Team</span></div>
+    <nav>
+      <a href="member-dashboard.html" class="active"><i data-lucide="layout-dashboard"></i> Dashboard</a>
+      <a href="explore-startups.html"><i data-lucide="search"></i> Explore Startups</a>
+      <a href="join-requests.html"><i data-lucide="send"></i> My Requests</a>
+      <a href="my-profile.html"><i data-lucide="user"></i> My Profile</a>
+    </nav>
+    <button onclick="logout()" class="logout-btn"><i data-lucide="log-out"></i> Logout</button>
+  </aside>
+
+  <main class="main">
+    <div class="header-section">
+      <h2 id="greetUser">Welcome back, Member!</h2>
+      <p style="color: #64748b; font-size: 14px;">Track your applications and explore new opportunities.</p>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="icon-box bg-blue"><i data-lucide="send" size="24"></i></div>
+        <div class="stat-info">
+          <h3>3</h3>
+          <p>Applied</p>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="icon-box bg-purple"><i data-lucide="check-circle" size="24"></i></div>
+        <div class="stat-info">
+          <h3>1</h3>
+          <p>Shortlisted</p>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="icon-box bg-green"><i data-lucide="rocket" size="24"></i></div>
+        <div class="stat-info">
+          <h3>12</h3>
+          <p>New Startups</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-layout">
+      <div class="content-box">
+        <div class="box-title"><i data-lucide="clock" size="20" color="#6366f1"></i> Application Status</div>
+        <div class="list-item">
+          <div>
+            <div style="font-weight: 600;">Frontend Developer</div>
+            <div style="font-size: 12px; color: #94a3b8;">TechNova AI</div>
+          </div>
+          <span class="status-badge pending">Pending</span>
+        </div>
+        <div class="list-item">
+          <div>
+            <div style="font-weight: 600;">UI/UX Designer</div>
+            <div style="font-size: 12px; color: #94a3b8;">EcoGrowth</div>
+          </div>
+          <span class="status-badge accepted">Interviewing</span>
+        </div>
+      </div>
+
+      <div class="content-box">
+        <div class="box-title"><i data-lucide="zap" size="20" color="#f97316"></i> For You</div>
+        <div class="startup-mini-card">
+          <div class="mini-logo">S</div>
+          <div>
+            <div style="font-size: 14px; font-weight: 600;">Solaris Tech</div>
+            <div style="font-size: 11px; color: #6366f1;">Clean Energy</div>
+          </div>
+        </div>
+        <div class="startup-mini-card">
+          <div class="mini-logo">F</div>
+          <div>
+            <div style="font-size: 14px; font-weight: 600;">FinFlow</div>
+            <div style="font-size: 11px; color: #6366f1;">Fintech</div>
+          </div>
+        </div>
+        <a href="explore-startups.html" style="color: #6366f1; font-size: 13px; font-weight: 600; text-decoration: none;">View All →</a>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+  lucide.createIcons();
+  window.onload = () => {
+    const user = JSON.parse(localStorage.getItem("memberProfile")) || { name: "Member" };
+    document.getElementById('greetUser').innerText = `Welcome back, ${user.name}!`;
+  }
+  function logout() {
+    localStorage.removeItem("loggedIn");
+    window.location.href = "../index.html";
+  }
+</script>
+</body>
+</html>

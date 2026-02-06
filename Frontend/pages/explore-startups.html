@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Explore Startups | StartupTeam</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    /* FIXED SIDEBAR CSS - NO SHIFTING */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Poppins', sans-serif; background: #f8fafc; color: #1e293b; }
+    .app { display: flex; min-height: 100vh; }
+
+    .sidebar { width: 260px; min-width: 260px; background: #0f172a; color: #fff; padding: 30px 20px; display: flex; flex-direction: column; position: sticky; top: 0; height: 100vh; z-index: 1000; }
+    .logo { font-size: 24px; font-weight: 700; margin-bottom: 40px; padding-left: 10px; }
+    .logo span { color: #6366f1; }
+    .sidebar nav { flex: 1; }
+    .sidebar a { display: flex; align-items: center; gap: 12px; color: #94a3b8; text-decoration: none; padding: 12px 15px; border-radius: 10px; margin-bottom: 8px; transition: 0.3s; font-size: 14px; font-weight: 500; border: 1px solid transparent; }
+    .sidebar a.active { background: #6366f1; color: white !important; box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3); }
+    .logout-btn { background: #ef4444; color: white; border: none; padding: 12px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 600; transition: 0.3s; margin-top: auto; }
+
+    /* MAIN AREA */
+    .main { flex: 1; padding: 40px; max-width: 1200px; margin: 0 auto; }
+    .controls-wrapper { display: flex; gap: 15px; margin-bottom: 35px; background: #fff; padding: 15px 20px; border-radius: 12px; border: 1px solid #f1f5f9; align-items: center; }
+    .search-box { flex: 2; position: relative; }
+    .search-box i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #94a3b8; }
+    .search-box input { width: 100%; padding: 12px 45px; border-radius: 10px; border: 1px solid #e2e8f0; outline: none; }
+
+    .startup-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 25px; }
+    .card { background: #fff; padding: 25px; border-radius: 20px; border: 1px solid #f1f5f9; transition: 0.3s; cursor: pointer; }
+    .card:hover { transform: translateY(-5px); border-color: #6366f1; box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
+    .mini-logo { width: 45px; height: 45px; background: #eff6ff; color: #6366f1; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 800; }
+    .badge { padding: 4px 10px; border-radius: 20px; font-size: 10px; font-weight: 700; text-transform: uppercase; background: #f5f3ff; color: #8b5cf6; }
+    .btn-view { display: block; text-align: center; padding: 12px; background: #f8fafc; color: #6366f1; text-decoration: none; border-radius: 10px; font-weight: 700; font-size: 13px; margin-top: 15px; border: 1px solid #e2e8f0; }
+  </style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="logo">Startup<span>Team</span></div>
+    <nav>
+      <a href="member-dashboard.html"><i data-lucide="layout-dashboard"></i> Dashboard</a>
+      <a href="explore-startups.html" class="active"><i data-lucide="search"></i> Explore Startups</a>
+      <a href="join-requests.html"><i data-lucide="send"></i> My Requests</a>
+      <a href="my-profile.html"><i data-lucide="user"></i> My Profile</a>
+    </nav>
+    <button onclick="logout()" class="logout-btn"><i data-lucide="log-out"></i> Sign Out</button>
+  </aside>
+
+  <main class="main">
+    <div class="header-section">
+      <h2>Explore Startups</h2>
+      <p style="color: #64748b; font-size: 14px;">Real-time feed from our registered founders.</p>
+    </div>
+
+    <div class="controls-wrapper">
+      <div class="search-box">
+        <i data-lucide="search" size="18"></i>
+        <input type="text" id="searchInput" placeholder="Search startup name..." onkeyup="filterStartups()">
+      </div>
+    </div>
+
+    <div class="startup-grid" id="startupGrid"></div>
+  </main>
+</div>
+
+<script>
+  lucide.createIcons();
+
+  // Load Real-time Data
+  function loadStartups() {
+    const grid = document.getElementById('startupGrid');
+    const startups = JSON.parse(localStorage.getItem("allStartups")) || [];
+
+    if (startups.length === 0) {
+      grid.innerHTML = `<div style="grid-column: span 3; text-align: center; padding: 50px; color: #94a3b8;">No startups found. Register one from the Founder Panel!</div>`;
+      return;
+    }
+
+    grid.innerHTML = startups.map(s => `
+      <div class="card" onclick="window.location.href='startup-details.html?id=${s.id}'">
+        <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:15px;">
+          <div class="mini-logo">${s.name.charAt(0)}</div>
+          <span class="badge">${s.industry || 'Startup'}</span>
+        </div>
+        <h3 style="margin-bottom:8px;">${s.name}</h3>
+        <p style="font-size:13px; color:#64748b; height:40px; overflow:hidden;">${s.tagline || s.desc.substring(0, 50) + '...'}</p>
+        <a href="startup-details.html?id=${s.id}" class="btn-view">View Full Profile →</a>
+      </div>
+    `).join('');
+    lucide.createIcons();
+  }
+
+  function filterStartups() {
+    const term = document.getElementById('searchInput').value.toLowerCase();
+    const startups = JSON.parse(localStorage.getItem("allStartups")) || [];
+    const filtered = startups.filter(s => s.name.toLowerCase().includes(term));
+    // Display filtered logic...
+  }
+
+  window.onload = loadStartups;
+  function logout() { localStorage.removeItem("loggedIn"); window.location.href = "../../index.html"; }
+</script>
+</body>
+</html>

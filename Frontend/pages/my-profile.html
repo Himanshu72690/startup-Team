@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Professional Profile | StartupTeam</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+
+    
+    /* CORE THEME */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Poppins', sans-serif; background: #f8fafc; color: #1e293b; }
+    .app { display: flex; min-height: 100vh; }
+
+    /* MODERN SIDEBAR (Same as Application Tracker) */
+    .sidebar { width: 260px; background: #0f172a; color: #fff; padding: 30px 20px; display: flex; flex-direction: column; position: sticky; top: 0; height: 100vh; }
+    .logo { font-size: 24px; font-weight: 700; margin-bottom: 40px; padding-left: 10px; }
+    .logo span { color: #6366f1; }
+    .sidebar nav { flex: 1; }
+    .sidebar a { display: flex; align-items: center; gap: 12px; color: #94a3b8; text-decoration: none; padding: 12px 15px; border-radius: 10px; margin-bottom: 8px; transition: 0.3s; font-size: 14px; font-weight: 500; }
+    .sidebar a:hover { background: rgba(255,255,255,0.05); color: #fff; }
+    .sidebar a.active { background: #6366f1; color: white; box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3); }
+
+    /* NEW LOGOUT BUTTON STYLE */
+    .logout-btn { background: #ef4444; color: white; border: none; padding: 12px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 600; transition: 0.3s; margin-top: auto; }
+    .logout-btn:hover { background: #dc2626; transform: translateY(-2px); }
+
+    /* MAIN CONTENT */
+    .main { flex: 1; padding: 40px 60px; max-width: 1100px; }
+
+    /* PROFILE UI COMPONENTS */
+    .profile-card { background: #fff; border-radius: 20px; border: 1px solid #f1f5f9; padding: 30px; margin-bottom: 25px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); }
+    .profile-header { display: flex; justify-content: space-between; align-items: center; }
+    .user-meta { display: flex; align-items: center; gap: 20px; }
+    .avatar-box { width: 80px; height: 80px; border-radius: 16px; background: #6366f1; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: 700; }
+    .user-info h1 { font-size: 26px; font-weight: 700; color: #0f172a; }
+    .user-info p { color: #6366f1; font-weight: 600; font-size: 14px; }
+
+    .btn-edit { background: #6366f1; color: #fff; padding: 10px 20px; border-radius: 10px; text-decoration: none; font-weight: 600; font-size: 13px; display: flex; align-items: center; gap: 8px; transition: 0.3s; }
+    .btn-edit:hover { background: #4f46e5; transform: scale(1.05); }
+
+    .details-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 25px; }
+    .info-box { background: #fff; padding: 25px; border-radius: 20px; border: 1px solid #f1f5f9; margin-bottom: 25px; transition: 0.3s; }
+    .info-box:hover { transform: translateY(-5px); border-color: #6366f1; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+    
+    .label-title { font-size: 11px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
+    .label-title i { color: #6366f1; }
+
+    .bio-text { line-height: 1.8; color: #475569; font-size: 15px; }
+    .exp-item { display: flex; gap: 15px; background: #f0fdf4; padding: 15px; border-radius: 12px; border: 1px solid #dcfce7; }
+    .exp-content h4 { font-size: 15px; color: #166534; }
+    .exp-content p { font-size: 13px; color: #166534; opacity: 0.8; }
+
+    .skills-flex { display: flex; flex-wrap: wrap; gap: 8px; }
+    .skill-tag { background: #eff6ff; color: #3b82f6; padding: 5px 12px; border-radius: 8px; font-size: 12px; font-weight: 700; border: 1px solid #dbeafe; transition: 0.2s; }
+    .skill-tag:hover { background: #6366f1; color: #fff; transform: scale(1.1); }
+
+    .social-links a { display: flex; align-items: center; gap: 12px; padding: 12px; background: #f8fafc; border-radius: 12px; text-decoration: none; color: #1e293b; font-size: 14px; font-weight: 600; margin-bottom: 10px; border: 1px solid #eef2f6; transition: 0.2s; }
+    .social-links a:hover { border-color: #6366f1; color: #6366f1; padding-left: 18px; }
+  </style>
+</head>
+<body>
+
+<div class="app">
+  <aside class="sidebar">
+    <div class="logo">Startup<span>Team</span></div>
+    <nav>
+      <a href="member-dashboard.html"><i data-lucide="layout-dashboard"></i> Dashboard</a>
+      <a href="explore-startups.html"><i data-lucide="search"></i> Explore Teams</a>
+      <a href="join-requests.html"><i data-lucide="send"></i> My Applications</a>
+      <a href="my-profile.html" class="active"><i data-lucide="user"></i> Professional Profile</a>
+    </nav>
+    <button onclick="logout()" class="logout-btn"><i data-lucide="log-out"></i> Log Out</button>
+  </aside>
+
+  <main class="main">
+    <div class="profile-card">
+      <div class="profile-header">
+        <div class="user-meta">
+          <div class="avatar-box" id="dispInit">M</div>
+          <div class="user-info">
+            <h1 id="dispName">User Name</h1>
+            <p id="dispRole">Professional Role</p>
+          </div>
+        </div>
+        <a href="edit-profile.html" class="btn-edit"><i data-lucide="edit-3" size="16"></i> Edit Profile</a>
+      </div>
+    </div>
+
+    <div class="details-grid">
+      <div class="left-col">
+        <div class="info-box">
+          <div class="label-title"><i data-lucide="book-open" size="14"></i> About My Journey</div>
+          <p class="bio-text" id="dispBio">Your bio will show here.</p>
+        </div>
+
+        <div class="info-box">
+          <div class="label-title"><i data-lucide="briefcase" size="14"></i> Experience Details</div>
+          <div class="exp-item">
+            <i data-lucide="award" class="exp-icon" style="color: #22c55e"></i>
+            <div class="exp-content">
+              <h4 id="dispExpHeading">0 Years of Experience</h4>
+              <p id="dispCompany">Company: Not Specified</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="info-box">
+          <div class="label-title"><i data-lucide="mail" size="14"></i> Contact Information</div>
+          <p style="font-size: 14px; font-weight: 600;" id="dispEmail">email@example.com</p>
+        </div>
+      </div>
+
+      <div class="right-col">
+        <div class="info-box">
+          <div class="label-title"><i data-lucide="zap" size="14"></i> Tech Stack</div>
+          <div class="skills-flex" id="dispSkills"></div>
+        </div>
+
+        <div class="info-box">
+          <div class="label-title"><i data-lucide="link" size="14"></i> Online Presence</div>
+          <div class="social-links">
+            <a href="#" id="linkIn" target="_blank"><i data-lucide="linkedin" size="16"></i> LinkedIn</a>
+            <a href="#" id="linkGh" target="_blank"><i data-lucide="github" size="16"></i> GitHub</a>
+            <a href="#" id="linkPf" target="_blank"><i data-lucide="globe" size="16"></i> Portfolio</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+  lucide.createIcons();
+
+  window.onload = () => {
+    const data = JSON.parse(localStorage.getItem("memberProfile")) || {
+      name: "User Name",
+      role: "Professional Role",
+      bio: "Add your bio in edit profile.",
+      email: "email@example.com",
+      company: "Freelance",
+      exp: "0",
+      skills: "General"
+    };
+
+    document.getElementById('dispName').innerText = data.name;
+    document.getElementById('dispInit').innerText = data.name.charAt(0);
+    document.getElementById('dispRole').innerText = data.role || 'Professional Role';
+    document.getElementById('dispBio').innerText = data.bio || 'Update your bio to attract founders.';
+    document.getElementById('dispEmail').innerText = data.email;
+    document.getElementById('dispExpHeading').innerText = `${data.exp || '0'} Years Experience`;
+    document.getElementById('dispCompany').innerText = `Current @ ${data.company || 'Not Specified'}`;
+
+    if(data.linkedin) document.getElementById('linkIn').href = data.linkedin;
+    if(data.github) document.getElementById('linkGh').href = data.github;
+    if(data.portfolio) document.getElementById('linkPf').href = data.portfolio;
+
+    const skills = data.skills.split(',');
+    document.getElementById('dispSkills').innerHTML = skills.map(s => `<span class="skill-tag">${s.trim()}</span>`).join('');
+    
+    lucide.createIcons();
+  }
+
+  // ADDED LOGOUT FUNCTION
+  function logout() {
+    localStorage.removeItem("loggedIn");
+    window.location.href = "../index.html";
+  }
+</script>
+</body>
+</html>

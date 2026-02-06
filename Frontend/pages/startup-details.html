@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Startup Details | StartupTeam</title>
+
+<link rel="stylesheet" href="../assets/css/member.css">
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<style>
+/* -------- PUBLIC PAGE LAYOUT -------- */
+
+body{
+  background:#f8fafc;
+}
+
+.public-container{
+  max-width:1100px;
+  margin:40px auto;
+  padding:0 15px;
+}
+
+.two-col{
+  display:grid;
+  grid-template-columns:2fr 1fr;
+  gap:30px;
+}
+
+.badge{
+  display:inline-block;
+  padding:4px 12px;
+  border-radius:20px;
+  background:#eef2ff;
+  color:#4f46e5;
+  font-size:12px;
+  font-weight:600;
+  margin-right:6px;
+}
+
+@media(max-width:900px){
+  .two-col{
+    grid-template-columns:1fr;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="public-container">
+
+  <!-- HEADER -->
+  <div class="card" style="margin-bottom:25px;">
+    <h1 id="sName">Startup</h1>
+    <p id="sTagline" style="color:#64748b;"></p>
+
+    <div style="margin-top:10px;">
+      <span class="badge" id="sIndustry"></span>
+      <span class="badge" id="sStage"></span>
+    </div>
+  </div>
+
+  <div class="two-col">
+
+    <!-- LEFT -->
+    <div>
+
+      <div class="card" style="margin-bottom:25px;">
+        <h3>About Startup</h3>
+        <p id="sDesc" style="margin-top:10px;color:#475569;"></p>
+      </div>
+
+      <h3 style="margin-bottom:10px;">Open Roles</h3>
+      <div id="rolesBox"></div>
+
+    </div>
+
+    <!-- RIGHT -->
+    <div>
+
+      <div class="card">
+        <h4>Startup Info</h4>
+
+        <p><b>Location :</b> <span id="sLocation"></span></p>
+        <p><b>Team Size :</b> <span id="sSize"></span></p>
+
+        <p style="margin-top:10px;">
+          <a id="sWebsite" href="#" target="_blank">Website</a>
+        </p>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+lucide.createIcons();
+
+/* ---------- GET STARTUP ID ---------- */
+const id = new URLSearchParams(location.search).get("id");
+
+/* ---------- LOAD DATA ---------- */
+const startups = JSON.parse(localStorage.getItem("allStartups")) || [];
+const roles    = JSON.parse(localStorage.getItem("startup_roles")) || [];
+
+/* ---------- FIND STARTUP ---------- */
+const startup = startups.find(s => String(s.id) === String(id));
+
+if(!startup){
+  document.body.innerHTML = "<h2 style='text-align:center;margin-top:80px;'>Startup not found</h2>";
+}else{
+
+  document.getElementById("sName").innerText     = startup.name || "";
+  document.getElementById("sTagline").innerText  = startup.tagline || "";
+  document.getElementById("sDesc").innerText     = startup.desc || "";
+  document.getElementById("sIndustry").innerText = startup.industry || "Startup";
+  document.getElementById("sStage").innerText    = startup.stage || "";
+  document.getElementById("sLocation").innerText = startup.location || "-";
+  document.getElementById("sSize").innerText     = startup.size || "-";
+
+  const link = document.getElementById("sWebsite");
+  if(startup.website){
+    link.href = startup.website;
+    link.innerText = startup.website;
+  }else{
+    link.style.display="none";
+  }
+
+  /* ---------- FILTER ROLES ---------- */
+  const myRoles = roles.filter(r => String(r.startupId) === String(id));
+  const box = document.getElementById("rolesBox");
+
+  if(myRoles.length === 0){
+    box.innerHTML = "<p style='color:#64748b;'>No open roles.</p>";
+  }else{
+
+    box.innerHTML = myRoles.map(r => `
+      <div class="card" style="margin-bottom:15px;">
+        <h4>${r.title}</h4>
+        <p style="color:#64748b;margin:6px 0;">${r.skills || ""}</p>
+        <small>${r.type || ""} • ${r.exp || ""}</small>
+
+        <div style="margin-top:10px;">
+          <button class="btn-primary"
+            onclick="applyRole('${startup.name}','${r.title}')">
+            Apply
+          </button>
+        </div>
+      </div>
+    `).join("");
+  }
+}
+
+/* ---------- APPLY ROLE ---------- */
+function applyRole(startupName, roleTitle){
+
+  const isLoggedIn = localStorage.getItem("isLoggedIn");
+
+  if(!isLoggedIn){
+    alert("Please login to apply.");
+    return;
+  }
+
+  let list = JSON.parse(localStorage.getItem("myRequests")) || [];
+
+  list.push({
+    startup: startupName,
+    role: roleTitle,
+    status: "Pending"
+  });
+
+  localStorage.setItem("myRequests", JSON.stringify(list));
+
+  alert("Applied successfully!");
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Member Requests | StartupTeam</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    /* EXACT SIDEBAR & THEME CONSISTENCY */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Poppins', sans-serif; background: #f8fafc; color: #1e293b; }
+    .app { display: flex; min-height: 100vh; }
+
+    .sidebar {
+      width: 260px; background: #0f172a; color: #fff; padding: 30px 20px;
+      display: flex; flex-direction: column; position: sticky; top: 0; height: 100vh;
+    }
+    .logo { font-size: 24px; font-weight: 700; margin-bottom: 40px; padding-left: 10px; }
+    .logo span { color: #6366f1; }
+    .sidebar a {
+      display: flex; align-items: center; gap: 12px; color: #94a3b8; text-decoration: none;
+      padding: 12px 15px; border-radius: 8px; margin-bottom: 5px; transition: 0.3s; font-size: 14px;
+    }
+    .sidebar a:hover, .sidebar a.active { background: rgba(255,255,255,0.05); color: #fff; }
+    .sidebar a.active { background: #6366f1; color: white; }
+    .logout-btn { margin-top: auto; background: #ef4444; color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 600; }
+
+    /* MAIN CONTENT */
+    .main { flex: 1; padding: 40px; }
+    .header-section { margin-bottom: 35px; }
+    .header-section h2 { font-size: 28px; font-weight: 700; }
+
+    /* ATTRACTIVE APPLICANT CARDS */
+    .requests-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 25px; }
+    
+    .request-card {
+      background: #fff; padding: 30px; border-radius: 16px; border: 1px solid #f1f5f9;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); transition: 0.3s;
+    }
+    .request-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.08); }
+
+    .user-profile { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
+    .avatar { 
+      width: 55px; height: 55px; border-radius: 12px; 
+      background: #f5f3ff; color: #8b5cf6; 
+      display: flex; align-items: center; justify-content: center; 
+      font-size: 20px; font-weight: 700; border: 1px solid #ddd6fe;
+    }
+
+    .user-info h4 { font-size: 17px; color: #0f172a; }
+    .user-info p { font-size: 13px; color: #6366f1; font-weight: 600; }
+
+    .meta-info { display: flex; gap: 15px; margin-bottom: 15px; }
+    .meta-tag { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: #64748b; }
+    .icon-highlight { color: #3b82f6; }
+
+    .skills-box { margin-bottom: 20px; }
+    .skill-pill { 
+      display: inline-block; background: #eff6ff; color: #3b82f6; 
+      padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; margin-right: 5px; 
+    }
+
+    .action-group { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; border-top: 1px solid #f1f5f9; padding-top: 20px; }
+    .btn { padding: 10px; border-radius: 8px; border: none; font-size: 13px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.3s; }
+    .btn-accept { background: #f0fdf4; color: #22c55e; }
+    .btn-accept:hover { background: #22c55e; color: white; }
+    .btn-reject { background: #fef2f2; color: #ef4444; }
+    .btn-reject:hover { background: #ef4444; color: white; }
+
+    .empty-state { text-align: center; padding: 80px; color: #94a3b8; }
+  </style>
+</head>
+<body>
+
+<div class="app">
+  <aside class="sidebar">
+    <div class="logo">Startup<span>Team</span></div>
+    <nav>
+      <a href="founder-dashboard.html"><i data-lucide="layout-dashboard"></i> Dashboard</a>
+      <a href="founder-profile.html"><i data-lucide="user"></i> Founder Profile</a>
+      <a href="startup-profile.html"><i data-lucide="rocket"></i> Startup Profile</a>
+      <a href="post-role.html"><i data-lucide="plus-circle"></i> Post Role</a>
+      <a href="roles-list.html"><i data-lucide="briefcase"></i> Roles</a>
+      <a href="members-requests.html" class="active"><i data-lucide="users"></i> Member Requests</a>
+    </nav>
+    <button onclick="logout()" class="logout-btn"><i data-lucide="log-out"></i> Logout</button>
+  </aside>
+
+  <main class="main">
+    <div class="header-section">
+      <h2>Member Requests</h2>
+      <p style="color: #64748b; font-size: 14px;">Review potential teammates who want to join your startup.</p>
+    </div>
+
+    <div class="requests-grid" id="requestsList">
+      </div>
+  </main>
+</div>
+
+<script>
+  lucide.createIcons();
+
+  // Demo data for Member Requests
+  const demoRequests = [
+    { name: "Rahul Sharma", role: "Fullstack Developer", exp: "3 Years", bio: "Passionate about building scalable web apps with Node.js and React.", skills: ["React", "Node", "AWS"] },
+    { name: "Priya Singh", role: "UI/UX Designer", exp: "2 Years", bio: "Focus on creating user-centric designs and high-fidelity prototypes.", skills: ["Figma", "Adobe XD", "Prototyping"] }
+  ];
+
+  window.onload = () => {
+    const container = document.getElementById('requestsList');
+
+    if (demoRequests.length === 0) {
+      container.innerHTML = `<div class="empty-state"><i data-lucide="user-plus" size="48" style="opacity:0.2; margin-bottom:15px;"></i><p>No pending requests at the moment.</p></div>`;
+      lucide.createIcons();
+      return;
+    }
+
+    container.innerHTML = demoRequests.map(req => `
+      <div class="request-card">
+        <div class="user-profile">
+          <div class="avatar">${req.name.charAt(0)}</div>
+          <div class="user-info">
+            <h4>${req.name}</h4>
+            <p>${req.role}</p>
+          </div>
+        </div>
+
+        <div class="meta-info">
+          <div class="meta-tag"><i data-lucide="briefcase" size="14" class="icon-highlight"></i> ${req.exp} Exp</div>
+          <div class="meta-tag"><i data-lucide="check-circle" size="14" class="icon-highlight"></i> Verified</div>
+        </div>
+
+        <div class="skills-box">
+          ${req.skills.map(skill => `<span class="skill-pill">${skill}</span>`).join('')}
+        </div>
+
+        <p style="font-size: 13px; color: #64748b; line-height: 1.6; margin-bottom: 20px;">
+          ${req.bio}
+        </p>
+
+        <div class="action-group">
+          <button class="btn btn-accept"><i data-lucide="user-check" size="16"></i> Accept</button>
+          <button class="btn btn-reject"><i data-lucide="user-x" size="16"></i> Reject</button>
+        </div>
+      </div>
+    `).join('');
+    lucide.createIcons();
+  }
+</script>
+</body>
+</html>

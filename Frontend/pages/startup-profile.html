@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Startup Profile | StartupTeam</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    /* EXACT CSS FROM YOUR CODE */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #f8fafc;
+      color: #1e293b;
+    }
+
+    .app { display: flex; min-height: 100vh; }
+
+    /* SIDEBAR REFINED */
+    .sidebar {
+      width: 260px;
+      background: #0f172a; /* Exact Dark Colour */
+      color: #fff;
+      padding: 30px 20px;
+      display: flex;
+      flex-direction: column;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 40px;
+      padding-left: 10px;
+    }
+    .logo span { color: #6366f1; }
+
+    .sidebar a {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: #94a3b8;
+      text-decoration: none;
+      padding: 12px 15px;
+      border-radius: 8px;
+      margin-bottom: 5px;
+      transition: 0.3s;
+      font-size: 14px;
+    }
+
+    .sidebar a:hover, .sidebar a.active {
+      background: rgba(255,255,255,0.05);
+      color: #fff;
+    }
+
+    .sidebar a.active { background: #6366f1; color: white; }
+
+    .logout-btn {
+      margin-top: auto;
+      background: #ef4444;
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-weight: 600;
+    }
+
+    /* MAIN CONTENT & CARD */
+    .main { flex: 1; padding: 40px; }
+    
+    .header-section { 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: flex-start; 
+      margin-bottom: 30px; 
+    }
+
+    .card {
+      background: #fff;
+      padding: 35px;
+      border-radius: 16px;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);
+      border: 1px solid #f1f5f9;
+    }
+
+    /* Professional Details Layout */
+    .info-grid { 
+      display: grid; 
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); 
+      gap: 30px; 
+      margin-top: 30px; 
+    }
+    
+    .info-item label { 
+      display: block; 
+      font-size: 11px; 
+      font-weight: 700; 
+      color: #94a3b8; 
+      text-transform: uppercase; 
+      letter-spacing: 0.5px; 
+      margin-bottom: 5px; 
+    }
+    
+    .info-item p { font-weight: 600; font-size: 15px; color: #1e293b; }
+    
+    .badge { 
+      background: #eff6ff; 
+      color: #3b82f6; 
+      padding: 4px 12px; 
+      border-radius: 20px; 
+      font-weight: 600; 
+      font-size: 13px; 
+      display: inline-block;
+    }
+
+    .btn-edit {
+      background: #6366f1;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="app">
+  <aside class="sidebar">
+    <div class="logo">Startup<span>Team</span></div>
+    <nav>
+      <a href="founder-dashboard.html"><i data-lucide="layout-dashboard"></i> Dashboard</a>
+      <a href="founder-profile.html"><i data-lucide="user"></i> Founder Profile</a>
+      <a href="startup-profile.html" class="active"><i data-lucide="rocket"></i> Startup Profile</a>
+      <a href="post-role.html"><i data-lucide="plus-circle"></i> Post Role</a>
+      <a href="roles-list.html"><i data-lucide="briefcase"></i> Roles</a>
+      <a href="members-requests.html"><i data-lucide="users"></i> Member Requests</a>
+    </nav>
+    <button onclick="logout()" class="logout-btn"><i data-lucide="log-out"></i> Logout</button>
+  </aside>
+
+  <main class="main">
+    <div class="header-section">
+      <div>
+        <h2 style="font-size: 28px;">Startup Profile</h2>
+        <p style="color: #64748b; font-size: 14px;">Managing your company's public identity.</p>
+      </div>
+      <a href="edit-startup.html" class="btn-edit"><i data-lucide="edit-3" style="width: 16px;"></i> Edit Startup</a>
+    </div>
+
+    <div class="card" id="profileBox">
+        </div>
+  </main>
+</div>
+
+<script>
+  lucide.createIcons();
+  
+  window.onload = () => {
+    const s = JSON.parse(localStorage.getItem("startup")) || {};
+    const box = document.getElementById('profileBox');
+
+    if(s.created) {
+      box.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 35px; border-bottom: 1px solid #f1f5f9; padding-bottom: 25px;">
+          <div style="width: 70px; height: 70px; background: #6366f1; color: white; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: 700;">
+            ${s.name.charAt(0)}
+          </div>
+          <div>
+            <h2 style="font-size: 24px;">${s.name}</h2>
+            <p style="color: #6366f1; font-weight: 600; font-size: 14px;">${s.tagline || 'Building the future'}</p>
+          </div>
+        </div>
+
+        <div class="info-grid">
+          <div class="info-item">
+            <label>Funding Stage</label>
+            <p><span class="badge">${s.stage}</span></p>
+          </div>
+          <div class="info-item">
+            <label>Industry</label>
+            <p>${s.industry || 'Tech'}</p>
+          </div>
+          <div class="info-item">
+            <label>Location</label>
+            <p>${s.location || 'Remote'}</p>
+          </div>
+          <div class="info-item">
+            <label>Team Size</label>
+            <p>${s.size || '1-10'} Members</p>
+          </div>
+          <div class="info-item">
+            <label>Website</label>
+            <p><a href="${s.website}" target="_blank" style="color: #6366f1; text-decoration: none;">${s.website || 'Not Provided'}</a></p>
+          </div>
+          <div class="info-item">
+            <label>LinkedIn</label>
+            <p><a href="${s.linkedin}" target="_blank" style="color: #6366f1; text-decoration: none;">Company Page</a></p>
+          </div>
+        </div>
+
+        <div style="margin-top: 35px; border-top: 1px solid #f1f5f9; padding-top: 25px;">
+          <label style="color: #94a3b8; font-size: 11px; font-weight: 700; text-transform: uppercase;">About the Mission</label>
+          <p style="line-height: 1.7; color: #475569; margin-top: 10px; font-size: 15px;">${s.description || 'No description provided.'}</p>
+        </div>
+      `;
+      lucide.createIcons();
+    } else {
+      box.innerHTML = `<div style="text-align: center; padding: 20px;"><p>No startup found. Please create one.</p></div>`;
+    }
+  }
+</script>
+</body>
+</html>

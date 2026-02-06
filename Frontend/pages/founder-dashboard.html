@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Founder Dashboard | StartupTeam</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    /* EXACT CONSISTENT CSS THEME */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Poppins', sans-serif; background: #f8fafc; color: #1e293b; }
+    .app { display: flex; min-height: 100vh; }
+
+    /* SIDEBAR REFINED */
+    .sidebar {
+      width: 260px; background: #0f172a; color: #fff; padding: 30px 20px;
+      display: flex; flex-direction: column; position: sticky; top: 0; height: 100vh;
+    }
+    .logo { font-size: 24px; font-weight: 700; margin-bottom: 40px; padding-left: 10px; }
+    .logo span { color: #6366f1; }
+    .sidebar a {
+      display: flex; align-items: center; gap: 12px; color: #94a3b8; text-decoration: none;
+      padding: 12px 15px; border-radius: 8px; margin-bottom: 5px; transition: 0.3s; font-size: 14px;
+    }
+    .sidebar a:hover, .sidebar a.active { background: rgba(255,255,255,0.05); color: #fff; }
+    .sidebar a.active { background: #6366f1; color: white; }
+    .logout-btn { margin-top: auto; background: #ef4444; color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 600; }
+
+    /* MAIN CONTENT */
+    .main { flex: 1; padding: 40px; }
+    .header-section { margin-bottom: 35px; }
+    .header-section h2 { font-size: 28px; font-weight: 700; }
+
+    /* STAT CARDS GRID */
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 25px; margin-bottom: 40px; }
+    
+    .stat-card {
+      background: #fff; padding: 25px; border-radius: 16px; border: 1px solid #f1f5f9;
+      display: flex; align-items: center; gap: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+      transition: 0.3s;
+    }
+    .stat-card:hover { transform: translateY(-5px); }
+
+    .card-icon {
+      width: 54px; height: 54px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .icon-blue { background: #eff6ff; color: #3b82f6; }
+    .icon-purple { background: #f5f3ff; color: #8b5cf6; }
+    .icon-orange { background: #fff7ed; color: #f97316; }
+
+    .stat-info h3 { font-size: 24px; font-weight: 700; color: #0f172a; }
+    .stat-info p { font-size: 13px; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+
+    /* RECENT ACTIVITY SECTION */
+    .section-title { font-size: 18px; font-weight: 700; margin-bottom: 20px; color: #0f172a; }
+    .activity-card { 
+      background: #fff; padding: 30px; border-radius: 16px; border: 1px solid #f1f5f9; 
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+    }
+    
+    .role-item {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 15px 0; border-bottom: 1px solid #f1f5f9;
+    }
+    .role-item:last-child { border-bottom: none; }
+    .role-name { font-weight: 600; color: #1e293b; font-size: 15px; }
+    .role-meta { font-size: 12px; color: #94a3b8; }
+    .status-active { color: #22c55e; background: #f0fdf4; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; }
+  </style>
+</head>
+<body>
+
+<div class="app">
+  <aside class="sidebar">
+    <div class="logo">Startup<span>Team</span></div>
+    <nav>
+      <a href="founder-dashboard.html" class="active"><i data-lucide="layout-dashboard"></i> Dashboard</a>
+      <a href="founder-profile.html"><i data-lucide="user"></i> Founder Profile</a>
+      <a href="startup-profile.html"><i data-lucide="rocket"></i> Startup Profile</a>
+      <a href="post-role.html"><i data-lucide="plus-circle"></i> Post Role</a>
+      <a href="roles-list.html"><i data-lucide="briefcase"></i> Roles</a>
+      <a href="members-requests.html"><i data-lucide="users"></i> Member Requests</a>
+    </nav>
+    <button onclick="logout()" class="logout-btn"><i data-lucide="log-out"></i> Logout</button>
+  </aside>
+
+  <main class="main">
+    <div class="header-section">
+      <h2 id="welcomeText">Welcome back, Founder!</h2>
+      <p style="color: #64748b; font-size: 14px;">Overview of your startup performance and hiring.</p>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="card-icon icon-blue"><i data-lucide="briefcase" size="24"></i></div>
+        <div class="stat-info">
+          <h3 id="totalRolesCount">0</h3>
+          <p>Total Roles</p>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="card-icon icon-purple"><i data-lucide="users" size="24"></i></div>
+        <div class="stat-info">
+          <h3 id="totalRequestsCount">2</h3>
+          <p>Member Requests</p>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="card-icon icon-orange"><i data-lucide="zap" size="24"></i></div>
+        <div class="stat-info">
+          <h3>Active</h3>
+          <p>Startup Status</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-title">Recently Posted Roles</div>
+    <div class="activity-card" id="recentRolesList">
+      </div>
+  </main>
+</div>
+
+<script>
+  lucide.createIcons();
+
+  window.onload = () => {
+    // 1. User Name fetch for Welcome message
+    const user = JSON.parse(localStorage.getItem("user")) || { name: "Founder" };
+    document.getElementById('welcomeText').innerText = `Welcome back, ${user.name}!`;
+
+    // 2. Roles Data fetch from localStorage
+    const roles = JSON.parse(localStorage.getItem("startup_roles")) || [];
+    document.getElementById('totalRolesCount').innerText = roles.length;
+
+    // 3. Populate Recent Roles
+    const recentList = document.getElementById('recentRolesList');
+    if (roles.length === 0) {
+      recentList.innerHTML = `<p style="text-align:center; color:#94a3b8; font-size:14px;">No roles posted yet. Start hiring!</p>`;
+    } else {
+      // Show last 3 roles
+      recentList.innerHTML = roles.slice(-3).reverse().map(role => `
+        <div class="role-item">
+          <div>
+            <div class="role-name">${role.title}</div>
+            <div class="role-meta">${role.type} • ${role.exp}</div>
+          </div>
+          <span class="status-active">Live</span>
+        </div>
+      `).join('');
+    }
+  }
+
+  function logout() {
+    localStorage.removeItem("loggedIn");
+    window.location.href = "../index.html";
+  }
+</script>
+</body>
+</html>

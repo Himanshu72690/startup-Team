@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Member Profile View | StartupTeam</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="../assets/css/founder.css">
+</head>
+<body>
+
+<div class="app">
+  <aside class="sidebar">
+    <div class="logo">Startup<span>Team</span></div>
+    <nav>
+      <a href="founder-dashboard.html"><i data-lucide="layout-dashboard"></i> Dashboard</a>
+      <a href="founder-profile.html"><i data-lucide="user"></i> Founder Profile</a>
+      <a href="startup-profile.html"><i data-lucide="rocket"></i> Startup Profile</a>
+      <a href="post-role.html"><i data-lucide="plus-circle"></i> Post Role</a>
+      <a href="roles-list.html"><i data-lucide="briefcase"></i> Roles</a>
+      <a href="members-requests.html" class="active"><i data-lucide="users"></i> Member Requests</a>
+    </nav>
+    <button onclick="logout()" class="logout-btn">Logout</button>
+  </aside>
+
+  <main class="main">
+    <div class="header-section" style="display: flex; justify-content: space-between; align-items: center;">
+      <div>
+        <h1>Candidate Application</h1>
+        <p style="color: #64748b;">Review the member's details before making a decision.</p>
+      </div>
+      <div style="display: flex; gap: 10px;">
+        <button class="btn" style="background: #10b981;" onclick="handleAction('Accepted')">Accept Member</button>
+        <button class="btn" style="background: #ef4444;" onclick="handleAction('Rejected')">Reject</button>
+      </div>
+    </div>
+
+    <div class="card" id="box">
+        <p style="color: #64748b;">Loading candidate profile...</p>
+    </div>
+  </main>
+</div>
+
+<script src="../assets/js/founder.js"></script>
+<script src="../assets/js/auth.js"></script>
+<script>
+  lucide.createIcons();
+
+  // Get Index from URL
+  const i = new URLSearchParams(location.search).get("i");
+  const requests = JSON.parse(localStorage.getItem("requests")) || [];
+  const r = requests[i];
+  const box = document.getElementById("box");
+
+  if (r) {
+    box.innerHTML = `
+      <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 30px; border-bottom: 1px solid #f1f5f9; padding-bottom: 20px;">
+        <div style="width: 60px; height: 60px; background: #eef2ff; color: #6366f1; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+            <i data-lucide="user" style="width: 32px; height: 32px;"></i>
+        </div>
+        <div>
+          <h2 style="font-size: 24px;">${r.name}</h2>
+          <p style="color: #64748b;">Applying for: <b style="color: #6366f1;">${r.role}</b></p>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+        <div>
+          <label style="display: block; color: #94a3b8; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Skills & Expertise</label>
+          <div style="margin-top: 10px; display: flex; flex-wrap: wrap; gap: 8px;">
+            ${r.skills.split(',').map(skill => `<span style="background: #f1f5f9; color: #475569; padding: 4px 12px; border-radius: 6px; font-size: 13px; font-weight: 500;">${skill.trim()}</span>`).join('')}
+          </div>
+        </div>
+        <div>
+          <label style="display: block; color: #94a3b8; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Contact Reference</label>
+          <p style="margin-top: 10px; font-weight: 500; display: flex; align-items: center; gap: 8px;">
+            <i data-lucide="mail" style="width: 16px; color: #94a3b8;"></i> Available via Platform
+          </p>
+        </div>
+      </div>
+    `;
+    lucide.createIcons();
+  }
+
+  function handleAction(status) {
+      alert(`Candidate has been ${status}`);
+      window.location.href = "members-requests.html";
+  }
+</script>
+</body>
+</html>

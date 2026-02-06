@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit Profile | StartupTeam</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+
+    
+    /* CORE THEME */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Poppins', sans-serif; background: #f8fafc; color: #1e293b; }
+    .app { display: flex; min-height: 100vh; }
+
+    /* SIDEBAR */
+    .sidebar { width: 260px; background: #0f172a; color: #fff; padding: 30px 20px; display: flex; flex-direction: column; position: sticky; top: 0; height: 100vh; }
+    .logo { font-size: 24px; font-weight: 700; margin-bottom: 40px; padding-left: 10px; }
+    .logo span { color: #6366f1; }
+    .sidebar a { display: flex; align-items: center; gap: 12px; color: #94a3b8; text-decoration: none; padding: 12px 15px; border-radius: 8px; margin-bottom: 5px; transition: 0.3s; font-size: 14px; }
+    .sidebar a.active { background: #6366f1; color: white; }
+    .logout-btn { margin-top: auto; background: #ef4444; color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 600; }
+
+    /* MAIN CONTENT */
+    .main { flex: 1; padding: 40px; }
+    .header-section { margin-bottom: 30px; }
+    .header-section h2 { font-size: 28px; font-weight: 700; }
+
+    /* FORM STYLING */
+    .edit-card { background: #fff; padding: 40px; border-radius: 20px; border: 1px solid #f1f5f9; box-shadow: 0 4px 6px rgba(0,0,0,0.02); max-width: 900px; }
+    .section-label { font-size: 13px; font-weight: 700; color: #6366f1; margin: 30px 0 20px; display: flex; align-items: center; gap: 10px; text-transform: uppercase; letter-spacing: 1px; }
+    .section-label:first-child { margin-top: 0; }
+    
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .full-width { grid-column: span 2; }
+
+    .input-group { margin-bottom: 10px; }
+    .input-group label { display: block; font-size: 12px; font-weight: 600; color: #64748b; margin-bottom: 8px; }
+    
+    .input-wrapper { position: relative; display: flex; align-items: center; }
+    .icon-box { position: absolute; left: 12px; width: 34px; height: 34px; border-radius: 8px; display: flex; align-items: center; justify-content: center; z-index: 1; }
+    
+    /* ICON COLORS */
+    .bg-blue { background: #eff6ff; color: #3b82f6; }
+    .bg-purple { background: #f5f3ff; color: #8b5cf6; }
+    .bg-gray { background: #f1f5f9; color: #475569; }
+    .bg-orange { background: #fff7ed; color: #f97316; }
+    .bg-green { background: #f0fdf4; color: #22c55e; }
+
+    .input-wrapper input, .input-wrapper textarea {
+      width: 100%; padding: 12px 15px 12px 55px; border: 1px solid #e2e8f0; border-radius: 10px; font-size: 14px; outline: none; transition: 0.3s; font-family: inherit;
+    }
+    .input-wrapper input:focus, .input-wrapper textarea:focus { border-color: #6366f1; box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1); }
+
+    .save-btn { margin-top: 40px; background: #6366f1; color: white; padding: 15px 30px; border-radius: 12px; border: none; font-weight: 700; font-size: 15px; cursor: pointer; width: 100%; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.3); }
+    .save-btn:hover { background: #4f46e5; transform: translateY(-2px); }
+  </style>
+</head>
+<body>
+
+<div class="app">
+  <aside class="sidebar">
+    <div class="logo">Startup<span>Team</span></div>
+    <nav>
+      <a href="member-dashboard.html"><i data-lucide="layout-dashboard"></i> Dashboard</a>
+      <a href="explore-startups.html"><i data-lucide="search"></i> Explore Startups</a>
+      <a href="join-requests.html"><i data-lucide="send"></i> My Requests</a>
+      <a href="my-profile.html" class="active"><i data-lucide="user"></i> My Profile</a>
+    </nav>
+    <button onclick="logout()" class="logout-btn"><i data-lucide="log-out"></i> Logout</button>
+  </aside>
+
+  <main class="main">
+    <div class="header-section">
+      <h2>Professional Experience</h2>
+      <p style="color: #64748b; font-size: 14px;">Founders look for relevant experience before hiring.</p>
+    </div>
+
+    <div class="edit-card">
+      <form id="memberProfileForm">
+        <div class="section-label"><i data-lucide="user"></i> Basic Information</div>
+        <div class="form-grid">
+          <div class="input-group"><label>Full Name</label><div class="input-wrapper"><div class="icon-box bg-blue"><i data-lucide="user-circle" size="18"></i></div><input type="text" id="mName" required></div></div>
+          <div class="input-group"><label>Professional Email</label><div class="input-wrapper"><div class="icon-box bg-blue"><i data-lucide="mail" size="18"></i></div><input type="email" id="mEmail" required></div></div>
+        </div>
+
+        <div class="section-label"><i data-lucide="briefcase"></i> Work Experience</div>
+        <div class="form-grid">
+          <div class="input-group">
+            <label>Current Role</label>
+            <div class="input-wrapper">
+              <div class="icon-box bg-green"><i data-lucide="user-plus" size="18"></i></div>
+              <input type="text" id="mRole" placeholder="e.g. Senior Web Developer">
+            </div>
+          </div>
+          <div class="input-group">
+            <label>Current Company</label>
+            <div class="input-wrapper">
+              <div class="icon-box bg-green"><i data-lucide="building-2" size="18"></i></div>
+              <input type="text" id="mCompany" placeholder="e.g. Google / Freelance">
+            </div>
+          </div>
+          <div class="input-group full-width">
+            <label>Years of Experience</label>
+            <div class="input-wrapper">
+              <div class="icon-box bg-green"><i data-lucide="calendar" size="18"></i></div>
+              <input type="number" id="mExp" placeholder="e.g. 3">
+            </div>
+          </div>
+        </div>
+
+        <div class="section-label"><i data-lucide="share-2"></i> Social & Portfolios</div>
+        <div class="form-grid">
+          <div class="input-group"><label>LinkedIn</label><div class="input-wrapper"><div class="icon-box bg-purple"><i data-lucide="linkedin" size="18"></i></div><input type="url" id="mLinkedin"></div></div>
+          <div class="input-group"><label>GitHub</label><div class="input-wrapper"><div class="icon-box bg-gray"><i data-lucide="github" size="18"></i></div><input type="text" id="mGithub"></div></div>
+        </div>
+
+        <div class="section-label"><i data-lucide="award"></i> Expertise</div>
+        <div class="form-grid">
+          <div class="input-group full-width"><label>Skills</label><div class="input-wrapper"><div class="icon-box bg-purple"><i data-lucide="cpu" size="18"></i></div><input type="text" id="mSkills"></div></div>
+        </div>
+
+        <button type="submit" class="save-btn"><i data-lucide="save" size="20"></i> Update Professional Profile</button>
+      </form>
+    </div>
+  </main>
+</div>
+
+<script>
+  lucide.createIcons();
+
+  window.onload = () => {
+    const data = JSON.parse(localStorage.getItem("memberProfile")) || {};
+    if(data.name) {
+      document.getElementById('mName').value = data.name;
+      document.getElementById('mEmail').value = data.email || '';
+      document.getElementById('mRole').value = data.role || '';
+      document.getElementById('mCompany').value = data.company || '';
+      document.getElementById('mExp').value = data.exp || '';
+      document.getElementById('mLinkedin').value = data.linkedin || '';
+      document.getElementById('mGithub').value = data.github || '';
+      document.getElementById('mSkills').value = data.skills || '';
+    }
+  }
+
+  document.getElementById('memberProfileForm').onsubmit = (e) => {
+    e.preventDefault();
+    const profile = {
+      name: document.getElementById('mName').value,
+      email: document.getElementById('mEmail').value,
+      role: document.getElementById('mRole').value,
+      company: document.getElementById('mCompany').value,
+      exp: document.getElementById('mExp').value,
+      linkedin: document.getElementById('mLinkedin').value,
+      github: document.getElementById('mGithub').value,
+      skills: document.getElementById('mSkills').value
+    };
+    
+    localStorage.setItem("memberProfile", JSON.stringify(profile));
+    alert("Profile Updated with Experience! 🚀");
+    window.location.href = "my-profile.html";
+  }
+
+  function logout() {
+    localStorage.removeItem("loggedIn");
+    window.location.href = "../index.html";
+  }
+</script>
+</body>
+</html>

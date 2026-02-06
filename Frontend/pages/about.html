@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>About • StartupTeam</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/about.css">
+</head>
+<body>
+
+<section class="hero">
+  <div class="hero-content" data-aos="zoom-out" data-aos-duration="1200">
+    <span class="badge">Innovation Hub</span>
+    <h1>About StartupTeam</h1>
+    <p>A next-gen collaboration ecosystem connecting visionary founders with high-impact talent to build the future.</p>
+  </div>
+  <div class="blob"></div>
+</section>
+
+<section class="stats-bar" data-aos="fade-up">
+  <div class="stat-item"><h3>0+</h3><p>Startups</p></div>
+  <div class="stat-item"><h3>0+</h3><p>Members</p></div>
+  <div class="stat-item"><h3>0%</h3><p>Collaboration</p></div>
+</section>
+
+<div class="container">
+  
+  <section class="section intro-grid">
+    <div class="text-side" data-aos="fade-right">
+      <h2 class="section-title">What is StartupTeam?</h2>
+      <p>StartupTeam is more than just a platform; it's a bridge for dreams. We specialize in connecting <b>Developers, Designers, and Marketers</b> with founders who have the vision but need the muscle to execute.</p>
+      <div class="glass-card">
+        <p><i>"Our goal is to turn ideas into reality by building the right teams at the right time."</i></p>
+      </div>
+    </div>
+    <div class="image-side" data-aos="fade-left">
+       <div class="abstract-box"></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="grid-2">
+      <div class="card problem-card" data-aos="flip-left">
+        <h3>The Problem</h3>
+        <ul>
+          <li>Founders can't find committed talent.</li>
+          <li>Members lack real-world project exposure.</li>
+          <li>Traditional sites are for jobs, not passion.</li>
+        </ul>
+      </div>
+      <div class="card solution-card" data-aos="flip-right">
+        <h3>Our Solution</h3>
+        <ul class="step-list">
+          <li><span>1</span> Create Startup Profile</li>
+          <li><span>2</span> Post Dynamic Roles</li>
+          <li><span>3</span> Connect on WhatsApp</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="section roadmap-sec" data-aos="fade-up">
+    <h2 class="center-title">Future Roadmap</h2>
+    <div class="roadmap-grid">
+      <div class="roadmap-item">Verified Profiles</div>
+      <div class="roadmap-item active">In-Platform Chat</div>
+      <div class="roadmap-item">Equity Matching</div>
+      <div class="roadmap-item">Paid Roles</div>
+    </div>
+  </section>
+
+</div>
+
+<section class="cta" data-aos="zoom-in">
+  <h2>Ready to build something great?</h2>
+  <p>Join the community of makers and shakers.</p>
+  <a href="../signup.html" class="btn-primary">Get Started Now</a>
+</section>
+
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+  AOS.init({ duration: 800, once: true });
+</script>
+<script>
+  // Numbers ko animate karne ka function
+  const animateCounters = () => {
+    const counters = document.querySelectorAll('.stat-item h3');
+    
+    counters.forEach(counter => {
+      const target = +counter.innerText.replace('+', '');
+      const count = +counter.innerText; // starts at 0 if you set it in HTML
+      
+      let current = 0;
+      const increment = target / 50; // Speed control
+
+      const updateCount = () => {
+        if (current < target) {
+          current += increment;
+          counter.innerText = Math.ceil(current) + (counter.innerText.includes('%') ? '%' : '+');
+          setTimeout(updateCount, 30);
+        } else {
+          counter.innerText = target + (counter.innerText.includes('%') ? '%' : '+');
+        }
+      };
+      updateCount();
+    });
+  };
+
+  // Jab scroll karke stats dikhe tabhi animation chale
+  const statsSection = document.querySelector('.stats-bar');
+  const observer = new IntersectionObserver((entries) => {
+    if(entries[0].isIntersecting) {
+      animateCounters();
+      observer.unobserve(statsSection);
+    }
+  }, { threshold: 0.5 });
+
+  observer.observe(statsSection);
+</script>
+</body>
+</html>

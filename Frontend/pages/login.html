@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login • StartupTeam</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../assets/css/login.css">
+</head>
+<body>
+
+<div class="auth-container">
+
+  <!-- LEFT INFO -->
+  <div class="auth-info">
+    <h1>Welcome Back</h1>
+    <p>Login to continue building and collaborating on StartupTeam.</p>
+    <ul>
+      <li>✔ Secure role-based access</li>
+      <li>✔ Founder & Member dashboards</li>
+      <li>✔ Request-based connections</li>
+    </ul>
+  </div>
+
+  <!-- LOGIN FORM -->
+  <div class="auth-form">
+    <h2>Login</h2>
+
+    <form onsubmit="login(event)">
+      <label>Email Address</label>
+      <input type="email" id="email" required placeholder="you@example.com">
+
+      <label>Password</label>
+      <input type="password" id="password" required placeholder="••••••••">
+
+      <button type="submit" class="btn">Login</button>
+    </form>
+
+    <button onclick="demoLogin()" class="btn demo-btn">Demo Login</button>
+
+    <p class="switch">
+      Don’t have an account?
+      <a href="signup.html">Sign up</a>
+    </p>
+  </div>
+
+</div>
+
+<script src="../assets/js/auth.js"></script>
+</body>
+</html>

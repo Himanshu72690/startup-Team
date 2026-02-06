@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit Startup Profile | StartupTeam</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    :root {
+      --sidebar-bg: #1a1c23;
+      --main-bg: #2d313c;
+      --card-bg: #ffffff;
+      --primary-gradient: linear-gradient(90deg, #4facfe 0%, #a29bfe 100%);
+      --text-main: #111827;
+      --text-muted: #6b7280;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+    body { background: var(--main-bg); display: flex; min-height: 100vh; color: var(--text-main); }
+
+    /* Sidebar Fix - Logout at bottom */
+    .sidebar { 
+      width: 260px; 
+      background: var(--sidebar-bg); 
+      padding: 30px 20px; 
+      position: fixed; 
+      height: 100vh; 
+      display: flex;
+      flex-direction: column;
+      color: #94a3b8; 
+    }
+    
+    .logo { font-size: 24px; font-weight: 700; color: white; margin-bottom: 40px; display: flex; align-items: center; gap: 10px; }
+    .logo span { color: #f87171; }
+
+    .nav-links { flex-grow: 1; }
+    .nav-links a {
+      display: flex; align-items: center; gap: 12px; padding: 12px 15px; text-decoration: none; 
+      color: #94a3b8; border-radius: 10px; margin-bottom: 8px; font-size: 14px; transition: 0.3s;
+    }
+    .nav-links a:hover, .nav-links a.active { background: #2d313c; color: white; }
+    .nav-links a.active .status-tag { background: #22c55e; color: white; padding: 2px 8px; border-radius: 20px; font-size: 10px; margin-left: auto; }
+
+    .logout-btn { 
+      background: #374151; border: none; color: white; padding: 12px; border-radius: 10px; 
+      cursor: pointer; width: 100%; margin-top: auto; display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+
+    /* Main Content & Card */
+    .main { flex: 1; margin-left: 260px; display: flex; align-items: center; justify-content: center; padding: 40px; }
+    .card { background: var(--card-bg); width: 100%; max-width: 850px; padding: 45px; border-radius: 24px; box-shadow: 0 25px 50px rgba(0,0,0,0.4); }
+
+    .card h1 { font-size: 30px; font-weight: 700; margin-bottom: 8px; }
+    .card p { color: var(--text-muted); font-size: 14px; margin-bottom: 35px; }
+
+    /* Form Layout */
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .input-group { margin-bottom: 18px; }
+    .input-group label { display: block; font-weight: 600; font-size: 13px; margin-bottom: 6px; }
+    
+    .input-wrapper { position: relative; }
+    .input-wrapper i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #94a3b8; width: 18px; }
+    
+    .input-wrapper input, .input-wrapper select, .input-wrapper textarea {
+      width: 100%; padding: 12px 12px 12px 45px; border: 1px solid #e5e7eb; border-radius: 12px; 
+      background: #f9fafb; font-size: 14px; transition: 0.2s;
+    }
+    .input-wrapper input:focus { border-color: #a29bfe; outline: none; background: #fff; }
+
+    .btn-container { text-align: center; margin-top: 30px; }
+    .save-btn {
+      background: var(--primary-gradient); color: white; padding: 15px 60px; border: none; border-radius: 50px;
+      font-weight: 700; font-size: 16px; cursor: pointer; box-shadow: 0 10px 20px rgba(79, 172, 254, 0.3); transition: 0.3s;
+    }
+    .save-btn:hover { transform: translateY(-2px); box-shadow: 0 15px 25px rgba(79, 172, 254, 0.4); }
+
+    @media (max-width: 900px) {
+      .sidebar { display: none; }
+      .main { margin-left: 0; }
+      .form-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="logo"><i data-lucide="layers"></i> Startup<span>Team</span></div>
+  <nav class="nav-links">
+    <a href="founder-dashboard.html"><i data-lucide="layout-dashboard"></i> Dashboard</a>
+    <a href="founder-profile.html"><i data-lucide="user"></i> Founder Profile</a>
+    <a href="startup-profile.html" class="active"><i data-lucide="rocket"></i> Startup Profile <span class="status-tag">active</span></a>
+    <a href="post-role.html"><i data-lucide="plus-square"></i> Post Role</a>
+    <a href="roles-list.html"><i data-lucide="briefcase"></i> Roles</a>
+    <a href="members-requests.html"><i data-lucide="users"></i> Requests</a>
+  </nav>
+  <button class="logout-btn" onclick="logout()"><i data-lucide="log-out"></i> Logout</button>
+</aside>
+
+<main class="main">
+  <div class="card">
+    <h1>Edit Startup Profile</h1>
+    <form onsubmit="saveStartupData(event)">
+      <div class="form-grid">
+        <div class="input-group">
+          <label>Startup Name</label>
+          <div class="input-wrapper"><i data-lucide="rocket"></i><input id="sname" placeholder="TechNova" required></div>
+        </div>
+        <div class="input-group">
+          <label>Industry</label>
+          <div class="input-wrapper"><i data-lucide="briefcase"></i><input id="sindustry" placeholder="AI / EdTech"></div>
+        </div>
+      </div>
+
+      <div class="form-grid">
+        <div class="input-group">
+          <label>Website URL</label>
+          <div class="input-wrapper"><i data-lucide="globe"></i><input id="swebsite" type="url" placeholder="https://yourstartup.com"></div>
+        </div>
+        <div class="input-group">
+          <label>Location</label>
+          <div class="input-wrapper"><i data-lucide="map-pin"></i><input id="slocation" placeholder="Delhi, India"></div>
+        </div>
+      </div>
+
+      <div class="form-grid">
+        <div class="input-group">
+          <label>Funding Stage</label>
+          <div class="input-wrapper">
+            <i data-lucide="bar-chart"></i>
+            <select id="stage">
+              <option value="Idea Phase">Idea Phase</option>
+              <option value="MVP/Pre-seed">MVP/Pre-seed</option>
+              <option value="Seed">Seed Stage</option>
+              <option value="Series A+">Series A or beyond</option>
+            </select>
+          </div>
+        </div>
+        <div class="input-group">
+          <label>Team Size</label>
+          <div class="input-wrapper"><i data-lucide="users"></i><input id="tsize" placeholder="e.g. 5-10 Members"></div>
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label>LinkedIn Company Page</label>
+        <div class="input-wrapper"><i data-lucide="linkedin"></i><input id="slinkedin" placeholder="LinkedIn URL"></div>
+      </div>
+
+      <div class="input-group">
+        <label>Tagline</label>
+        <div class="input-wrapper"><i data-lucide="zap"></i><input id="stagline" placeholder="Jaise: Revolutionizing AI education"></div>
+      </div>
+
+      <div class="input-group">
+        <label>Startup Description</label>
+        <div class="input-wrapper">
+          <i data-lucide="align-left" style="top:20px; transform:none;"></i>
+          <textarea id="sdesc" rows="4" style="padding-top:15px;" placeholder="Company ke mission ke baare mein likhein..."></textarea>
+        </div>
+      </div>
+
+      <div class="btn-container">
+        <button type="submit" class="save-btn">Update Startup Details</button>
+        <span style="font-size: 10px; color: #3b82f6; display: block; margin-top: 10px;">20 0 auto</span>
+      </div>
+    </form>
+  </div>
+</main>
+
+<script src="../assets/js/auth.js"></script>
+<script>
+  lucide.createIcons();
+
+  function saveStartupData(e) {
+    e.preventDefault();
+    const data = {
+      name: document.getElementById('sname').value,
+      industry: document.getElementById('sindustry').value,
+      website: document.getElementById('swebsite').value,
+      location: document.getElementById('slocation').value,
+      stage: document.getElementById('stage').value,
+      size: document.getElementById('tsize').value,
+      linkedin: document.getElementById('slinkedin').value,
+      tagline: document.getElementById('stagline').value,
+      description: document.getElementById('sdesc').value,
+      created: true
+    };
+    localStorage.setItem("startup", JSON.stringify(data));
+    alert("Startup Profile Updated Successfully!");
+    window.location.href = "startup-profile.html";
+  }
+
+  window.onload = () => {
+    const s = JSON.parse(localStorage.getItem("startup")) || {};
+    if(s.created) {
+      document.getElementById('sname').value = s.name || '';
+      document.getElementById('sindustry').value = s.industry || '';
+      document.getElementById('swebsite').value = s.website || '';
+      document.getElementById('slocation').value = s.location || '';
+      document.getElementById('stage').value = s.stage || '';
+      document.getElementById('tsize').value = s.size || '';
+      document.getElementById('slinkedin').value = s.linkedin || '';
+      document.getElementById('stagline').value = s.tagline || '';
+      document.getElementById('sdesc').value = s.description || '';
+    }
+  }
+</script>
+</body>
+</html>

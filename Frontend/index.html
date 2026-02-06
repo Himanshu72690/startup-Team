@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StartupTeam • Build Your Dream Team</title>
+
+    <link rel="stylesheet" href="assets/css/base.css">
+    <link rel="stylesheet" href="assets/css/header.css">
+    <link rel="stylesheet" href="assets/css/home.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+   
+<header class="main-header glass-header">
+    <div class="container nav">
+        <a class="logo" href="index.html">
+            Team<span>Startup</span>
+        </a>
+
+        <nav class="nav-links">
+            <a href="index.html" class="active">Home</a>
+            <a href="pages/members-list.html">Members</a>
+            <a href="pages/startup-details.html">Startups</a>
+            <a href="pages/about.html">About</a>
+            <a href="pages/contact.html">Contact</a>
+        </nav>
+
+        <div class="auth-buttons">
+            <a href="pages/login.html" class="login-btn">Login</a>
+            <a href="pages/signup.html" class="signup-btn">Sign Up</a>
+        </div>
+        <div class="menu-toggle" onclick="toggleMenu()">☰</div>
+    </div>
+</header>
+
+
+<section class="hero">
+    <div class="hero-content">
+        <h1>Build Your Dream Team Startup</h1>
+        <p>
+            Join founders, developers, designers, marketers & creators to build the next big product.
+            Discover teams, hire talented members, and make your idea a real startup.
+        </p>
+
+        <div class="hero-buttons">
+            <a href="pages/signup.html" class="primary-btn">Get Started</a>
+            <a href="pages/members-list.html" class="secondary-btn">Explore Members</a>
+        </div>
+    </div>
+</section>
+
+
+<section class="features">
+    <h2 id="why-title">Why Choose StartupTeam?</h2>
+
+    <div class="feature-grid">
+        <div class="feature-box fade">
+            <img src="assets/icons/users.svg" alt="">
+            <h3>Find Talent Easily</h3>
+            <p>Discover thousands of skilled professionals ready to work on your startup.</p>
+        </div>
+
+        <div class="feature-box fade">
+            <img src="assets/icons/startup.svg" alt="">
+            <h3>Create Startup Profile</h3>
+            <p>Showcase your vision, mission and idea to attract the right people.</p>
+        </div>
+
+        <div class="feature-box fade">
+            <img src="assets/icons/team.svg" alt="">
+            <h3>Post Roles</h3>
+            <p>Hire developers, designers, marketers and co-founders instantly.</p>
+        </div>
+
+        <div class="feature-box fade">
+            <img src="assets/icons/chat.svg" alt="">
+            <h3>Chat & Collaborate</h3>
+            <p>Communicate directly with members and collaborate on projects.</p>
+        </div>
+    </div>
+</section>
+
+
+<!-- ⭐ GROWING EVERYDAY STATS -->
+<section class="stats-pro">
+  <div class="container">
+
+     <h2 class="stats-title slide-left">Growing Every Day</h2>
+     <div class="moving-line"></div>
+     <p class="stats-subtitle reveal d1">A thriving community of builders & dreamers</p>
+
+    <div class="stats-grid">
+
+      <div class="stat reveal d1" data-target="1200">
+        <h3>0</h3><p>Active Members</p>
+      </div>
+
+      <div class="stat reveal d2" data-target="150">
+        <h3>0</h3><p>Startup Teams</p>
+      </div>
+
+      <div class="stat reveal d3" data-target="75">
+        <h3>0</h3><p>Open Roles</p>
+      </div>
+
+      <div class="stat reveal d4" data-target="20">
+        <h3>0</h3><p>Products Launched</p>
+      </div>
+
+    </div>
+
+    <div class="blob s1"></div>
+    <div class="blob s2"></div>
+
+  </div>
+</section>
+
+
+<section class="cta-pro">
+  <h2 class="cta-title">Ready to build your startup team?</h2>
+  <div class="cta-line"></div>
+  <p class="cta-subtitle">
+    Join founders and skilled professionals who are actively working
+    on real startup ideas and products.
+  </p>
+
+  <a href="pages/signup.html" class="cta-pro-btn sparkle-btn">Get Started</a>
+
+  <!-- many stars -->
+  <div class="spark s1"></div><div class="spark s2"></div>
+  <div class="spark s3"></div><div class="spark s4"></div>
+  <div class="spark s5"></div><div class="spark s6"></div>
+  <div class="spark s7"></div><div class="spark s8"></div>
+</section>
+
+<footer class="footer">
+    <p>© 2025 StartupTeam • All Rights Reserved</p>
+</footer>
+
+
+<script src="assets/js/header.js"></script>
+<script src="assets/js/home.js"></script>
+
+
+<!-- 🎯 PRO PERFECT JS -->
+<script>
+let statsActive = false;
+
+function runStats() {
+  const section = document.querySelector(".stats-pro");
+  if (!section || statsActive) return;
+
+  if (section.getBoundingClientRect().top > window.innerHeight - 120) return;
+  statsActive = true;
+
+  // Reveal
+  document.querySelectorAll(".slide-left,.reveal,.fade,.stat,.stats-title,.stats-subtitle")
+    .forEach(el => el.classList.add("show","visible"));
+
+  // Number animation
+  document.querySelectorAll(".stat").forEach(card => {
+    const h3 = card.querySelector("h3");
+    const target = Number(card.dataset.target);
+    let count = 0;
+
+    // speed perfect for small (20) or big (1200)
+    const steps = 65;
+    const increment = target / steps;
+
+    const animate = () => {
+      count += increment;
+
+      if (count < target) {
+        h3.innerText = Math.floor(count);
+        requestAnimationFrame(animate);
+      } else {
+        h3.innerText = target + "+";
+      }
+    };
+    requestAnimationFrame(animate);
+  });
+}
+
+// Tap turbo count (separate)
+document.querySelectorAll(".stat").forEach(stat => {
+  let done = false;
+  stat.addEventListener("click", () => {
+    if (done) return;
+    done = true;
+
+    const h3 = stat.querySelector("h3");
+    const target = Number(stat.dataset.target);
+    let count = 0;
+
+    const fastSteps = 30;
+    const speed = target / fastSteps;
+
+    const tapCount = () => {
+      count += speed;
+      if (count < target) {
+        h3.innerText = Math.floor(count);
+        requestAnimationFrame(tapCount);
+      } else {
+        h3.innerText = target + "+";
+      }
+    };
+    requestAnimationFrame(tapCount);
+  });
+});
+
+window.addEventListener("scroll", runStats);
+window.addEventListener("load", runStats);
+</script>
+
+<script>
+let statsPlayed = false;
+
+function runStats() {
+  const section = document.querySelector(".stats-pro");
+  if (!section || statsPlayed) return;
+
+  if (section.getBoundingClientRect().top > window.innerHeight - 120) return;
+  statsPlayed = true;
+
+  document.querySelectorAll(".slide-left,.reveal,.fade,.stat,.stats-title,.stats-subtitle")
+    .forEach(el => el.classList.add("show","visible"));
+
+  document.querySelectorAll(".stat").forEach(card => {
+    const h3 = card.querySelector("h3");
+    const target = +card.dataset.target;
+    let count = 0;
+    const steps = 60;
+    const increment = target / steps;
+
+    const animate = () => {
+      count += increment;
+
+      if (count < target) {
+        h3.innerText = Math.floor(count);
+
+        // bounce effect
+        h3.classList.remove("bump");
+        void h3.offsetWidth;  // reset animation
+        h3.classList.add("bump");
+
+        requestAnimationFrame(animate);
+      } else {
+        h3.innerText = target + "+";
+      }
+    };
+    requestAnimationFrame(animate);
+  });
+}
+
+// 🔥 Tap to fast count
+document.querySelectorAll(".stat").forEach(card => {
+  let tapped = false;
+  card.addEventListener("click", () => {
+    if (tapped) return;
+    tapped = true;
+
+    const h3 = card.querySelector("h3");
+    const target = +card.dataset.target;
+    let count = 0;
+    const speed = target / 35;
+
+    const tapRun = () => {
+      count += speed;
+      if (count < target) {
+        h3.innerText = Math.floor(count);
+
+        h3.classList.remove("bump");
+        void h3.offsetWidth;
+        h3.classList.add("bump");
+
+        requestAnimationFrame(tapRun);
+      } else {
+        h3.innerText = target + "+";
+      }
+    };
+    requestAnimationFrame(tapRun);
+  });
+});
+
+window.addEventListener("scroll", runStats);
+window.addEventListener("load", runStats);
+
+window.addEventListener("scroll", () => {
+  document.querySelectorAll(".cta-title,.cta-line,.cta-subtitle")
+    .forEach(el => {
+      if (el.getBoundingClientRect().top < window.innerHeight - 80)
+        el.classList.add("show");
+    });
+});
+
+window.addEventListener("scroll", () => {
+  document.querySelectorAll(".cta-title,.cta-line,.cta-subtitle")
+    .forEach(el => {
+      if (el.getBoundingClientRect().top < window.innerHeight - 80)
+        el.classList.add("show");
+    });
+});
+
+window.addEventListener("scroll", () => {
+  document.querySelectorAll(".cta-title,.cta-line,.cta-subtitle,.cta-pro-btn")
+    .forEach(el => {
+      if (el.getBoundingClientRect().top < window.innerHeight - 80)
+        el.classList.add("show");
+    });
+});
+
+</script>
+
+</body>
+</html>
+

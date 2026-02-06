@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Post a New Role | StartupTeam</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    /* EXACT CSS FROM YOUR SIDEBAR THEME */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #f8fafc;
+      color: #1e293b;
+    }
+
+    .app { display: flex; min-height: 100vh; }
+
+    /* SIDEBAR REFINED */
+    .sidebar {
+      width: 260px;
+      background: #0f172a; /* Exact Dark Sidebar */
+      color: #fff;
+      padding: 30px 20px;
+      display: flex;
+      flex-direction: column;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+    }
+
+    .logo { font-size: 24px; font-weight: 700; margin-bottom: 40px; padding-left: 10px; }
+    .logo span { color: #6366f1; }
+
+    .sidebar a {
+      display: flex; align-items: center; gap: 12px; color: #94a3b8; text-decoration: none;
+      padding: 12px 15px; border-radius: 8px; margin-bottom: 5px; transition: 0.3s; font-size: 14px;
+    }
+
+    .sidebar a:hover, .sidebar a.active { background: rgba(255,255,255,0.05); color: #fff; }
+    .sidebar a.active { background: #6366f1; color: white; }
+
+    .logout-btn {
+      margin-top: auto; background: #ef4444; color: white; border: none; padding: 12px;
+      border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 600;
+    }
+
+    /* MAIN CONTENT */
+    .main { flex: 1; padding: 40px; }
+    .header-section { margin-bottom: 30px; }
+    .header-section h2 { font-size: 28px; font-weight: 700; }
+
+    .card {
+      background: #fff;
+      padding: 35px;
+      border-radius: 16px;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+      border: 1px solid #f1f5f9;
+      max-width: 900px;
+    }
+
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
+    .full-width { grid-column: span 2; }
+
+    .input-group label { 
+      display: block; font-size: 11px; font-weight: 800; color: #94a3b8; 
+      text-transform: uppercase; margin-bottom: 10px; letter-spacing: 0.8px;
+    }
+    
+    .input-wrapper { position: relative; display: flex; align-items: center; }
+    
+    /* HIGHLIGHTED ICON BOXES */
+    .icon-box {
+      position: absolute; left: 12px; width: 32px; height: 32px; 
+      border-radius: 8px; display: flex; align-items: center; justify-content: center;
+    }
+    .icon-blue { background: #eff6ff; color: #3b82f6; }
+    .icon-purple { background: #f5f3ff; color: #8b5cf6; }
+    .icon-orange { background: #fff7ed; color: #f97316; }
+    .icon-green { background: #f0fdf4; color: #22c55e; }
+
+    .input-wrapper input, .input-wrapper select, .input-wrapper textarea {
+      width: 100%; padding: 12px 15px 12px 55px; border: 1px solid #e2e8f0; border-radius: 10px; 
+      font-size: 14px; transition: 0.3s; background: #fdfdfd; font-family: 'Poppins', sans-serif;
+    }
+    .input-wrapper input:focus { border-color: #6366f1; outline: none; box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1); }
+
+    .submit-btn {
+      background: #6366f1; color: white; padding: 14px 30px; border: none; border-radius: 10px; 
+      font-weight: 700; font-size: 15px; cursor: pointer; width: 100%; transition: 0.3s;
+      display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 20px;
+    }
+    .submit-btn:hover { background: #4f46e5; transform: translateY(-1px); }
+  </style>
+</head>
+<body>
+
+<div class="app">
+  <aside class="sidebar">
+    <div class="logo">Startup<span>Team</span></div>
+    <nav>
+      <a href="founder-dashboard.html"><i data-lucide="layout-dashboard"></i> Dashboard</a>
+      <a href="founder-profile.html"><i data-lucide="user"></i> Founder Profile</a>
+      <a href="startup-profile.html"><i data-lucide="rocket"></i> Startup Profile</a>
+      <a href="post-role.html" class="active"><i data-lucide="plus-circle"></i> Post Role</a>
+      <a href="roles-list.html"><i data-lucide="briefcase"></i> Roles</a>
+      <a href="members-requests.html"><i data-lucide="users"></i> Member Requests</a>
+    </nav>
+    <button onclick="logout()" class="logout-btn"><i data-lucide="log-out"></i> Logout</button>
+  </aside>
+
+  <main class="main">
+    <div class="header-section">
+      <h2>Post a New Role</h2>
+      <p style="color: #64748b; font-size: 14px;">Define the role and find your perfect teammate.</p>
+    </div>
+
+    <div class="card">
+      <form onsubmit="saveRole(event)">
+        <div class="form-grid">
+          <div class="input-group">
+            <label>Job Title</label>
+            <div class="input-wrapper">
+              <div class="icon-box icon-blue"><i data-lucide="briefcase" size="16"></i></div>
+              <input id="roleTitle" placeholder="e.g. Senior Backend Engineer" required>
+            </div>
+          </div>
+          <div class="input-group">
+            <label>Experience Required</label>
+            <div class="input-wrapper">
+              <div class="icon-box icon-purple"><i data-lucide="award" size="16"></i></div>
+              <select id="experience">
+                <option>Intern / Fresher</option>
+                <option>Junior (1-2 Years)</option>
+                <option>Mid-Level (3-5 Years)</option>
+                <option>Senior (5+ Years)</option>
+              </select>
+            </div>
+          </div>
+          <div class="input-group">
+            <label>Salary / Equity</label>
+            <div class="input-wrapper">
+              <div class="icon-box icon-green"><i data-lucide="dollar-sign" size="16"></i></div>
+              <input id="salary" placeholder="e.g. ₹3 LPA or 1% Equity">
+            </div>
+          </div>
+          <div class="input-group">
+            <label>Job Type</label>
+            <div class="input-wrapper">
+              <div class="icon-box icon-orange"><i data-lucide="clock" size="16"></i></div>
+              <select id="workType">
+                <option>Full-Time</option>
+                <option>Remote</option>
+                <option>Part-Time</option>
+              </select>
+            </div>
+          </div>
+          <div class="input-group full-width">
+            <label>Required Skills (Comma separated)</label>
+            <div class="input-wrapper">
+              <div class="icon-box icon-blue"><i data-lucide="code" size="16"></i></div>
+              <input id="skills" placeholder="Java, Spring Boot, MySQL">
+            </div>
+          </div>
+          <div class="input-group full-width">
+            <label>Role Description</label>
+            <div class="input-wrapper">
+              <textarea id="description" rows="4" placeholder="Describe the responsibilities and perks..." style="padding-left: 15px;"></textarea>
+            </div>
+          </div>
+        </div>
+        <button type="submit" class="submit-btn"><i data-lucide="send"></i>  Post Role</button>
+      </form>
+    </div>
+  </main>
+</div>
+
+<script>
+  lucide.createIcons();
+  function saveRole(e) {
+    e.preventDefault();
+    const roleData = {
+      title: document.getElementById('roleTitle').value,
+      exp: document.getElementById('experience').value,
+      salary: document.getElementById('salary').value,
+      type: document.getElementById('workType').value,
+      skills: document.getElementById('skills').value,
+      desc: document.getElementById('description').value,
+      date: new Date().toLocaleDateString()
+    };
+    let roles = JSON.parse(localStorage.getItem("startup_roles")) || [];
+    roles.push(roleData);
+    localStorage.setItem("startup_roles", JSON.stringify(roles));
+    alert("Role Published Successfully! ");
+    window.location.href = "roles-list.html";
+  }
+  
+</script>
+</body>
+</html

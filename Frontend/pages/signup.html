@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Sign Up • StartupTeam</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="../assets/css/signup.css">
+</head>
+<body>
+
+<div class="auth-container">
+
+  <!-- LEFT -->
+  <div class="auth-info">
+    <h1>Join StartupTeam</h1>
+    <p>
+      Create your account and start collaborating with
+      founders and skilled members.
+    </p>
+    <ul>
+      <li>✔ Discover real startups</li>
+      <li>✔ Build strong teams</li>
+      <li>✔ Request-based secure connection</li>
+    </ul>
+  </div>
+
+  <!-- RIGHT -->
+  <div class="auth-form">
+    <h2>Create Account</h2>
+
+    <form onsubmit="signup(event)">
+      <label>Full Name</label>
+      <input type="text" id="name" required placeholder="Your name">
+
+      <label>Email Address</label>
+      <input type="email" id="email" required placeholder="you@example.com">
+
+      <label>Password</label>
+      <input type="password" id="password" required placeholder="••••••••">
+
+      <label>Sign up as</label>
+      <select id="role" required>
+        <option value="">Select role</option>
+        <option value="member">Member</option>
+        <option value="founder">Founder</option>
+      </select>
+
+      <button type="submit" class="btn">Sign Up</button>
+    </form>
+
+    <p class="switch">
+      Already have an account?
+      <a href="login.html">Login</a>
+    </p>
+  </div>
+
+</div>
+
+<script src="../assets/js/auth.js"></script>
+</body>
+</html>
+
