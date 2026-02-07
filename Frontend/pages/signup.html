@@ -2,62 +2,87 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Sign Up • StartupTeam</title>
+  <title>Join StartupTeam | Connect & Build</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Material+Icons+Outlined&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../assets/css/signup.css">
 </head>
 <body>
 
 <div class="auth-container">
-
-  <!-- LEFT -->
   <div class="auth-info">
-    <h1>Join StartupTeam</h1>
-    <p>
-      Create your account and start collaborating with
-      founders and skilled members.
-    </p>
-    <ul>
-      <li>✔ Discover real startups</li>
-      <li>✔ Build strong teams</li>
-      <li>✔ Request-based secure connection</li>
-    </ul>
+    <div class="brand-logo">
+      <i class="material-icons-outlined">rocket_launch</i>
+      <span>StartupTeam</span>
+    </div>
+    
+    <h1>Build your dream <br>team today.</h1>
+    <p>The smartest way for founders to find talent and members to find vision.</p>
+    
+    <div class="glass-feature-card">
+      <div class="f-item"><i class="material-icons-outlined">check_circle</i><span>Discover real startups</span></div>
+      <div class="f-item"><i class="material-icons-outlined">check_circle</i><span>Build strong core teams</span></div>
+      <div class="f-item"><i class="material-icons-outlined">check_circle</i><span>Request-based secure connections</span></div>
+    </div>
+
+    <div class="bottom-icons">
+      <i class="material-icons-outlined">handshake</i>
+      <i class="material-icons-outlined">lightbulb</i>
+    </div>
   </div>
 
-  <!-- RIGHT -->
-  <div class="auth-form">
-    <h2>Create Account</h2>
+  <div class="auth-form-section">
+    <div class="form-header">
+      <h2>Create Account</h2>
+      <p>Join the community of builders</p>
+    </div>
 
-    <form onsubmit="signup(event)">
-      <label>Full Name</label>
-      <input type="text" id="name" required placeholder="Your name">
+    <button type="button" class="google-btn">
+      <img src="https://fonts.gstatic.com/s/i/productlogos/googleg/v6/24px.svg" alt="Google">
+      Continue with Google
+    </button>
 
-      <label>Email Address</label>
-      <input type="email" id="email" required placeholder="you@example.com">
+    <div class="divider"><span>OR</span></div>
 
-      <label>Password</label>
-      <input type="password" id="password" required placeholder="••••••••">
+    <form id="signupForm">
+      <div class="input-group">
+        <label><i class="material-icons-outlined">person</i> Full Name</label>
+        <input type="text" id="name" required placeholder="John Doe">
+      </div>
 
-      <label>Sign up as</label>
-      <select id="role" required>
-        <option value="">Select role</option>
-        <option value="member">Member</option>
-        <option value="founder">Founder</option>
-      </select>
+      <div class="input-group">
+        <label><i class="material-icons-outlined">mail</i> Email Address</label>
+        <input type="email" id="email" required placeholder="name@company.com">
+      </div>
 
-      <button type="submit" class="btn">Sign Up</button>
+      <div class="input-group">
+        <label><i class="material-icons-outlined">lock</i> Password</label>
+        <input type="password" id="password" required placeholder="Min. 8 characters">
+      </div>
+
+      <div class="input-group">
+        <label><i class="material-icons-outlined">badge</i> Sign up as</label>
+        <select id="role" required>
+          <option value="" disabled selected>Select your role</option>
+          <option value="member">Individual Member (Talent)</option>
+          <option value="founder">Startup Founder</option>
+        </select>
+      </div>
+
+      <div id="otpBox" class="otp-container" style="display: none;">
+        <label><i class="material-icons-outlined">vibration</i> Enter OTP</label>
+        <input type="number" id="otpInput" placeholder="6-digit code">
+      </div>
+
+      <button type="submit" class="btn-primary" id="submitBtn">Continue</button>
     </form>
 
-    <p class="switch">
-      Already have an account?
-      <a href="login.html">Login</a>
+    <p class="switch-text">
+      Already have an account? <a href="login.html">Login</a>
     </p>
   </div>
-
 </div>
 
-<script src="../assets/js/auth.js"></script>
+<script src="../assets/js/signup.js"></script>
 </body>
 </html>
-

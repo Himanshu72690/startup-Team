@@ -1,91 +1,61 @@
 document.addEventListener("DOMContentLoaded", () => {
+    const form = document.getElementById("signupForm");
+    const otpBox = document.getElementById("otpBox");
+    const submitBtn = document.getElementById("submitBtn");
+    
+    let generatedOtp = null;
+    let otpSent = false;
 
-  console.log("🔥 signup.js loaded");
+    form.addEventListener("submit", (e) => {
+        e.preventDefault();
 
-  const form = document.getElementById("signupForm");
-  const otpBox = document.getElementById("otpBox");
-  const otpInput = form.querySelector('input[name="otp"]');
+        const name = document.getElementById("name").value;
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
+        const role = document.getElementById("role").value;
 
-  const email = form.querySelector('input[name="email"]');
-  const password = form.querySelector('input[name="password"]');
-  const confirmPassword = form.querySelector('input[name="confirmPassword"]');
-  const role = form.querySelector('select[name="role"]');
+        // STEP 1: SEND OTP
+        if (!otpSent) {
+            if (password.length < 8) {
+                alert("Password must be at least 8 characters!");
+                return;
+            }
 
-  let generatedOtp = null;
-  let otpSent = false;
+            // Generate Demo OTP
+            generatedOtp = Math.floor(100000 + Math.random() * 900000);
+            console.log("📩 SYSTEM OTP IS:", generatedOtp);
+            alert("Verification code sent! (Check your console F12)");
 
-  form.addEventListener("submit", (e) => {
-    e.preventDefault();
+            // UI Changes
+            otpBox.style.display = "block";
+            submitBtn.innerText = "Verify & Create Account";
+            otpSent = true;
+            return;
+        }
 
-    // STEP 1: SEND OTP
-    if (!otpSent) {
+        // STEP 2: VERIFY OTP
+        const userOtp = document.getElementById("otpInput").value;
+        if (parseInt(userOtp) !== generatedOtp) {
+            alert("❌ Invalid OTP! Please try again.");
+            return;
+        }
 
-      if (!email.value || !password.value || !confirmPassword.value || !role.value) {
-        alert("⚠ Fill all required fields");
-        return;
-      }
+        // STEP 3: FINAL SIGNUP & SAVE
+        const newUser = {
+            id: Date.now(),
+            name: name,
+            email: email,
+            password: password,
+            role: role,
+            joinedDate: new Date().toLocaleDateString()
+        };
 
-      if (password.value !== confirmPassword.value) {
-        alert("❌ Password mismatch");
-        return;
-      }
+        // Save to LocalStorage
+        let users = JSON.parse(localStorage.getItem("users")) || [];
+        users.push(newUser);
+        localStorage.setItem("users", JSON.stringify(users));
 
-      generatedOtp = Math.floor(100000 + Math.random() * 900000);
-
-      console.log("📩 OTP (DEMO):", generatedOtp);
-
-      alert("📩 OTP sent (check console)");
-
-      otpBox.style.display = "block";
-      otpInput.focus();
-      otpSent = true;
-      return;
-    }
-
-    // STEP 2: VERIFY OTP
-    if (parseInt(otpInput.value) !== generatedOtp) {
-      alert("❌ Invalid OTP");
-      return;
-    }
-
-    // SAVE USER
-    localStorage.setItem(
-      "startupUser",
-      JSON.stringify({
-        email: email.value,
-        role: role.value
-      })
-    );
-
-    alert("✅ Account created successfully!");
-    window.location.href = "login.html";
-  });
-
+        alert("✅ Welcome to StartupTeam! Account created.");
+        window.location.href = "login.html";
+    });
 });
-
-
-function signup(){
-
-  let users = JSON.parse(localStorage.getItem("users")) || [];
-
-  let roleInput = document.querySelector('input[name="role"]:checked');
-
-  if(!roleInput){
-    alert("Select role");
-    return;
-  }
-
-  let user = {
-    id: Date.now(),
-    name: name.value,
-    email: email.value,
-    password: password.value,
-    role: roleInput.value
-  };
-
-  users.push(user);
-  localStorage.setItem("users", JSON.stringify(users));
-
-  alert("Signup done");
-  window.location.href = "login.html";
-}

@@ -1,21 +1,31 @@
-function login(){
+document.addEventListener("DOMContentLoaded", () => {
+    const loginForm = document.getElementById("loginForm");
 
-  let users = JSON.parse(localStorage.getItem("users")) || [];
+    loginForm.addEventListener("submit", (e) => {
+        e.preventDefault();
 
-  let user = users.find(u =>
-    u.email === email.value && u.password === password.value
-  );
+        const email = document.getElementById("loginEmail").value;
+        const password = document.getElementById("loginPassword").value;
 
-  if(!user){
-    alert("Wrong details");
-    return;
-  }
+        // LocalStorage se users ki list nikalein
+        let users = JSON.parse(localStorage.getItem("users")) || [];
 
-  localStorage.setItem("currentUser", JSON.stringify(user));
+        // User ko find karein
+        const user = users.find(u => u.email === email && u.password === password);
 
-  if(user.role === "founder"){
-    location.href = "founder-dashboard.html";
-  }else{
-    location.href = "member-dashboard.html";
-  }
-}
+        if (user) {
+            alert(`Welcome back, ${user.name}!`);
+            // Session save karein
+            localStorage.setItem("currentUser", JSON.stringify(user));
+            
+            // Role ke hisaab se redirect karein
+            if (user.role === "founder") {
+                window.location.href = "founder-dashboard.html";
+            } else {
+                window.location.href = "member-dashboard.html";
+            }
+        } else {
+            alert("❌ Invalid email or password. Please try again.");
+        }
+    });
+});

@@ -2,67 +2,174 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>About • StartupTeam</title>
+  <title>About Us | StartupTeam</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-  <link rel="stylesheet" href="../assets/css/about.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    /* StartupTeam - Custom Professional Styles */
+    :root {
+      --brand-hub: #4f46e5;
+      --accent-pop: #ec4899;
+      --canvas-white: #f8fafc;
+      --deep-ink: #0f172a;
+      --slate-text: #64748b;
+      --line-gray: #e2e8f0;
+      --frost-effect: rgba(255, 255, 255, 0.72);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+
+    body { 
+      font-family: 'Plus Jakarta Sans', sans-serif; 
+      background-color: var(--canvas-white); 
+      color: var(--deep-ink); 
+      line-height: 1.62; 
+      overflow-x: hidden; 
+    }
+
+    /* Animated Background Depth */
+    .bg-visuals { position: fixed; inset: 0; z-index: -1; pointer-events: none; }
+    .blob { 
+      position: absolute; width: 615px; height: 615px; 
+      background: radial-gradient(circle, rgba(79, 70, 229, 0.07) 0%, transparent 70%); 
+      border-radius: 50%; filter: blur(90px); animation: organic-float 18s ease-in-out infinite alternate; 
+    }
+    .blob-1 { top: -180px; right: -90px; }
+    .blob-2 { 
+      bottom: -150px; left: -120px; 
+      background: radial-gradient(circle, rgba(236, 72, 153, 0.06) 0%, transparent 70%); 
+      animation-duration: 22s;
+    }
+
+    @keyframes organic-float { 
+      from { transform: translate(0, 0) rotate(0deg); } 
+      to { transform: translate(75px, 110px) rotate(15deg); } 
+    }
+
+    .container { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+
+    /* Hero Section Branding */
+    .hero { text-align: center; padding: 100px 0 60px; }
+    .badge { 
+      display: inline-block; padding: 8px 18px; background: #eef2ff; color: var(--brand-hub); 
+      border-radius: 100px; font-size: 13px; font-weight: 800; text-transform: uppercase; margin-bottom: 25px;
+    }
+    .hero h1 { font-size: 3.4rem; font-weight: 800; letter-spacing: -0.04em; line-height: 1.15; }
+    .hero span { background: linear-gradient(145deg, var(--brand-hub), var(--accent-pop)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .hero p { font-size: 1.22rem; color: var(--slate-text); max-width: 680px; margin: 22px auto; font-weight: 500; }
+
+    /* Stats Bar */
+    .stats-bar { 
+      display: flex; justify-content: space-around; background: var(--deep-ink); 
+      padding: 50px; border-radius: 38px; color: white; margin-bottom: 90px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+    }
+    .stat-item { text-align: center; }
+    .stat-item h3 { font-size: 2.5rem; font-weight: 800; color: #818cf8; margin-bottom: 5px; }
+    .stat-item p { font-size: 0.85rem; opacity: 0.7; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+
+    /* Intro Grid */
+    .intro-grid { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 60px; align-items: center; margin-bottom: 100px; }
+    .section-title { font-size: 2.2rem; font-weight: 800; margin-bottom: 25px; }
+    .intro-p { font-size: 1.1rem; color: var(--slate-text); margin-bottom: 30px; }
+    .glass-card { 
+      background: var(--frost-effect); backdrop-filter: blur(12px); 
+      padding: 30px; border-radius: 28px; border: 1px solid #ffffff; font-style: italic; 
+    }
+
+    /* Comparison Grid */
+    .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; margin-bottom: 100px; }
+    .card { padding: 48px; border-radius: 38px; border: 1.5px solid var(--line-gray); background: #ffffff; transition: 0.4s; }
+    .card:hover { transform: translateY(-12px); box-shadow: 0 24px 48px rgba(15, 23, 42, 0.06); }
+    .problem-card { border-top: 7px solid #fb7185; }
+    .solution-card { border-top: 7px solid #34d399; }
+    .card h3 { font-size: 1.65rem; font-weight: 800; margin-bottom: 25px; }
+    .card ul { list-style: none; }
+    .card li { margin-bottom: 18px; display: flex; align-items: center; gap: 12px; font-weight: 600; color: #475569; }
+    .card span { width: 32px; height: 32px; background: var(--brand-hub); color: white; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+
+    /* Roadmap Section */
+    .roadmap-sec { text-align: center; margin-bottom: 100px; }
+    .roadmap-underline { width: 72px; height: 5px; background: linear-gradient(90deg, #ff4d4d, #f9cb28, #20bdff, #a5ff24); margin: 0 auto 55px; border-radius: 50px; }
+    .roadmap-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
+    .roadmap-item { padding: 25px; background: white; border-radius: 20px; border: 1.5px solid var(--line-gray); font-weight: 700; color: var(--slate-text); }
+    .roadmap-item.active { border-color: var(--brand-hub); color: var(--brand-hub); background: #f5f3ff; }
+
+    /* CTA Section */
+    .cta { 
+      background: #ffffff; border: 1px solid var(--line-gray); border-radius: 46px; 
+      padding: 80px 35px; text-align: center; margin-bottom: 100px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.02); 
+    }
+    .cta h2 { font-size: 2.5rem; font-weight: 800; margin-bottom: 15px; }
+    .btn-primary { 
+      display: inline-flex; align-items: center; gap: 12px; padding: 18px 45px; 
+      background: var(--brand-hub); color: #ffffff; border-radius: 15px; 
+      text-decoration: none; font-weight: 800; transition: 0.4s; margin-top: 30px; 
+    }
+    .btn-primary:hover { transform: translateY(-6px); box-shadow: 0 16px 32px rgba(79, 70, 229, 0.32); }
+  </style>
 </head>
 <body>
 
+<div class="bg-visuals">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+</div>
+
 <section class="hero">
-  <div class="hero-content" data-aos="zoom-out" data-aos-duration="1200">
+  <div class="container" data-aos="zoom-out">
     <span class="badge">Innovation Hub</span>
-    <h1>About StartupTeam</h1>
+    <h1>About <span>StartupTeam</span></h1>
     <p>A next-gen collaboration ecosystem connecting visionary founders with high-impact talent to build the future.</p>
   </div>
-  <div class="blob"></div>
-</section>
-
-<section class="stats-bar" data-aos="fade-up">
-  <div class="stat-item"><h3>0+</h3><p>Startups</p></div>
-  <div class="stat-item"><h3>0+</h3><p>Members</p></div>
-  <div class="stat-item"><h3>0%</h3><p>Collaboration</p></div>
 </section>
 
 <div class="container">
-  
-  <section class="section intro-grid">
+  <section class="stats-bar" data-aos="fade-up">
+    <div class="stat-item"><h3>150+</h3><p>Startups</p></div>
+    <div class="stat-item"><h3>1200+</h3><p>Members</p></div>
+    <div class="stat-item"><h3>98%</h3><p>Collaboration</p></div>
+  </section>
+
+  <section class="intro-grid">
     <div class="text-side" data-aos="fade-right">
       <h2 class="section-title">What is StartupTeam?</h2>
-      <p>StartupTeam is more than just a platform; it's a bridge for dreams. We specialize in connecting <b>Developers, Designers, and Marketers</b> with founders who have the vision but need the muscle to execute.</p>
+      <p class="intro-p">StartupTeam is more than just a platform; it's a bridge for dreams. We specialize in connecting <b>Developers, Designers, and Marketers</b> with founders who have the vision but need the muscle to execute.</p>
       <div class="glass-card">
-        <p><i>"Our goal is to turn ideas into reality by building the right teams at the right time."</i></p>
+        <p>"Our goal is to turn ideas into reality by building the right teams at the right time."</p>
       </div>
     </div>
     <div class="image-side" data-aos="fade-left">
-       <div class="abstract-box"></div>
+      <i data-lucide="rocket" style="width: 100%; height: 200px; color: var(--brand-hub); opacity: 0.1;"></i>
     </div>
   </section>
 
-  <section class="section">
-    <div class="grid-2">
-      <div class="card problem-card" data-aos="flip-left">
-        <h3>The Problem</h3>
-        <ul>
-          <li>Founders can't find committed talent.</li>
-          <li>Members lack real-world project exposure.</li>
-          <li>Traditional sites are for jobs, not passion.</li>
-        </ul>
-      </div>
-      <div class="card solution-card" data-aos="flip-right">
-        <h3>Our Solution</h3>
-        <ul class="step-list">
-          <li><span>1</span> Create Startup Profile</li>
-          <li><span>2</span> Post Dynamic Roles</li>
-          <li><span>3</span> Connect on WhatsApp</li>
-        </ul>
-      </div>
+  <section class="grid-2">
+    <div class="card problem-card" data-aos="flip-left">
+      <h3>The Problem</h3>
+      <ul>
+        <li><i data-lucide="alert-circle" size="18"></i> Founders can't find committed talent.</li>
+        <li><i data-lucide="alert-circle" size="18"></i> Members lack real-world project exposure.</li>
+        <li><i data-lucide="alert-circle" size="18"></i> Traditional sites are for jobs, not passion.</li>
+      </ul>
+    </div>
+    <div class="card solution-card" data-aos="flip-right">
+      <h3>Our Solution</h3>
+      <ul>
+        <li><span>1</span> Create Startup Profile</li>
+        <li><span>2</span> Post Dynamic Roles</li>
+        <li><span>3</span> Connect with Members</li>
+      </ul>
     </div>
   </section>
 
-  <section class="section roadmap-sec" data-aos="fade-up">
-    <h2 class="center-title">Future Roadmap</h2>
+  <section class="roadmap-sec" data-aos="fade-up">
+    <h2 class="section-title">Future Roadmap</h2>
+    <div class="roadmap-underline"></div>
     <div class="roadmap-grid">
       <div class="roadmap-item">Verified Profiles</div>
       <div class="roadmap-item active">In-Platform Chat</div>
@@ -71,53 +178,45 @@
     </div>
   </section>
 
+  <section class="cta" data-aos="zoom-in">
+    <h2>Ready to build something great?</h2>
+    <p style="color: var(--slate-text);">Join the community of makers and shakers today.</p>
+    <a href="../signup.html" class="btn-primary">Get Started Now</a>
+  </section>
 </div>
-
-<section class="cta" data-aos="zoom-in">
-  <h2>Ready to build something great?</h2>
-  <p>Join the community of makers and shakers.</p>
-  <a href="../signup.html" class="btn-primary">Get Started Now</a>
-</section>
 
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 <script>
-  AOS.init({ duration: 800, once: true });
-</script>
-<script>
-  // Numbers ko animate karne ka function
+  AOS.init({ duration: 1000, once: true });
+  lucide.createIcons();
+
+  // Optimized Counter Animation
   const animateCounters = () => {
     const counters = document.querySelectorAll('.stat-item h3');
-    
     counters.forEach(counter => {
-      const target = +counter.innerText.replace('+', '');
-      const count = +counter.innerText; // starts at 0 if you set it in HTML
-      
-      let current = 0;
-      const increment = target / 50; // Speed control
-
-      const updateCount = () => {
-        if (current < target) {
-          current += increment;
-          counter.innerText = Math.ceil(current) + (counter.innerText.includes('%') ? '%' : '+');
-          setTimeout(updateCount, 30);
+      const target = parseInt(counter.innerText);
+      let count = 0;
+      const update = () => {
+        const speed = target / 100;
+        if (count < target) {
+          count += speed;
+          counter.innerText = Math.ceil(count) + (counter.innerText.includes('%') ? '%' : '+');
+          setTimeout(update, 20);
         } else {
           counter.innerText = target + (counter.innerText.includes('%') ? '%' : '+');
         }
       };
-      updateCount();
+      update();
     });
   };
 
-  // Jab scroll karke stats dikhe tabhi animation chale
-  const statsSection = document.querySelector('.stats-bar');
   const observer = new IntersectionObserver((entries) => {
     if(entries[0].isIntersecting) {
       animateCounters();
-      observer.unobserve(statsSection);
+      observer.disconnect();
     }
   }, { threshold: 0.5 });
-
-  observer.observe(statsSection);
+  observer.observe(document.querySelector('.stats-bar'));
 </script>
 </body>
 </html>

@@ -1,0 +1,106 @@
+:root {
+  --primary: #6366f1;
+  --primary-glow: rgba(99, 102, 241, 0.4);
+  --bg-gradient: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+  --white: #ffffff;
+  --text-dark: #0f172a;
+  --text-muted: #64748b;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background: #f8fafc;
+  min-height: 100vh;
+  display: flex; align-items: center; justify-content: center; padding: 20px;
+}
+
+.auth-container {
+  display: grid; grid-template-columns: 1fr 1fr;
+  max-width: 1050px; width: 100%;
+  background: var(--white); border-radius: 32px; overflow: hidden;
+  box-shadow: 0 40px 100px -20px rgba(0,0,0,0.15);
+  animation: containerAppear 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes containerAppear {
+  from { opacity: 0; transform: translateY(40px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Left Panel */
+.auth-info {
+  background: var(--bg-gradient);
+  color: var(--white); padding: 60px;
+  position: relative; display: flex; flex-direction: column; overflow: hidden;
+}
+
+.brand-logo { 
+    display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 24px; 
+    margin-bottom: 50px; position: relative; z-index: 2;
+}
+
+.auth-info h1 { font-size: 44px; line-height: 1.1; margin-bottom: 20px; position: relative; z-index: 2; }
+.auth-info h1 span { opacity: 0.7; font-weight: 400; }
+.auth-info p { font-size: 18px; opacity: 0.9; margin-bottom: 40px; z-index: 2; }
+
+/* Improved Glass Card */
+.glass-card {
+  background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 24px;
+  padding: 30px; margin-top: auto; z-index: 2;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+}
+
+.f-item { display: flex; align-items: center; gap: 15px; margin-bottom: 18px; }
+.icon-wrap { 
+    width: 36px; height: 36px; background: rgba(255,255,255,0.2); 
+    border-radius: 10px; display: flex; align-items: center; justify-content: center;
+}
+
+/* Right Panel */
+.auth-form-section { padding: 60px; display: flex; align-items: center; justify-content: center; }
+.form-wrapper { width: 100%; max-width: 380px; }
+
+.icon-badge {
+    width: 70px; height: 70px; background: #f5f3ff; color: var(--primary);
+    border-radius: 22px; display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 24px; font-size: 36px; box-shadow: 0 10px 20px rgba(99,102,241,0.1);
+}
+
+.form-header h2 { font-size: 28px; color: var(--text-dark); letter-spacing: -0.5px; }
+.form-header p { color: var(--text-muted); margin-top: 8px; margin-bottom: 35px; }
+
+.input-group { margin-bottom: 24px; }
+label { display: block; font-size: 14px; font-weight: 600; margin-bottom: 8px; color: var(--text-dark); }
+label i { font-size: 18px; vertical-align: middle; color: var(--primary); margin-right: 6px; }
+
+input { 
+    width: 100%; padding: 14px 16px; border: 2px solid #f1f5f9; border-radius: 14px; 
+    font-size: 15px; transition: all 0.3s ease; background: #f8fafc;
+}
+input:focus { 
+    outline: none; border-color: var(--primary); background: #fff;
+    box-shadow: 0 0 0 4px var(--primary-glow);
+}
+
+.btn-primary {
+  width: 100%; padding: 16px; background: var(--primary); color: white;
+  border: none; border-radius: 16px; font-weight: 700; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  transition: all 0.3s ease; box-shadow: 0 10px 25px -5px var(--primary-glow);
+}
+.btn-primary:hover { transform: translateY(-3px); background: var(--primary-dark); }
+
+.dynamic-section { 
+    animation: slideIn 0.5s ease forwards; background: #fefeff; 
+    border: 1px dashed var(--primary); padding: 20px; border-radius: 16px; margin-bottom: 24px;
+}
+
+@keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+.switch-text { margin-top: 30px; font-size: 15px; color: var(--text-muted); }
+.switch-text a { color: var(--primary); text-decoration: none; font-weight: 700; }
+
+@media (max-width: 900px) { .auth-container { grid-template-columns: 1fr; } .auth-info { display: none; } }

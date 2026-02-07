@@ -128,9 +128,10 @@
   lucide.createIcons();
   const pid = new URLSearchParams(window.location.search).get("id");
 
+  // Talent Pool Data (Synced with members-list.html)
   const talentPool = [
-    { id: 1, name: "Arjun Khanna", role: "Software Architect", initial: "A", loc: "Bangalore", bio: "Seasoned Software Architect with over 8 years experience in building high-scale distributed systems.", skills: ["Go", "Kubernetes", "React", "AWS", "System Design"] },
-    { id: 2, name: "Isha Malhotra", role: "Sr. Product Designer", initial: "I", loc: "Remote", bio: "Award-winning designer focused on user experiences and modern design systems.", skills: ["Figma", "UX Research", "Design Ops", "Prototyping"] },
+    { id: 1, name: "Arjun Mehta", role: "Software Architect", initial: "A", loc: "Bangalore", bio: "Seasoned Software Architect with over 8 years experience in building high-scale distributed systems.", skills: ["Go", "Kubernetes", "React", "AWS", "System Design"] },
+    { id: 2, name: "Isha Malhotra", role: "UI/UX Designer", initial: "I", loc: "Remote", bio: "Award-winning designer focused on user experiences and modern design systems.", skills: ["Figma", "UX Research", "Design Ops", "Prototyping"] },
     { id: 3, name: "Vikram Seth", role: "Full Stack Dev", initial: "V", loc: "Delhi", bio: "Full stack expert focused on data-driven product growth.", skills: ["Python", "Django", "React", "PostgreSQL"] },
     { id: 4, name: "Sneha Roy", role: "Sr. Designer", initial: "S", loc: "Mumbai", bio: "Visual storyteller creating impactful brand identities.", skills: ["Branding", "Illustrator", "Figma", "Motion Design"] }
   ];
@@ -177,8 +178,8 @@
             </div>
             
             <div class="lock-notice">
-              <p>Social links are only visible to registered Founders.</p>
-              <a href="register.html" class="btn-register">Register as Founder</a>
+              <p>Full contact details and social links are only visible to our registered community.</p>
+              <a href="signup.html" class="btn-register">Create Founder Account</a>
             </div>
           </div>
         </div>
@@ -186,7 +187,7 @@
     `;
     lucide.createIcons();
   } else {
-    document.getElementById('fullProfile').innerHTML = "<h2>Professional Not Found</h2>";
+    document.getElementById('fullProfile').innerHTML = "<div class='card'><h2>Professional Not Found</h2></div>";
   }
 </script>
 </body>

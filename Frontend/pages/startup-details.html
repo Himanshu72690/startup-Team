@@ -2,180 +2,282 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Startup Details | StartupTeam</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Startup Marketplace | Fixed Edition</title>
 
-<link rel="stylesheet" href="../assets/css/member.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@800&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/lucide@latest"></script>
 
 <style>
-/* -------- PUBLIC PAGE LAYOUT -------- */
+    :root {
+        --primary: #4f46e5;
+        --primary-glow: rgba(79, 70, 229, 0.25);
+        --bg: #f8fafc;
+        --text-dark: #0f172a;
+        --text-gray: #64748b;
+    }
 
-body{
-  background:#f8fafc;
-}
+    body {
+        font-family: 'Inter', sans-serif;
+        background-color: var(--bg);
+        margin: 0;
+        padding-bottom: 80px;
+        color: var(--text-dark);
+    }
 
-.public-container{
-  max-width:1100px;
-  margin:40px auto;
-  padding:0 15px;
-}
+    .container { 
+        max-width: 1200px; 
+        margin: 0 auto; 
+        padding: 0 20px; 
+    }
 
-.two-col{
-  display:grid;
-  grid-template-columns:2fr 1fr;
-  gap:30px;
-}
+    /* --- HERO SECTION --- */
+    .hero {
+        text-align: center; 
+        padding: 80px 20px 60px; 
+        background: radial-gradient(circle at center, #f0f4ff 0%, #f8fafc 100%);
+    }
 
-.badge{
-  display:inline-block;
-  padding:4px 12px;
-  border-radius:20px;
-  background:#eef2ff;
-  color:#4f46e5;
-  font-size:12px;
-  font-weight:600;
-  margin-right:6px;
-}
+    .hero h1 { 
+        font-family: 'Plus Jakarta Sans', sans-serif; 
+        font-size: 3.8rem; 
+        font-weight: 800; 
+        color: #0f172a; 
+        margin: 0 0 20px 0; 
+        letter-spacing: -2px;
+        line-height: 1.1;
+    }
 
-@media(max-width:900px){
-  .two-col{
-    grid-template-columns:1fr;
-  }
-}
+    .hero h1 span {
+        background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%); 
+        -webkit-background-clip: text; 
+        -webkit-text-fill-color: transparent;
+    }
+
+    .hero p { 
+        font-size: 1.25rem; 
+        color: #64748b; 
+        max-width: 700px; 
+        margin: 0 auto; 
+        line-height: 1.6;
+    }
+
+    /* --- FIXED SEARCH WRAPPER --- */
+    .search-wrapper {
+        max-width: 1160px; /* Aligned with Grid */
+        margin: -45px auto 60px;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(12px);
+        padding: 20px;
+        border-radius: 24px;
+        box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.08);
+        display: flex;
+        gap: 15px;
+        border: 1px solid #e2e8f0;
+        position: relative;
+        z-index: 10;
+    }
+
+    .input-group { 
+        flex: 1; 
+        display: flex; 
+        align-items: center; 
+        gap: 12px; 
+        background: #f8fafc;
+        padding: 12px 18px;
+        border-radius: 16px;
+        border: 1px solid #e2e8f0;
+        transition: 0.3s ease;
+    }
+
+    .input-group:focus-within {
+        border-color: var(--primary);
+        background: #fff;
+        box-shadow: 0 0 0 4px var(--primary-glow);
+    }
+
+    .input-group i { color: var(--primary); flex-shrink: 0; }
+    
+    .input-group input, .input-group select { 
+        width: 100%; border: none; outline: none; 
+        font-size: 15px; font-weight: 600; 
+        font-family: inherit; color: var(--text-dark);
+        background: transparent;
+    }
+
+    /* --- STARTUP GRID & CARDS --- */
+    .startup-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+        gap: 30px;
+    }
+
+    .startup-card {
+        background: white;
+        border-radius: 28px;
+        padding: 35px;
+        border: 1px solid #f1f5f9;
+        transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between; /* Keeps footer at bottom */
+        min-height: 320px;
+    }
+
+    .startup-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.1);
+        border-color: var(--primary);
+    }
+
+    .industry-label {
+        font-size: 11px;
+        font-weight: 800;
+        color: var(--primary);
+        text-transform: uppercase;
+        letter-spacing: 1.2px;
+        margin-bottom: 15px;
+        display: inline-block;
+        padding: 5px 12px;
+        background: #eef2ff;
+        border-radius: 8px;
+        align-self: flex-start;
+    }
+
+    .startup-card h3 { 
+        margin: 0 0 12px 0; 
+        font-size: 1.6rem; 
+        font-weight: 800;
+        line-height: 1.2;
+    }
+
+    .tagline-text { 
+        color: var(--text-gray); 
+        font-size: 15px; 
+        line-height: 1.6;
+        margin-bottom: 30px;
+        flex-grow: 1; /* Pushes content below to bottom */
+    }
+
+    .card-actions {
+        display: flex; 
+        justify-content: space-between; 
+        align-items: center; 
+        border-top: 1px solid #f1f5f9; 
+        padding-top: 20px;
+    }
+
+    .location-info {
+        display: flex; 
+        align-items: center; 
+        gap: 6px; 
+        color: var(--text-gray); 
+        font-size: 14px; 
+        font-weight: 600;
+    }
+
+    .details-btn {
+        background: var(--primary);
+        color: white;
+        padding: 12px 24px;
+        border-radius: 14px;
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 14px;
+        transition: 0.3s;
+    }
+
+    .details-btn:hover {
+        background: #4338ca;
+        transform: scale(1.03);
+    }
 </style>
 </head>
-
 <body>
 
-<div class="public-container">
-
-  <!-- HEADER -->
-  <div class="card" style="margin-bottom:25px;">
-    <h1 id="sName">Startup</h1>
-    <p id="sTagline" style="color:#64748b;"></p>
-
-    <div style="margin-top:10px;">
-      <span class="badge" id="sIndustry"></span>
-      <span class="badge" id="sStage"></span>
+<div class="hero">
+    <div class="container">
+        <h1>Fueling the Next <span>Startup Revolution</span></h1>
+        <p>Connecting high-impact founders with elite professionals to build, scale, and innovate in real-time.</p>
     </div>
-  </div>
+</div>
 
-  <div class="two-col">
-
-    <!-- LEFT -->
-    <div>
-
-      <div class="card" style="margin-bottom:25px;">
-        <h3>About Startup</h3>
-        <p id="sDesc" style="margin-top:10px;color:#475569;"></p>
-      </div>
-
-      <h3 style="margin-bottom:10px;">Open Roles</h3>
-      <div id="rolesBox"></div>
-
-    </div>
-
-    <!-- RIGHT -->
-    <div>
-
-      <div class="card">
-        <h4>Startup Info</h4>
-
-        <p><b>Location :</b> <span id="sLocation"></span></p>
-        <p><b>Team Size :</b> <span id="sSize"></span></p>
-
-        <p style="margin-top:10px;">
-          <a id="sWebsite" href="#" target="_blank">Website</a>
-        </p>
-      </div>
-
+<div class="container">
+    <div class="search-wrapper">
+        <div class="input-group">
+            <i data-lucide="search" size="18"></i>
+            <input type="text" id="searchInput" placeholder="Startup name..." onkeyup="filterStartups()">
+        </div>
+        <div class="input-group">
+            <i data-lucide="map-pin" size="18"></i>
+            <input type="text" id="locationInput" placeholder="Location..." onkeyup="filterStartups()">
+        </div>
+        <div class="input-group" style="flex: 0.8;">
+            <i data-lucide="layers" size="18"></i>
+            <select id="industryFilter" onchange="filterStartups()">
+                <option value="all">All Specialties</option>
+                <option value="AI & Cloud">AI & Cloud</option>
+                <option value="FinTech">FinTech</option>
+                <option value="GreenTech">GreenTech</option>
+            </select>
+        </div>
     </div>
 
-  </div>
-
+    <div class="startup-grid" id="startupContainer">
+        </div>
 </div>
 
 <script>
-lucide.createIcons();
+    lucide.createIcons();
 
-/* ---------- GET STARTUP ID ---------- */
-const id = new URLSearchParams(location.search).get("id");
+    const startups = [
+        { id: 1, name: "TechNova AI", industry: "AI & Cloud", location: "Bangalore", tagline: "Autonomous AI agents for cloud infrastructure scaling and enterprise automation." },
+        { id: 2, name: "FinFlow Payments", industry: "FinTech", location: "Mumbai", tagline: "Blockchain-powered B2B transaction settlements for global commerce." },
+        { id: 3, name: "GreenDrive EV", industry: "GreenTech", location: "Delhi", tagline: "Sustainable battery swapping for urban mobility and smart city transport." }
+    ];
 
-/* ---------- LOAD DATA ---------- */
-const startups = JSON.parse(localStorage.getItem("allStartups")) || [];
-const roles    = JSON.parse(localStorage.getItem("startup_roles")) || [];
+    function renderStartups(list) {
+        const container = document.getElementById('startupContainer');
+        if (list.length === 0) {
+            container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 60px; color: #94a3b8; font-weight: 600;">No startups match your search.</div>`;
+            return;
+        }
+        container.innerHTML = list.map((s) => `
+            <div class="startup-card">
+                <div>
+                    <span class="industry-label">${s.industry}</span>
+                    <h3>${s.name}</h3>
+                    <p class="tagline-text">${s.tagline}</p>
+                </div>
+                <div class="card-actions">
+                    <div class="location-info">
+                        <i data-lucide="map-pin" size="16"></i> ${s.location}
+                    </div>
+                    <a href="startup-details.html?id=${s.id}" class="details-btn">View Profile</a>
+                </div>
+            </div>
+        `).join('');
+        lucide.createIcons();
+    }
 
-/* ---------- FIND STARTUP ---------- */
-const startup = startups.find(s => String(s.id) === String(id));
+    function filterStartups() {
+        const nameVal = document.getElementById('searchInput').value.toLowerCase();
+        const locVal = document.getElementById('locationInput').value.toLowerCase();
+        const indVal = document.getElementById('industryFilter').value;
 
-if(!startup){
-  document.body.innerHTML = "<h2 style='text-align:center;margin-top:80px;'>Startup not found</h2>";
-}else{
+        const filtered = startups.filter(s => {
+            const matchesName = s.name.toLowerCase().includes(nameVal);
+            const matchesLoc = s.location.toLowerCase().includes(locVal);
+            const matchesInd = indVal === 'all' || s.industry === indVal;
+            return matchesName && matchesLoc && matchesInd;
+        });
 
-  document.getElementById("sName").innerText     = startup.name || "";
-  document.getElementById("sTagline").innerText  = startup.tagline || "";
-  document.getElementById("sDesc").innerText     = startup.desc || "";
-  document.getElementById("sIndustry").innerText = startup.industry || "Startup";
-  document.getElementById("sStage").innerText    = startup.stage || "";
-  document.getElementById("sLocation").innerText = startup.location || "-";
-  document.getElementById("sSize").innerText     = startup.size || "-";
+        renderStartups(filtered);
+    }
 
-  const link = document.getElementById("sWebsite");
-  if(startup.website){
-    link.href = startup.website;
-    link.innerText = startup.website;
-  }else{
-    link.style.display="none";
-  }
-
-  /* ---------- FILTER ROLES ---------- */
-  const myRoles = roles.filter(r => String(r.startupId) === String(id));
-  const box = document.getElementById("rolesBox");
-
-  if(myRoles.length === 0){
-    box.innerHTML = "<p style='color:#64748b;'>No open roles.</p>";
-  }else{
-
-    box.innerHTML = myRoles.map(r => `
-      <div class="card" style="margin-bottom:15px;">
-        <h4>${r.title}</h4>
-        <p style="color:#64748b;margin:6px 0;">${r.skills || ""}</p>
-        <small>${r.type || ""} • ${r.exp || ""}</small>
-
-        <div style="margin-top:10px;">
-          <button class="btn-primary"
-            onclick="applyRole('${startup.name}','${r.title}')">
-            Apply
-          </button>
-        </div>
-      </div>
-    `).join("");
-  }
-}
-
-/* ---------- APPLY ROLE ---------- */
-function applyRole(startupName, roleTitle){
-
-  const isLoggedIn = localStorage.getItem("isLoggedIn");
-
-  if(!isLoggedIn){
-    alert("Please login to apply.");
-    return;
-  }
-
-  let list = JSON.parse(localStorage.getItem("myRequests")) || [];
-
-  list.push({
-    startup: startupName,
-    role: roleTitle,
-    status: "Pending"
-  });
-
-  localStorage.setItem("myRequests", JSON.stringify(list));
-
-  alert("Applied successfully!");
-}
-</script>
+    window.onload = () => renderStartups(startups);
+     lucide.createIcons();
+    </script>
 
 </body>
 </html>

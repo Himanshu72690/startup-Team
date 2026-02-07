@@ -2,108 +2,228 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Contact • StartupTeam</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <title>Contact Us | StartupTeam</title>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/lucide@latest"></script>
-  <link rel="stylesheet" href="../assets/css/contact.css">
+
+  <style>
+    /* Hand-written Style CSS for Organic Feel */
+    :root {
+      --brand-hub: #4f46e5;
+      --accent-pop: #ec4899;
+      --canvas-white: #f8fafc;
+      --deep-ink: #0f172a;
+      --slate-text: #64748b;
+      --line-gray: #e2e8f0;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { 
+      font-family: 'Plus Jakarta Sans', sans-serif; 
+      background-color: var(--canvas-white); 
+      color: var(--deep-ink); 
+      overflow-x: hidden; 
+    }
+
+    /* Animated Background Depth */
+    .bg-visuals { position: fixed; inset: 0; z-index: -1; pointer-events: none; }
+    .blob { 
+      position: absolute; width: 550px; height: 550px; 
+      background: radial-gradient(circle, rgba(79, 70, 229, 0.06) 0%, transparent 70%); 
+      border-radius: 50%; filter: blur(80px); animation: float-slow 20s infinite alternate; 
+    }
+    .blob-1 { top: -100px; right: -50px; }
+    .blob-2 { bottom: -150px; left: -100px; background: rgba(236, 72, 153, 0.05); }
+    @keyframes float-slow { from { transform: translate(0,0); } to { transform: translate(60px, 40px); } }
+
+    .container { max-width: 1080px; margin: 0 auto; padding: 93px 24px; }
+
+    /* Entrance Animation */
+    .reveal { opacity: 0; transform: translateY(30px); transition: 1s cubic-bezier(0.165, 0.84, 0.44, 1); }
+    .reveal.active { opacity: 1; transform: translateY(0); }
+
+    /* Contact Header */
+    .contact-hero { text-align: center; margin-bottom: 70px; }
+    .contact-hero h1 { font-size: 3.2rem; font-weight: 800; letter-spacing: -2px; }
+    .contact-hero span { background: linear-gradient(135deg, var(--brand-hub), var(--accent-pop)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .contact-hero p { font-size: 1.2rem; color: var(--slate-text); margin-top: 15px; }
+
+    /* Contact Grid */
+    .contact-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 40px; }
+
+    /* Left Side: Contact Cards */
+    .info-box { 
+      background: white; border-radius: 35px; border: 1px solid var(--line-gray); 
+      padding: 45px; display: flex; flex-direction: column; gap: 25px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.02);
+    }
+    .contact-method { 
+      display: flex; align-items: center; gap: 20px; text-decoration: none; color: inherit; 
+      padding: 20px; border-radius: 20px; transition: 0.3s; border: 1px solid transparent;
+    }
+    .contact-method:hover { background: #f5f3ff; border-color: var(--brand-hub); transform: translateX(10px); }
+    .icon-wrap { width: 55px; height: 55px; background: #eef2ff; color: var(--brand-hub); border-radius: 15px; display: flex; align-items: center; justify-content: center; }
+
+    /* Right Side: Form */
+    .form-card { 
+      background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(12px); 
+      padding: 50px; border-radius: 40px; border: 1px solid white;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.03);
+    }
+    .input-group { margin-bottom: 25px; }
+    .input-group label { display: block; font-weight: 700; font-size: 14px; margin-bottom: 10px; color: var(--slate-text); }
+    .input-group input, .input-group textarea { 
+      width: 100%; padding: 16px; border-radius: 14px; border: 1px solid var(--line-gray); 
+      background: white; outline: none; transition: 0.3s; font-size: 15px;
+    }
+    .input-group input:focus, .input-group textarea:focus { border-color: var(--brand-hub); box-shadow: 0 0 0 5px rgba(79, 70, 229, 0.08); }
+
+    .btn-send { 
+      width: 100%; padding: 18px; background: var(--brand-hub); color: white; border: none; 
+      border-radius: 15px; font-weight: 800; font-size: 16px; cursor: pointer; transition: 0.3s;
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+    }
+    .btn-send:hover { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(79, 70, 229, 0.3); background: #3730a3; }
+  </style>
 </head>
 <body>
 
-<section class="contact-wrapper">
-  <div class="glow-orb"></div>
+  <div class="bg-visuals">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+  </div>
 
   <div class="container">
-    <div class="contact-header">
-      <span class="badge">Support Center</span>
-      <h1>Let's Start a <span class="text-gradient">Conversation</span></h1>
-      <p>Have a question or a brilliant idea? Our team is just a message away.</p>
+    <header class="contact-hero reveal">
+      <h1>Get in <span>Touch</span></h1>
+      <p>Have a question or want to build together? We're here to help.</p>
+    </header>
+
+    <div class="contact-grid">
+      <div class="info-box reveal">
+        <h3 style="font-size: 1.5rem; font-weight: 800; margin-bottom: 10px;">Contact Info</h3>
+        <p style="color: var(--slate-text); margin-bottom: 20px;">Reach out directly via these channels.</p>
+        
+        <a href="https://wa.me/yournumber" class="contact-method">
+          <div class="icon-wrap"><i data-lucide="message-circle"></i></div>
+          <div>
+            <h4 style="font-weight: 800;">WhatsApp</h4>
+            <p style="font-size: 13px; color: var(--slate-text);">xxxxxx7846</p>
+          </div>
+        </a>
+
+        <a href="mailto:support@startupteam.com" class="contact-method">
+          <div class="icon-wrap"><i data-lucide="mail"></i></div>
+          <div>
+            <h4 style="font-weight: 800;">Email Us</h4>
+            <p style="font-size: 13px; color: var(--slate-text);">Response within 24 hours</p>
+          </div>
+        </a>
+
+        <div class="contact-method">
+          <div class="icon-wrap"><i data-lucide="map-pin"></i></div>
+          <div>
+            <h4 style="font-weight: 800;">Location</h4>
+            <p style="font-size: 13px; color: var(--slate-text);">New Delhi India </p>
+          </div>
+        </div>
+      </div>
+
+     <form class="form-card reveal" style="transition-delay: 200ms;">
+  <div class="input-grid-2">
+    <div class="input-group">
+      <label>I am a...</label>
+      <select required>
+        <option value="" disabled selected>Select Role</option>
+        <option value="founder">Startup Founder</option>
+        <option value="member">Professional Member</option>
+        <option value="investor">Investor / Partner</option>
+      </select>
     </div>
-
-    <div class="grid-layout">
-      <div class="contact-info-card">
-        <h2>Contact Information</h2>
-        <p>Fill out the form and our team will get back to you within 24 hours.</p>
-
-        <div class="info-list">
-          <div class="info-item">
-            <i data-lucide="mail"></i>
-            <div>
-              <span>Email us</span>
-              <p>support@startupteam.com</p>
-            </div>
-          </div>
-          <div class="info-item">
-            <i data-lucide="message-circle"></i>
-            <div>
-              <span>WhatsApp Support</span>
-              <p>+91 XXXXXX7846</p>
-            </div>
-          </div>
-          <div class="info-item">
-            <i data-lucide="map-pin"></i>
-            <div>
-              <span>Location</span>
-              <p> India</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="social-rings">
-          <div class="ring"></div>
-        </div>
-      </div>
-
-      <div class="form-container">
-        <form onsubmit="submitContact(event)" class="main-form">
-          <div class="input-group">
-            <label>Full Name</label>
-            <input type="text" id="name" required placeholder="John Doe">
-          </div>
-
-          <div class="input-group">
-            <label>Email Address</label>
-            <input type="email" id="email" required placeholder="you@example.com">
-          </div>
-
-          <div class="input-group">
-            <label>I am a...</label>
-            <select id="role">
-              <option value="Member">Skilled Member</option>
-              <option value="Founder">Startup Founder</option>
-              <option value="Other">Enthusiast</option>
-            </select>
-          </div>
-
-          <div class="input-group">
-            <label>Message</label>
-            <textarea id="message" rows="4" required placeholder="Tell us how we can help..."></textarea>
-          </div>
-
-          <button class="submit-btn" type="submit">
-            <span>Send Message</span>
-            <i data-lucide="send"></i>
-          </button>
-        </form>
-      </div>
+    <div class="input-group">
+      <label>Full Name</label>
+      <input type="text" placeholder="e.g. Arjun Mehta" required>
     </div>
   </div>
-</section>
+
+  <div class="input-grid-2">
+    <div class="input-group">
+      <label>Email Address</label>
+      <input type="email" placeholder="name@company.com" required>
+    </div>
+    <div class="input-group">
+      <label>LinkedIn Profile (Optional)</label>
+      <input type="url" placeholder="https://linkedin.com/in/...">
+    </div>
+  </div>
+
+  <div class="input-group">
+    <label>Subject / Topic</label>
+    <select required>
+      <option value="" disabled selected>Choose Reason</option>
+      <option value="hiring">I want to hire talent</option>
+      <option value="joining">I want to join a startup</option>
+      <option value="support">Technical Support</option>
+      <option value="other">Other Inquiry</option>
+    </select>
+  </div>
+
+  <div class="input-group">
+    <label>Detailed Message</label>
+    <textarea rows="4" placeholder="Briefly describe your requirements or question..." required></textarea>
+  </div>
+
+  <button type="submit" class="btn-send">
+    Send Detailed Inquiry <i data-lucide="send" size="18"></i>
+  </button>
+</form>
+
+<style>
+  /* Extra Styling for Detailed Form */
+  .input-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  select {
+    width: 100%;
+    padding: 16px;
+    border-radius: 14px;
+    border: 1px solid var(--line-gray);
+    background: white;
+    outline: none;
+    font-size: 15px;
+    cursor: pointer;
+    appearance: none; /* Modern look */
+  }
+
+  /* Responsive fix for grid */
+  @media (max-width: 600px) {
+    .input-grid-2 {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+    </div>
+  </div>
 
 <script>
-  lucide.createIcons(); // Icons load karne ke liye
-  
-  function submitContact(e){
-    e.preventDefault();
-    const btn = e.target.querySelector('.submit-btn');
-    btn.innerHTML = 'Sending...';
-    setTimeout(() => {
-      alert("Success! Message sent.");
-      e.target.reset();
-      btn.innerHTML = '<span>Send Message</span><i data-lucide="send"></i>';
-      lucide.createIcons();
-    }, 1500);
-  }
+  lucide.createIcons();
+
+  // Scroll Reveal Observer
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('active');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 </script>
 </body>
 </html>
