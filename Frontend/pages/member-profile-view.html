@@ -2,89 +2,191 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Member Profile View | StartupTeam</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Professional Profile | StartupTeam</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/lucide@latest"></script>
-  <link rel="stylesheet" href="../assets/css/founder.css">
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --bg: #f8fafc;
+      --white: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+    }
+
+    /* BASE STYLES */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text-main); line-height: 1.6; overflow-x: hidden; }
+
+    .container { max-width: 1100px; margin: 0 auto; padding: 40px 20px; }
+
+    /* ANIMATIONS */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes scaleIn {
+      from { transform: scale(0.9); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .animate-fade { animation: fadeInUp 0.8s ease forwards; }
+    .animate-scale { animation: scaleIn 0.6s ease forwards; }
+
+    /* TOP NAVIGATION */
+    .nav-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
+    .btn-back { 
+      display: flex; align-items: center; gap: 8px; color: var(--text-main); 
+      text-decoration: none; font-weight: 700; font-size: 14px; 
+      padding: 10px 18px; background: white; border-radius: 12px; border: 1px solid var(--border);
+      transition: all 0.3s ease;
+    }
+    .btn-back:hover { transform: translateX(-5px); border-color: var(--primary); color: var(--primary); }
+
+    /* PREMIUM PROFILE HERO */
+    .profile-hero { 
+      background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);
+      border-radius: 40px; padding: 60px; border: 1px solid var(--border); 
+      display: flex; align-items: center; gap: 50px; margin-bottom: 40px; 
+      position: relative; overflow: hidden;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.02);
+    }
+
+    .avatar-large { 
+      width: 180px; height: 180px; border-radius: 55px; background: var(--white); 
+      color: var(--primary); display: flex; align-items: center; justify-content: center; 
+      font-size: 80px; font-weight: 800; border: 1px solid var(--border);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.05); transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .avatar-large:hover { transform: rotate(5deg) scale(1.05); }
+
+    .hero-info h1 { font-size: 42px; font-weight: 800; letter-spacing: -2px; margin-bottom: 10px; }
+    .role-badge { 
+      display: inline-block; padding: 8px 18px; background: var(--primary); 
+      color: white; border-radius: 14px; font-size: 13px; font-weight: 700; 
+      text-transform: uppercase; margin-bottom: 20px; box-shadow: 0 10px 20px rgba(79, 70, 229, 0.2);
+    }
+
+    /* CONTENT GRID */
+    .profile-grid { display: grid; grid-template-columns: 1.6fr 1fr; gap: 30px; }
+    .card { 
+      background: var(--white); border-radius: 32px; padding: 40px; 
+      border: 1px solid var(--border); margin-bottom: 30px;
+      transition: all 0.3s ease;
+    }
+    .card:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(0,0,0,0.04); }
+
+    .card-title { font-size: 20px; font-weight: 800; margin-bottom: 25px; display: flex; align-items: center; gap: 12px; }
+    .card-title i { color: var(--primary); }
+
+    /* SKILLS SECTION */
+    .skills-flex { display: flex; flex-wrap: wrap; gap: 12px; }
+    .skill-tag { 
+      padding: 10px 20px; background: #f8fafc; border: 1px solid var(--border); 
+      border-radius: 14px; font-size: 14px; font-weight: 700; color: #475569;
+      transition: all 0.3s ease;
+    }
+    .skill-tag:hover { background: var(--primary); color: white; transform: scale(1.1); }
+
+    /* SIDEBAR ACTIONS */
+    .action-btn { 
+      display: flex; align-items: center; justify-content: center; gap: 12px; width: 100%; 
+      padding: 18px; border-radius: 20px; font-weight: 700; font-size: 15px; 
+      margin-bottom: 15px; border: 1px solid var(--border); background: #f8fafc;
+      color: #94a3b8; cursor: not-allowed;
+    }
+
+    .lock-notice { 
+      background: #fef2f2; border: 1px solid #fee2e2; padding: 25px; 
+      border-radius: 24px; text-align: center; 
+    }
+    .lock-notice p { font-size: 14px; color: #991b1b; font-weight: 700; margin-bottom: 15px; }
+    .btn-register {
+      display: block; width: 100%; padding: 14px; background: var(--text-main);
+      color: white; text-decoration: none; border-radius: 14px; font-size: 14px; font-weight: 700;
+      transition: 0.3s;
+    }
+    .btn-register:hover { background: var(--primary); transform: scale(1.02); }
+  </style>
 </head>
 <body>
 
-<div class="app">
-  <aside class="sidebar">
-    <div class="logo">Startup<span>Team</span></div>
-    <nav>
-      <a href="founder-dashboard.html"><i data-lucide="layout-dashboard"></i> Dashboard</a>
-      <a href="founder-profile.html"><i data-lucide="user"></i> Founder Profile</a>
-      <a href="startup-profile.html"><i data-lucide="rocket"></i> Startup Profile</a>
-      <a href="post-role.html"><i data-lucide="plus-circle"></i> Post Role</a>
-      <a href="roles-list.html"><i data-lucide="briefcase"></i> Roles</a>
-      <a href="members-requests.html" class="active"><i data-lucide="users"></i> Member Requests</a>
-    </nav>
-    <button onclick="logout()" class="logout-btn">Logout</button>
-  </aside>
+<div class="container">
+  <nav class="nav-header animate-fade">
+    <a href="members-list.html" class="btn-back">
+      <i data-lucide="arrow-left" size="18"></i> Back to Directory
+    </a>
+  </nav>
 
-  <main class="main">
-    <div class="header-section" style="display: flex; justify-content: space-between; align-items: center;">
-      <div>
-        <h1>Candidate Application</h1>
-        <p style="color: #64748b;">Review the member's details before making a decision.</p>
-      </div>
-      <div style="display: flex; gap: 10px;">
-        <button class="btn" style="background: #10b981;" onclick="handleAction('Accepted')">Accept Member</button>
-        <button class="btn" style="background: #ef4444;" onclick="handleAction('Rejected')">Reject</button>
-      </div>
-    </div>
-
-    <div class="card" id="box">
-        <p style="color: #64748b;">Loading candidate profile...</p>
-    </div>
-  </main>
+  <div id="fullProfile"></div>
 </div>
 
-<script src="../assets/js/founder.js"></script>
-<script src="../assets/js/auth.js"></script>
 <script>
   lucide.createIcons();
+  const pid = new URLSearchParams(window.location.search).get("id");
 
-  // Get Index from URL
-  const i = new URLSearchParams(location.search).get("i");
-  const requests = JSON.parse(localStorage.getItem("requests")) || [];
-  const r = requests[i];
-  const box = document.getElementById("box");
+  const talentPool = [
+    { id: 1, name: "Arjun Khanna", role: "Software Architect", initial: "A", loc: "Bangalore", bio: "Seasoned Software Architect with over 8 years experience in building high-scale distributed systems.", skills: ["Go", "Kubernetes", "React", "AWS", "System Design"] },
+    { id: 2, name: "Isha Malhotra", role: "Sr. Product Designer", initial: "I", loc: "Remote", bio: "Award-winning designer focused on user experiences and modern design systems.", skills: ["Figma", "UX Research", "Design Ops", "Prototyping"] },
+    { id: 3, name: "Vikram Seth", role: "Full Stack Dev", initial: "V", loc: "Delhi", bio: "Full stack expert focused on data-driven product growth.", skills: ["Python", "Django", "React", "PostgreSQL"] },
+    { id: 4, name: "Sneha Roy", role: "Sr. Designer", initial: "S", loc: "Mumbai", bio: "Visual storyteller creating impactful brand identities.", skills: ["Branding", "Illustrator", "Figma", "Motion Design"] }
+  ];
 
-  if (r) {
-    box.innerHTML = `
-      <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 30px; border-bottom: 1px solid #f1f5f9; padding-bottom: 20px;">
-        <div style="width: 60px; height: 60px; background: #eef2ff; color: #6366f1; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
-            <i data-lucide="user" style="width: 32px; height: 32px;"></i>
-        </div>
-        <div>
-          <h2 style="font-size: 24px;">${r.name}</h2>
-          <p style="color: #64748b;">Applying for: <b style="color: #6366f1;">${r.role}</b></p>
+  const m = talentPool.find(item => String(item.id) === String(pid));
+
+  if (m) {
+    document.getElementById('fullProfile').innerHTML = `
+      <div class="profile-hero animate-scale">
+        <div class="avatar-large">${m.initial}</div>
+        <div class="hero-info">
+          <span class="role-badge">${m.role}</span>
+          <h1>${m.name}</h1>
+          <div class="meta-row">
+            <div class="meta-item"><i data-lucide="map-pin" size="18"></i> ${m.loc}</div>
+            <div class="meta-item"><i data-lucide="verified" size="18"></i> Verified Professional</div>
+          </div>
         </div>
       </div>
 
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
-        <div>
-          <label style="display: block; color: #94a3b8; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Skills & Expertise</label>
-          <div style="margin-top: 10px; display: flex; flex-wrap: wrap; gap: 8px;">
-            ${r.skills.split(',').map(skill => `<span style="background: #f1f5f9; color: #475569; padding: 4px 12px; border-radius: 6px; font-size: 13px; font-weight: 500;">${skill.trim()}</span>`).join('')}
+      <div class="profile-grid">
+        <div class="main-content">
+          <div class="card animate-fade" style="animation-delay: 0.2s">
+            <h3 class="card-title"><i data-lucide="user-check"></i> Professional Summary</h3>
+            <p class="bio-p">${m.bio}</p>
+          </div>
+
+          <div class="card animate-fade" style="animation-delay: 0.4s">
+            <h3 class="card-title"><i data-lucide="layers"></i> Technical Expertise</h3>
+            <div class="skills-flex">
+              ${m.skills.map(s => `<span class="skill-tag">${s}</span>`).join('')}
+            </div>
           </div>
         </div>
-        <div>
-          <label style="display: block; color: #94a3b8; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Contact Reference</label>
-          <p style="margin-top: 10px; font-weight: 500; display: flex; align-items: center; gap: 8px;">
-            <i data-lucide="mail" style="width: 16px; color: #94a3b8;"></i> Available via Platform
-          </p>
+
+        <div class="sidebar animate-fade" style="animation-delay: 0.6s">
+          <div class="card">
+            <h3 class="card-title"><i data-lucide="shield-lock"></i> Member Access</h3>
+            <div class="action-btn">
+              <i data-lucide="linkedin" size="20"></i> LinkedIn Restricted
+            </div>
+            <div class="action-btn">
+              <i data-lucide="external-link" size="20"></i> Portfolio Locked
+            </div>
+            
+            <div class="lock-notice">
+              <p>Social links are only visible to registered Founders.</p>
+              <a href="register.html" class="btn-register">Register as Founder</a>
+            </div>
+          </div>
         </div>
       </div>
     `;
     lucide.createIcons();
-  }
-
-  function handleAction(status) {
-      alert(`Candidate has been ${status}`);
-      window.location.href = "members-requests.html";
+  } else {
+    document.getElementById('fullProfile').innerHTML = "<h2>Professional Not Found</h2>";
   }
 </script>
 </body>
