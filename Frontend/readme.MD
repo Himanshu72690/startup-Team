@@ -1,5 +1,0 @@
-TEAMUP PLATFORM......
-
-.
-.
-.
