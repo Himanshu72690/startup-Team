@@ -99,24 +99,81 @@
 </div>
 
 <script>
-  lucide.createIcons();
+lucide.createIcons();
 
-  // Demo data for Member Requests
-  const demoRequests = [
-    { name: "Rahul Sharma", role: "Fullstack Developer", exp: "3 Years", bio: "Passionate about building scalable web apps with Node.js and React.", skills: ["React", "Node", "AWS"] },
-    { name: "Priya Singh", role: "UI/UX Designer", exp: "2 Years", bio: "Focus on creating user-centric designs and high-fidelity prototypes.", skills: ["Figma", "Adobe XD", "Prototyping"] }
-  ];
+// Demo data with phone added
+let demoRequests = [
+  { 
+    id: 1,
+    name: "Rahul Sharma", 
+    role: "Fullstack Developer", 
+    exp: "3 Years", 
+    bio: "Passionate about building scalable web apps with Node.js and React.", 
+    skills: ["React", "Node", "AWS"],
+    phone: "919876543210",
+    status: "Pending"
+  },
+  { 
+    id: 2,
+    name: "Priya Singh", 
+    role: "UI/UX Designer", 
+    exp: "2 Years", 
+    bio: "Focus on creating user-centric designs and high-fidelity prototypes.", 
+    skills: ["Figma", "Adobe XD", "Prototyping"],
+    phone: "919812345678",
+    status: "Pending"
+  }
+];
 
-  window.onload = () => {
-    const container = document.getElementById('requestsList');
+window.onload = () => {
+  render();
+};
 
-    if (demoRequests.length === 0) {
-      container.innerHTML = `<div class="empty-state"><i data-lucide="user-plus" size="48" style="opacity:0.2; margin-bottom:15px;"></i><p>No pending requests at the moment.</p></div>`;
-      lucide.createIcons();
-      return;
+function render(){
+
+  const container = document.getElementById('requestsList');
+
+  if (demoRequests.length === 0) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <i data-lucide="user-plus" size="48" style="opacity:0.2; margin-bottom:15px;"></i>
+        <p>No pending requests at the moment.</p>
+      </div>`;
+    lucide.createIcons();
+    return;
+  }
+
+  container.innerHTML = demoRequests.map(req => {
+
+    let actionButtons = "";
+
+    if(req.status === "Pending"){
+      actionButtons = `
+        <button class="btn btn-accept" onclick="accept(${req.id})">
+          <i data-lucide="user-check" size="16"></i> Accept
+        </button>
+        <button class="btn btn-reject" onclick="reject(${req.id})">
+          <i data-lucide="user-x" size="16"></i> Reject
+        </button>
+      `;
     }
 
-    container.innerHTML = demoRequests.map(req => `
+    if(req.status === "Accepted"){
+      actionButtons = `
+        <a href="#" onclick="openWhatsApp('${req.phone}','${req.name}','${req.role}')" 
+           class="btn btn-accept">
+          <i data-lucide="message-circle" size="16"></i> Chat on WhatsApp
+        </a>
+      `;
+    }
+
+    if(req.status === "Rejected"){
+      actionButtons = `
+        <span style="color:#ef4444;font-weight:600;">Rejected</span>
+      `;
+    }
+
+    return `
       <div class="request-card">
         <div class="user-profile">
           <div class="avatar">${req.name.charAt(0)}</div>
@@ -127,8 +184,14 @@
         </div>
 
         <div class="meta-info">
-          <div class="meta-tag"><i data-lucide="briefcase" size="14" class="icon-highlight"></i> ${req.exp} Exp</div>
-          <div class="meta-tag"><i data-lucide="check-circle" size="14" class="icon-highlight"></i> Verified</div>
+          <div class="meta-tag">
+            <i data-lucide="briefcase" size="14" class="icon-highlight"></i>
+            ${req.exp} Exp
+          </div>
+          <div class="meta-tag">
+            <i data-lucide="check-circle" size="14" class="icon-highlight"></i>
+            ${req.status}
+          </div>
         </div>
 
         <div class="skills-box">
@@ -140,13 +203,54 @@
         </p>
 
         <div class="action-group">
-          <button class="btn btn-accept"><i data-lucide="user-check" size="16"></i> Accept</button>
-          <button class="btn btn-reject"><i data-lucide="user-x" size="16"></i> Reject</button>
+          ${actionButtons}
         </div>
       </div>
-    `).join('');
-    lucide.createIcons();
-  }
+    `;
+
+  }).join('');
+
+  lucide.createIcons();
+}
+
+/* ======================
+   ACCEPT FUNCTION
+====================== */
+
+function accept(id){
+  const req = demoRequests.find(r => r.id === id);
+  req.status = "Accepted";
+  render();
+
+  // 🔥 Auto open WhatsApp
+  openWhatsApp(req.phone, req.name, req.role);
+}
+
+/* ======================
+   REJECT FUNCTION
+====================== */
+
+function reject(id){
+  const req = demoRequests.find(r => r.id === id);
+  req.status = "Rejected";
+  render();
+}
+
+/* ======================
+   WHATSAPP OPEN
+====================== */
+
+function openWhatsApp(phone, name, role){
+
+  const message = encodeURIComponent(
+    `Hi ${name}, your application for ${role} has been accepted. Let's discuss further.`
+  );
+
+  const url = `https://wa.me/${phone}?text=${message}`;
+
+  window.open(url, "_blank");
+}
 </script>
+
 </body>
 </html>

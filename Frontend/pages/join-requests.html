@@ -7,114 +7,112 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/lucide@latest"></script>
   <style>
-    /* CORE THEME & ANIMATIONS */
+    /* CORE THEME */
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: 'Poppins', sans-serif; background: #f8fafc; color: #1e293b; }
     
     @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(20px); }
+      from { opacity: 0; transform: translateY(15px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
     .app { display: flex; min-height: 100vh; }
 
-    /* FIXED SIDEBAR - NO SHIFTING */
+    /* SIDEBAR (Locked as requested) */
     .sidebar { 
-      width: 260px; 
-      min-width: 260px; /* Locked width to prevent shifting */
-      background: #0f172a; 
-      color: #fff; 
-      padding: 30px 20px; 
-      display: flex; 
-      flex-direction: column; 
-      position: sticky; 
-      top: 0; 
-      height: 100vh; 
-      z-index: 1000;
+      width: 260px; min-width: 260px; background: #0f172a; color: #fff; 
+      padding: 30px 20px; display: flex; flex-direction: column; 
+      position: sticky; top: 0; height: 100vh; z-index: 1000;
     }
-
-    .logo { 
-      font-size: 24px; 
-      font-weight: 700; 
-      margin-bottom: 40px; 
-      padding-left: 10px; 
-      white-space: nowrap; 
-    }
+    .logo { font-size: 24px; font-weight: 700; margin-bottom: 40px; padding-left: 10px; white-space: nowrap; }
     .logo span { color: #6366f1; }
-
     .sidebar nav { flex: 1; }
-
     .sidebar a { 
-      display: flex; 
-      align-items: center; 
-      gap: 12px; 
-      color: #94a3b8; 
-      text-decoration: none; 
-      padding: 12px 15px; 
-      border-radius: 10px; 
-      margin-bottom: 8px; 
-      transition: 0.3s; 
-      font-size: 14px; 
-      font-weight: 500;
-      border: 1px solid transparent; 
+      display: flex; align-items: center; gap: 12px; color: #94a3b8; text-decoration: none; 
+      padding: 12px 15px; border-radius: 10px; margin-bottom: 8px; transition: 0.3s; 
+      font-size: 14px; font-weight: 500;
     }
-
-    .sidebar a:hover { 
-      background: rgba(255,255,255,0.05); 
-      color: #fff; 
-    }
-
-    .sidebar a.active { 
-      background: #6366f1; 
-      color: white !important; 
-      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3); 
-    }
+    .sidebar a:hover { background: rgba(255,255,255,0.05); color: #fff; }
+    .sidebar a.active { background: #6366f1; color: white !important; box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3); }
 
     .logout-btn { 
-      background: #ef4444; 
-      color: white; 
-      border: none; 
-      padding: 12px; 
-      border-radius: 10px; 
-      cursor: pointer; 
-      display: flex; 
-      align-items: center; 
-      justify-content: center; 
-      gap: 8px; 
-      font-weight: 600; 
-      transition: 0.3s; 
-      margin-top: auto;
+      background: #ef4444; color: white; border: none; padding: 12px; border-radius: 10px; 
+      cursor: pointer; display: flex; align-items: center; justify-content: center; 
+      gap: 8px; font-weight: 600; transition: 0.3s; margin-top: auto;
     }
 
     /* MAIN CONTENT */
-    .main { flex: 1; padding: 50px 70px; max-width: 1100px; }
-    .header-section { margin-bottom: 35px; }
+    .main { flex: 1; padding: 40px 60px; max-width: 1200px; }
+    .header-section { margin-bottom: 30px; }
     .header-section h2 { font-size: 28px; font-weight: 700; color: #0f172a; }
 
-    /* REQUEST CARDS */
-    .request-list { display: flex; flex-direction: column; gap: 20px; }
+    /* STATS GRID WITH ICONS */
+    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 35px; }
     
-    .request-card { 
-      background: #fff; padding: 25px; border-radius: 20px; border: 1px solid #f1f5f9; 
-      display: flex; justify-content: space-between; align-items: center;
-      animation: fadeInUp 0.5s ease-out forwards; opacity: 0;
+    .stat-card { 
+      background: #fff; padding: 20px; border-radius: 16px; border: 1px solid #f1f5f9; 
+      display: flex; align-items: flex-start; justify-content: space-between;
       transition: 0.3s;
     }
-    .request-card:hover { transform: translateX(10px); border-color: #6366f1; box-shadow: 0 10px 20px rgba(0,0,0,0.02); }
-
-    .startup-info { display: flex; align-items: center; gap: 20px; }
-    .startup-icon { width: 55px; height: 55px; border-radius: 14px; background: #eff6ff; color: #6366f1; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 700; border: 1px solid #dbeafe; }
+    .stat-content span { font-size: 13px; color: #64748b; font-weight: 500; }
+    .stat-content h4 { font-size: 24px; font-weight: 700; color: #0f172a; margin-top: 4px; }
     
-    .text-details h3 { font-size: 17px; font-weight: 700; color: #0f172a; }
-    .text-details p { font-size: 13px; color: #64748b; font-weight: 500; }
+    .stat-icon {
+      width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center;
+    }
+    .icon-total { background: #eef2ff; color: #6366f1; }
+    .icon-interview { background: #f0fdf4; color: #22c55e; }
+    .icon-pending { background: #fff7ed; color: #f97316; }
+    .icon-rejected { background: #fef2f2; color: #ef4444; }
 
-    /* STATUS BADGES */
-    .status-badge { padding: 6px 16px; border-radius: 100px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
-    .status-pending { background: #fff7ed; color: #f97316; border: 1px solid #ffedd5; }
-    .status-interview { background: #f0fdf4; color: #22c55e; border: 1px solid #dcfce7; }
-    .status-rejected { background: #fef2f2; color: #ef4444; border: 1px solid #fee2e2; }
+    /* FILTER BAR */
+    .filter-controls { display: flex; gap: 12px; margin-bottom: 25px; }
+    .search-box { flex: 1; position: relative; display: flex; align-items: center; }
+    .search-box i { position: absolute; left: 16px; color: #94a3b8; pointer-events: none; }
+    .search-box input {
+      width: 100%; height: 50px; padding: 0 20px 0 48px; border-radius: 12px;
+      border: 1px solid #e2e8f0; background: #fff; font-family: inherit; font-size: 14px;
+      outline: none; transition: 0.2s;
+    }
+    .search-box input:focus { border-color: #6366f1; box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.05); }
 
-    .empty-state { text-align: center; padding: 60px; color: #94a3b8; }
+    .status-select {
+      height: 50px; min-width: 170px; padding: 0 15px; border-radius: 12px;
+      border: 1px solid #e2e8f0; background: #fff; color: #475569; font-family: inherit;
+      font-size: 14px; font-weight: 500; cursor: pointer; outline: none;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 15px center; background-size: 14px;
+    }
+
+    /* REQUEST LIST */
+    .request-list { display: flex; flex-direction: column; gap: 15px; }
+    .request-card { 
+      background: #fff; padding: 20px 25px; border-radius: 18px; border: 1px solid #f1f5f9; 
+      display: flex; justify-content: space-between; align-items: center;
+      transition: 0.3s ease; animation: fadeInUp 0.4s ease-out forwards;
+    }
+    .request-card:hover { border-color: #6366f1; box-shadow: 0 10px 30px rgba(0,0,0,0.04); }
+
+    .startup-info { display: flex; align-items: center; gap: 15px; }
+    .startup-icon { width: 50px; height: 50px; border-radius: 12px; background: #eff6ff; color: #6366f1; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 700; border: 1px solid #dbeafe; }
+    
+    .text-details h3 { font-size: 16px; font-weight: 600; color: #0f172a; }
+    .text-details p { font-size: 13px; color: #64748b; display: flex; align-items: center; gap: 5px; }
+
+    /* ACTION AREA */
+    .action-area { display: flex; align-items: center; gap: 20px; }
+    .status-badge { padding: 6px 14px; border-radius: 100px; font-size: 11px; font-weight: 700; text-transform: uppercase; }
+    .status-pending { background: #fff7ed; color: #f97316; }
+    .status-interview { background: #f0fdf4; color: #22c55e; }
+    .status-rejected { background: #fef2f2; color: #ef4444; }
+
+    .delete-btn {
+      color: #94a3b8; background: none; border: none; cursor: pointer; padding: 8px; border-radius: 8px; transition: 0.2s;
+    }
+    .delete-btn:hover { color: #ef4444; background: #fef2f2; }
+
+    .empty-state { text-align: center; padding: 60px; color: #94a3b8; width: 100%; }
   </style>
 </head>
 <body>
@@ -127,68 +125,139 @@
       <a href="explore-startups.html"><i data-lucide="search"></i> Explore Teams</a>
       <a href="join-requests.html" class="active"><i data-lucide="send"></i> My Applications</a>
       <a href="my-profile.html"><i data-lucide="user"></i> Professional Profile</a>
-    </nav>
+        </nav>
     <button onclick="logout()" class="logout-btn"><i data-lucide="log-out"></i> Sign Out</button>
   </aside>
 
   <main class="main">
     <div class="header-section">
       <h2>Application Tracker</h2>
-      <p style="color: #64748b; font-size: 14px;">Track the status of your join requests in real-time.</p>
+      <p style="color: #64748b; font-size: 14px;">Track your journey with startups in real-time.</p>
     </div>
 
-    <div class="request-list" id="reqContainer">
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-content"><span>Total</span><h4 id="statTotal">0</h4></div>
+        <div class="stat-icon icon-total"><i data-lucide="briefcase" size="20"></i></div>
       </div>
+      <div class="stat-card">
+        <div class="stat-content"><span>Interviews</span><h4 id="statInterview">0</h4></div>
+        <div class="stat-icon icon-interview"><i data-lucide="calendar-check" size="20"></i></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-content"><span>Pending</span><h4 id="statPending">0</h4></div>
+        <div class="stat-icon icon-pending"><i data-lucide="clock" size="20"></i></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-content"><span>Rejected</span><h4 id="statRejected">0</h4></div>
+        <div class="stat-icon icon-rejected"><i data-lucide="user-x" size="20"></i></div>
+      </div>
+    </div>
+
+    <div class="filter-controls">
+      <div class="search-box">
+        <i data-lucide="search" size="20"></i>
+        <input type="text" id="searchInput" placeholder="Search startup or role..." onkeyup="filterData()">
+      </div>
+      <select id="statusFilter" class="status-select" onchange="filterData()">
+        <option value="All">All Status</option>
+        <option value="Interview">Interview</option>
+        <option value="Pending">Pending</option>
+        <option value="Rejected">Rejected</option>
+      </select>
+    </div>
+
+    <div class="request-list" id="reqContainer"></div>
   </main>
 </div>
 
 <script>
-  lucide.createIcons();
+  let allApplications = [];
 
   function loadRequests() {
-    const container = document.getElementById('reqContainer');
-
-    // 1. DEMO DATA (Pahle wala data)
     const demoRequests = [
       { id: 'd1', startup: "TechNova AI", role: "Frontend Developer", date: "05 Feb 2026", status: "Interview" },
       { id: 'd2', startup: "FinFlow", role: "UI Designer", date: "03 Feb 2026", status: "Pending" },
       { id: 'd3', startup: "EcoGrowth", role: "Product Intern", date: "28 Jan 2026", status: "Rejected" }
     ];
 
-    // 2. REAL DATA (LocalStorage se)
     const userRequests = JSON.parse(localStorage.getItem("member_applications")) || [];
+    allApplications = [...userRequests.reverse(), ...demoRequests];
     
-    // 3. MERGE (Nayi apps top par)
-    const allRequests = [...userRequests.reverse(), ...demoRequests];
+    updateStats();
+    renderData(allApplications);
+  }
 
-    if(allRequests.length === 0) {
-      container.innerHTML = `<div class="empty-state"><i data-lucide="inbox" size="48"></i><p style="margin-top:10px;">No applications yet.</p></div>`;
+  function updateStats() {
+    document.getElementById('statTotal').innerText = allApplications.length;
+    document.getElementById('statInterview').innerText = allApplications.filter(a => a.status === 'Interview').length;
+    document.getElementById('statPending').innerText = allApplications.filter(a => a.status === 'Pending').length;
+    document.getElementById('statRejected').innerText = allApplications.filter(a => a.status === 'Rejected').length;
+  }
+
+  function renderData(data) {
+    const container = document.getElementById('reqContainer');
+    if(data.length === 0) {
+      container.innerHTML = `
+        <div class="empty-state">
+          <i data-lucide="search-x" size="48" style="margin-bottom:15px; color:#cbd5e1"></i>
+          <p>No applications found matching your criteria.</p>
+        </div>`;
       lucide.createIcons();
       return;
     }
 
-    container.innerHTML = allRequests.map((req, index) => `
-      <div class="request-card" style="animation-delay: ${index * 0.12}s">
+    container.innerHTML = data.map((req, index) => `
+      <div class="request-card" style="animation-delay: ${index * 0.05}s">
         <div class="startup-info">
           <div class="startup-icon">${req.startup.charAt(0)}</div>
           <div class="text-details">
             <h3>${req.startup}</h3>
-            <p>${req.role} • Applied on ${req.date}</p>
+            <p><i data-lucide="calendar" size="12"></i> Applied on ${req.date} • ${req.role}</p>
           </div>
         </div>
-        <span class="status-badge status-${req.status.toLowerCase()}">${req.status}</span>
+        <div class="action-area">
+          <span class="status-badge status-${req.status.toLowerCase()}">${req.status}</span>
+          <button class="delete-btn" onclick="deleteApp('${req.id}')" title="Cancel Application">
+            <i data-lucide="trash-2" size="18"></i>
+          </button>
+        </div>
       </div>
     `).join('');
-    
     lucide.createIcons();
   }
 
-  window.onload = loadRequests;
+  function deleteApp(id) {
+    if(confirm("Are you sure you want to cancel this application?")) {
+      allApplications = allApplications.filter(app => app.id !== id);
+      const userRequests = JSON.parse(localStorage.getItem("member_applications")) || [];
+      const updatedUserRequests = userRequests.filter(app => app.id !== id);
+      localStorage.setItem("member_applications", JSON.stringify(updatedUserRequests));
+      updateStats();
+      filterData();
+    }
+  }
+
+  function filterData() {
+    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+    const statusTerm = document.getElementById('statusFilter').value;
+
+    const filtered = allApplications.filter(req => {
+      const matchesSearch = req.startup.toLowerCase().includes(searchTerm) || 
+                            req.role.toLowerCase().includes(searchTerm);
+      const matchesStatus = (statusTerm === "All") || (req.status === statusTerm);
+      return matchesSearch && matchesStatus;
+    });
+
+    renderData(filtered);
+  }
 
   function logout() {
     localStorage.removeItem("loggedIn");
     window.location.href = "../../index.html";
   }
+
+  window.onload = loadRequests;
 </script>
 </body>
 </html>
