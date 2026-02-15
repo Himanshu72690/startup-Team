@@ -1,7 +1,13 @@
 function logout() {
-    if(confirm("Bhai, logout karna hai?")) {
-        localStorage.removeItem("isLoggedIn");
-        window.location.href = "../../index.html"; // Aapke login page ka path
+    if (window.logoutUser) {
+        window.logoutUser();
+    } else {
+        // Fallback if logout.js not loaded
+        if(confirm("Are you sure you want to logout?")) {
+            localStorage.removeItem("isLoggedIn");
+            localStorage.removeItem("loggedInUser");
+            window.location.href = "login.html";
+        }
     }
 }
 

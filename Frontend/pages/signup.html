@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Material+Icons+Outlined&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../assets/css/signup.css">
+  <script type="module" src="../../Backend/register.js" defer></script>
 </head>
 <body>
 
@@ -47,7 +48,7 @@
     <form id="signupForm">
       <div class="input-group">
         <label><i class="material-icons-outlined">person</i> Full Name</label>
-        <input type="text" id="name" required placeholder="John Doe">
+        <input type="text" id="name" required placeholder="Name">
       </div>
 
       <div class="input-group">
@@ -78,6 +79,12 @@
       <div id="otpBox" class="otp-container" style="display: none;">
         <label><i class="material-icons-outlined">vibration</i> Enter OTP</label>
         <input type="number" id="otpInput" placeholder="6-digit code">
+        <div class="otp-actions">
+          <button type="button" id="resendOtpBtn" class="resend-btn" disabled>
+            <span id="resendText">Resend OTP in <span id="timer">60</span>s</span>
+          </button>
+          <p class="otp-help">Check your email and spam folder</p>
+        </div>
       </div>
 
       <button type="submit" class="btn-primary" id="submitBtn">Continue</button>
@@ -88,7 +95,5 @@
     </p>
   </div>
 </div>
-
-<script src="../assets/js/signup.js"></script>
 </body>
 </html>

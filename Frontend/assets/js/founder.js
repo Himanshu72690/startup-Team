@@ -21,10 +21,15 @@ if (!localStorage.getItem("requests")) {
   localStorage.setItem("requests", "[]");
 }
 
-// LOGOUT (auth.js ke logout ko call karta hai)
+// LOGOUT (now uses shared logout.js)
 function logout(){
-  localStorage.clear();
-  window.location.href = "../login.html";
+  if (window.logoutUser) {
+    window.logoutUser();
+  } else {
+    // Fallback if logout.js not loaded
+    localStorage.clear();
+    window.location.href = "login.html";
+  }
 }
 
 
