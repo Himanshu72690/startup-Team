@@ -14,6 +14,7 @@ const { generateTokenPair } = require('../utils/jwtUtils');
 
 // Local Authentication Routes
 router.post('/register', validateRegister, authController.register);
+router.post('/register-firebase', authController.registerFirebase); // New route for Firebase sync
 router.post('/verify-email', validateVerifyOTP, authController.verifyEmail);
 router.post('/resend-otp', authController.resendOTP);
 router.post('/login', validateLogin, authController.login);

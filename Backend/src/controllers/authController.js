@@ -5,6 +5,78 @@ const { generateTokenPair, verifyRefreshToken } = require('../utils/jwtUtils');
 const { generateResetToken, hashToken } = require('../utils/tokenUtils');
 const emailService = require('../services/emailService');
 
+// @route   POST /api/auth/register-firebase
+// @desc    Sync Firebase registration with MongoDB
+// @access  Public
+exports.registerFirebase = async (req, res) => {
+  try {
+    const { uid, name, email, phone, role, provider } = req.body;
+
+    // Check if user already exists
+    let user = await User.findOne({ email });
+    
+    if (user) {
+      // If user exists, just ensure profile exists and return success
+      // This handles cases where user re-registers or sync happens again
+      
+      // Update role if not set (rare case)
+      if (!user.role && role) {
+        user.role = role;
+        await user.save();
+      }
+      
+      return res.status(200).json({
+        success: true,
+        message: 'User already registered',
+        data: {
+          id: user._id,
+          email: user.email,
+          role: user.role
+        }
+      });
+    }
+
+    // Create new user
+    user = new User({
+      name: name || email.split('@')[0],
+      email,
+      phone,
+      role: role || 'member',
+      authProvider: provider || 'firebase',
+      providerId: uid, // Storing Firebase UID
+      emailVerified: provider === 'google', // Google is verified, email/pass needs link
+      lastLogin: Date.now()
+    });
+
+    await user.save();
+
+    // Create associated profile based on role
+    if (user.role === 'founder') {
+      await FounderProfile.create({ userId: user._id });
+    } else {
+      await MemberProfile.create({ userId: user._id });
+    }
+
+    res.status(201).json({
+      success: true,
+      message: 'User registered in backend',
+      data: {
+        id: user._id,
+        email: user.email,
+        role: user.role
+      }
+    });
+
+  } catch (error) {
+    console.error('Firebase registration sync error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Backend registration sync failed',
+      error: error.message
+    });
+  }
+};
+
 // @route   POST /api/auth/register
 // @desc    Register a new user
 // @access  Public
@@ -42,8 +114,16 @@ exports.register = async (req, res) => {
       await MemberProfile.create({ userId: user._id });
     }
 
-    // Send verification email
-    await emailService.sendVerificationEmail(email, otp, name);
+    // Send verification email (skip in development if email fails)
+    try {
+      await emailService.sendVerificationEmail(email, otp, name);
+    } catch (emailError) {
+      console.warn('Email sending failed (continuing in development mode):', emailError.message);
+      // In development, log the OTP to console
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`\n📧 OTP for ${email}: ${otp}\n`);
+      }
+    }
 
     res.status(201).json({
       success: true,
@@ -51,7 +131,8 @@ exports.register = async (req, res) => {
       data: {
         email: user.email,
         name: user.name,
-        role: user.role
+        role: user.role,
+        ...(process.env.NODE_ENV === 'development' && { otp }) // Include OTP in dev mode
       }
     });
   } catch (error) {
@@ -141,12 +222,21 @@ exports.resendOTP = async (req, res) => {
     const otp = user.generateOTP();
     await user.save();
 
-    // Send email
-    await emailService.sendVerificationEmail(email, otp, user.name);
+    // Send email (skip in development if email fails)
+    try {
+      await emailService.sendVerificationEmail(email, otp, user.name);
+    } catch (emailError) {
+      console.warn('Email sending failed (continuing in development mode):', emailError.message);
+      // In development, log the OTP to console
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`\n📧 OTP for ${email}: ${otp}\n`);
+      }
+    }
 
     res.json({
       success: true,
-      message: 'New verification code sent to your email'
+      message: 'New verification code sent to your email',
+      ...(process.env.NODE_ENV === 'development' && { data: { otp } }) // Include OTP in dev mode
     });
   } catch (error) {
     console.error('Resend OTP error:', error);
