@@ -69,7 +69,7 @@ const userSchema = new mongoose.Schema({
   }],
   authProvider: {
     type: String,
-    enum: ['local', 'google', 'linkedin'],
+    enum: ['local', 'google', 'linkedin', 'firebase'],
     default: 'local'
   },
   providerId: {

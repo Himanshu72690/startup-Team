@@ -166,3 +166,8 @@ $RECYCLE.BIN/
 .directory
 .Trash-*
 .nfs*
+
+
+# Database Flies
+data/
+*.lock

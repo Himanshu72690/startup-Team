@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Material+Icons+Outlined&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../assets/css/signup.css">
-  <script type="module" src="../../Backend/register.js" defer></script>
+  <script type="module" src="../assets/js/signup.js?v=4" defer></script>
 </head>
 <body>
 
@@ -38,6 +38,15 @@
       <p>Join the community of builders</p>
     </div>
 
+    <div class="input-group" style="margin-bottom: 1.5rem;">
+      <label><i class="material-icons-outlined">badge</i> I want to join as a:</label>
+      <select id="role" required style="width: 100%; padding: 0.8rem; border: 1px solid #e1e1e1; border-radius: 8px; font-family: inherit;">
+        <option value="" disabled selected>Select your role first</option>
+        <option value="member">Individual Member (Talent)</option>
+        <option value="founder">Startup Founder</option>
+      </select>
+    </div>
+
     <button type="button" class="google-btn">
       <img src="https://fonts.gstatic.com/s/i/productlogos/googleg/v6/24px.svg" alt="Google">
       Continue with Google
@@ -65,15 +74,6 @@
       <div class="input-group">
         <label><i class="material-icons-outlined">lock</i> Password</label>
         <input type="password" id="password" required placeholder="Min. 8 characters">
-      </div>
-
-      <div class="input-group">
-        <label><i class="material-icons-outlined">badge</i> Sign up as</label>
-        <select id="role" required>
-          <option value="" disabled selected>Select your role</option>
-          <option value="member">Individual Member (Talent)</option>
-          <option value="founder">Startup Founder</option>
-        </select>
       </div>
 
       <div id="otpBox" class="otp-container" style="display: none;">

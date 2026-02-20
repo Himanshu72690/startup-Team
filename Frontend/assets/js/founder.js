@@ -1,8 +1,19 @@
 // ROLE + LOGIN GUARD
 const user = JSON.parse(localStorage.getItem("loggedInUser"));
 if(!user || user.role !== "founder"){
-  window.location.href = "../login.html";
+  window.location.replace("../login.html");
 }
+
+// BFCache / Back Button Protection
+window.addEventListener('pageshow', function(event) {
+    if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
+        // Page was loaded from back/forward cache, re-run auth check
+        const userCheck = JSON.parse(localStorage.getItem("loggedInUser"));
+        if(!userCheck || userCheck.role !== "founder"){
+             window.location.replace("../login.html");
+        }
+    }
+});
 
 /* DEFAULT STORAGE */
 if (!localStorage.getItem("founderProfile")) {

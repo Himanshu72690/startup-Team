@@ -11,18 +11,32 @@ const emailService = require('../services/emailService');
 exports.registerFirebase = async (req, res) => {
   try {
     const { uid, name, email, phone, role, provider } = req.body;
+    
+    console.log('Register Firebase Request:', { uid, name, email, role, provider }); // DEBUG LOG
 
     // Check if user already exists
     let user = await User.findOne({ email });
     
     if (user) {
-      // If user exists, just ensure profile exists and return success
-      // This handles cases where user re-registers or sync happens again
-      
-      // Update role if not set (rare case)
-      if (!user.role && role) {
-        user.role = role;
-        await user.save();
+      console.log('User found in DB:', user.email, 'Role:', user.role);
+    
+      // Force update role if user provides a different one during "signup" (not login)
+      // This is important because users might have accidentally created an account with wrong role
+      if (role && role !== user.role) {
+         console.log('Updating existing user role to:', role);
+         user.role = role;
+         await user.save();
+         
+         // Fix profile type mismatch
+         if (role === 'founder') {
+             await MemberProfile.findOneAndDelete({ userId: user._id });
+             const existingProfile = await FounderProfile.findOne({ userId: user._id });
+             if (!existingProfile) await FounderProfile.create({ userId: user._id });
+         } else {
+             await FounderProfile.findOneAndDelete({ userId: user._id });
+             const existingProfile = await MemberProfile.findOne({ userId: user._id });
+             if (!existingProfile) await MemberProfile.create({ userId: user._id });
+         }
       }
       
       return res.status(200).json({

@@ -1,6 +1,6 @@
 // Import Firebase modules
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-auth.js";
+import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-auth.js";
 
 console.log("Firebase login script loaded!");
 
@@ -18,6 +18,7 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth();
+const googleProvider = new GoogleAuthProvider();
 
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -27,10 +28,52 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Google OAuth login
     if (googleBtn) {
-        googleBtn.addEventListener('click', () => {
-            // Redirect to backend Google OAuth endpoint
-            const backendURL = 'http://localhost:5000';
-            window.location.href = `${backendURL}/api/auth/google`;
+        googleBtn.addEventListener('click', async () => {
+            googleBtn.disabled = true;
+            googleBtn.textContent = 'Connecting...';
+            
+            try {
+                const result = await signInWithPopup(auth, googleProvider);
+                const user = result.user;
+                
+                // Fetch user data from backend
+                const response = await fetch('http://localhost:5000/api/auth/register-firebase', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        uid: user.uid,
+                        email: user.email,
+                        name: user.displayName,
+                        provider: 'google'
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    const userData = {
+                        uid: user.uid,
+                        email: user.email,
+                        name: user.displayName,
+                        role: data.data.role // Use role from backend
+                    };
+                    
+                    localStorage.setItem(`user_${user.uid}`, JSON.stringify(userData));
+                    localStorage.setItem("isLoggedIn", "true");
+                    
+                    alert(`✅ Welcome back, ${userData.name}!`);
+                    
+                    if (userData.role === 'founder') window.location.href = "founder-dashboard.html";
+                    else window.location.href = "member-dashboard.html";
+                } else {
+                    throw new Error(data.message || 'Login failed');
+                }
+            } catch (error) {
+                console.error("Google Login Error:", error);
+                alert(`❌ Login Failed: ${error.message}`);
+                googleBtn.disabled = false;
+                googleBtn.innerHTML = '<img src="https://fonts.gstatic.com/s/i/productlogos/googleg/v6/24px.svg" alt="Google"> Login with Google';
+            }
         });
     }
 
@@ -39,10 +82,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const email = document.getElementById("loginEmail").value.trim();
         const password = document.getElementById("loginPassword").value;
-
-        console.log("Login attempt started");
-        console.log("Email:", email);
-        console.log("Password length:", password.length);
 
         // Validation
         if (!email || !password) {
@@ -54,92 +93,85 @@ document.addEventListener("DOMContentLoaded", () => {
         submitBtn.disabled = true;
         submitBtn.textContent = "Logging in...";
 
-        console.log("About to call Firebase signInWithEmailAndPassword...");
-
         try {
             // Sign in with Firebase
             const userCredential = await signInWithEmailAndPassword(auth, email, password);
-            console.log("Sign in successful!");
-            console.log("User credential:", userCredential);
             const user = userCredential.user;
-            console.log("User object:", user);
-            console.log("Email verified:", user.emailVerified);
 
             // Check if email is verified
             if (!user.emailVerified) {
-                alert("❌ Please verify your email before logging in. Check your inbox for the verification link.");
+                alert("❌ Please verify your email before logging in. Check your inbox.");
                 await auth.signOut();
                 submitBtn.disabled = false;
                 submitBtn.textContent = "Login Now";
                 return;
             }
 
-            // Get user data from localStorage or create basic profile
-            // In a real app, you'd fetch this from your backend
-            let userData = JSON.parse(localStorage.getItem(`user_${user.uid}`)) || {
-                uid: user.uid,
-                email: user.email,
-                name: user.displayName || email.split('@')[0],
-                role: null
-            };
-
-            // If role is not set, try to get it from backend or prompt user
-            if (!userData.role) {
-                // Try to fetch from backend
-                try {
-                    const response = await fetch(`http://localhost:5000/api/auth/user/${user.uid}`);
-                    if (response.ok) {
-                        const backendData = await response.json();
-                        userData = { ...userData, ...backendData };
-                    }
-                } catch (err) {
-                    console.error("Could not fetch user data from backend:", err);
-                }
+            // Sync/Fetch user from backend to get correct role
+            try {
+                const response = await fetch('http://localhost:5000/api/auth/register-firebase', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        uid: user.uid,
+                        email: user.email,
+                        name: user.displayName || email.split('@')[0],
+                        provider: 'firebase'
+                    })
+                });
                 
-                // If still no role, default based on email or ask
-                if (!userData.role) {
-                    userData.role = "member"; // Default role
+                if (response.ok) {
+                    const data = await response.json();
+                    
+                    console.log('Backend response:', data); // DEBUG
+                    
+                    // Ensure data structure is valid
+                    if (!data.data || !data.data.role) {
+                        console.error('Missing role in backend response', data);
+                        throw new Error("User role not found in server response");
+                    }
+                    
+                    const userData = {
+                        uid: user.uid,
+                        email: user.email,
+                        name: data.data.name || user.displayName,
+                        role: data.data.role // CRITICAL: Get role from backend
+                    };
+                    
+                    localStorage.setItem("isLoggedIn", "true");
+                    localStorage.setItem("loggedInUser", JSON.stringify(userData));
+                    localStorage.setItem(`user_${user.uid}`, JSON.stringify(userData));
+
+                    alert(`✅ Welcome back, ${userData.name}!`);
+                    
+                    if (userData.role === 'founder') {
+                        window.location.replace("founder-dashboard.html");
+                    } else {
+                        window.location.replace("member-dashboard.html");
+                    }
+                } else {
+                     throw new Error("Could not retrieve user profile");
                 }
-            }
-
-            alert(`✅ Welcome back, ${userData.name}!`);
-
-            // Store session
-            localStorage.setItem("isLoggedIn", "true");
-            localStorage.setItem("loggedInUser", JSON.stringify(userData));
-            localStorage.setItem(`user_${user.uid}`, JSON.stringify(userData));
-
-            // Redirect based on role
-            if (userData.role === "founder") {
-                window.location.replace("founder-dashboard.html");
-            } else {
+            } catch (backendError) {
+                console.error("Backend fetch error:", backendError);
+                // Fallback only if backend is down
+                alert("Login successful but could not load profile. Using default member view.\nError: " + backendError.message);
+                // improving debugging by not auto-redirecting if there's an error,
+                // or at least logging it visibly
                 window.location.replace("member-dashboard.html");
             }
 
         } catch (error) {
-            const errorCode = error.code;
             console.error("Firebase login error:", error);
-            console.error("Error code:", errorCode);
-            console.error("Error message:", error.message);
-            
             let errorText = "Login failed. Please try again.";
-
-            if (errorCode === 'auth/invalid-credential' || errorCode === 'auth/wrong-password') {
+            if (error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password') {
                 errorText = "❌ Invalid email or password.";
-            } else if (errorCode === 'auth/user-not-found') {
+            } else if (error.code === 'auth/user-not-found') {
                 errorText = "❌ No account found with this email.";
-            } else if (errorCode === 'auth/invalid-email') {
-                errorText = "❌ Invalid email address.";
-            } else if (errorCode === 'auth/too-many-requests') {
-                errorText = "❌ Too many failed attempts. Please try again later.";
-            } else {
-                errorText = `❌ ${error.message}`;
             }
-
             alert(errorText);
             submitBtn.disabled = false;
             submitBtn.textContent = "Login Now";
         }
     });
-
 });
