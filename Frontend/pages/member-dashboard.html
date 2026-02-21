@@ -92,10 +92,10 @@
     <div class="logo">Startup<span>Team</span></div>
     <nav>
       <a href="member-dashboard.html" class="active"><i data-lucide="layout-dashboard"></i> <span>Dashboard</span></a>
-      <a href="explore-startups.html"><i data-lucide="search"></i> <span>Explore Startups</span></a>
-      <a href="join-requests.html"><i data-lucide="send"></i> <span>My Requests</span></a>
-      <a href="my-profile.html"><i data-lucide="user"></i> <span>My Profile</span></a>
-      <a href="members-list.html"><i data-lucide="users"></i> <span>Explore Members</span></a>
+      <a href="posted-roles.html"><i data-lucide="users"></i> <span>Explore Opportunities</span></a>
+      <a href="startup-details.html"><i data-lucide="search"></i> <span>Explore Dreams</span></a>
+      <a href="join-requests.html"><i data-lucide="send"></i> <span>My Applications</span></a>
+      <a href="my-profile.html"><i data-lucide="user"></i> <span>Profile</span></a>
     </nav>
     <button onclick="window.logoutUser()" class="logout-btn"><i data-lucide="log-out"></i> <span>Logout</span></button>
   </aside>
@@ -110,22 +110,22 @@
       <div class="stat-card">
         <div class="icon-box bg-blue"><i data-lucide="send" size="24"></i></div>
         <div class="stat-info">
-          <h3>3</h3>
+          <h3 id="appliedCount">0</h3>
           <p>Applied</p>
         </div>
       </div>
       <div class="stat-card">
         <div class="icon-box bg-purple"><i data-lucide="check-circle" size="24"></i></div>
         <div class="stat-info">
-          <h3>1</h3>
+          <h3 id="shortlistedCount">0</h3>
           <p>Shortlisted</p>
         </div>
       </div>
       <div class="stat-card">
-        <div class="icon-box bg-green"><i data-lucide="rocket" size="24"></i></div>
+        <div class="icon-box bg-green"><i data-lucide="hourglass" size="24"></i></div>
         <div class="stat-info">
-          <h3>12</h3>
-          <p>New Startups</p>
+          <h3 id="pendingCount">0</h3>
+          <p>Pending</p>
         </div>
       </div>
     </div>
@@ -133,39 +133,17 @@
     <div class="grid-layout">
       <div class="content-box">
         <div class="box-title"><i data-lucide="clock" size="20" color="#6366f1"></i> Application Status</div>
-        <div class="list-item">
-          <div>
-            <div style="font-weight: 600;">Frontend Developer</div>
-            <div style="font-size: 12px; color: #94a3b8;">TechNova AI</div>
-          </div>
-          <span class="status-badge pending">Pending</span>
-        </div>
-        <div class="list-item">
-          <div>
-            <div style="font-weight: 600;">UI/UX Designer</div>
-            <div style="font-size: 12px; color: #94a3b8;">EcoGrowth</div>
-          </div>
-          <span class="status-badge accepted">Interviewing</span>
+        <div id="applicationsContainer">
+          <div style="text-align: center; padding: 20px; color: #94a3b8;">Loading applications...</div>
         </div>
       </div>
 
       <div class="content-box">
         <div class="box-title"><i data-lucide="zap" size="20" color="#f97316"></i> For You</div>
-        <div class="startup-mini-card">
-          <div class="mini-logo">S</div>
-          <div>
-            <div style="font-size: 14px; font-weight: 600;">Solaris Tech</div>
-            <div style="font-size: 11px; color: #6366f1;">Clean Energy</div>
-          </div>
+        <div style="text-align: center; padding: 40px 20px; color: #94a3b8;">
+          <p style="font-size: 14px; margin-bottom: 10px;">✨ Feature coming soon</p>
+          <p style="font-size: 12px;">Personalized startup recommendations will appear here</p>
         </div>
-        <div class="startup-mini-card">
-          <div class="mini-logo">F</div>
-          <div>
-            <div style="font-size: 14px; font-weight: 600;">FinFlow</div>
-            <div style="font-size: 11px; color: #6366f1;">Fintech</div>
-          </div>
-        </div>
-        <a href="explore-startups.html" style="color: #6366f1; font-size: 13px; font-weight: 600; text-decoration: none;">View All →</a>
       </div>
     </div>
   </main>
@@ -204,9 +182,68 @@
   restoreSidebarState();
 
   lucide.createIcons();
+
+  async function loadStats() {
+    try {
+      const user = JSON.parse(localStorage.getItem("loggedInUser"));
+      const token = localStorage.getItem("token") || localStorage.getItem("accessToken");
+
+      if (!token) return;
+
+      const response = await fetch('http://localhost:5000/api/member/applications', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const applications = data.data || [];
+
+        // Calculate stats
+        const applied = applications.length;
+        const shortlisted = applications.filter(app => app.status === 'shortlisted').length;
+        const pending = applications.filter(app => app.status === 'pending').length;
+
+        // Update stats cards
+        document.getElementById('appliedCount').innerText = applied;
+        document.getElementById('shortlistedCount').innerText = shortlisted;
+        document.getElementById('pendingCount').innerText = pending;
+
+        // Update applications list
+        const container = document.getElementById('applicationsContainer');
+        if (applications.length === 0) {
+          container.innerHTML = '<div style="text-align: center; padding: 20px; color: #94a3b8;">No applications yet</div>';
+        } else {
+          container.innerHTML = applications.slice(0, 5).map(app => {
+            const statusClass = app.status === 'pending' ? 'pending' : app.status === 'shortlisted' ? 'accepted' : 'pending';
+            const statusText = app.status === 'shortlisted' ? 'Shortlisted' : app.status === 'interviewing' ? 'Interviewing' : 'Pending';
+            return `
+              <div class="list-item">
+                <div>
+                  <div style="font-weight: 600;">${app.roleId?.title || 'Role'}</div>
+                  <div style="font-size: 12px; color: #94a3b8;">${app.startupId?.name || 'Startup'}</div>
+                </div>
+                <span class="status-badge ${statusClass}">${statusText}</span>
+              </div>
+            `;
+          }).join('');
+        }
+        lucide.createIcons();
+      }
+    } catch (error) {
+      console.error('Error loading stats:', error);
+      const container = document.getElementById('applicationsContainer');
+      container.innerHTML = '<div style="text-align: center; padding: 20px; color: #94a3b8;">Unable to load applications</div>';
+    }
+  }
+
   window.onload = () => {
-    const user = JSON.parse(localStorage.getItem("memberProfile")) || { name: "Member" };
-    document.getElementById('greetUser').innerText = `Welcome back, ${user.name}!`;
+    const user = JSON.parse(localStorage.getItem("loggedInUser")) || { name: "Member" };
+    document.getElementById('greetUser').innerText = `Welcome back, ${user.name || user.firstName || "Member"}!`;
+    loadStats();
   }
   /* function logout() {
     localStorage.removeItem("loggedIn");

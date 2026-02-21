@@ -58,7 +58,17 @@ exports.updateProfile = async (req, res) => {
     if (github !== undefined) profile.github = github;
     if (skills) profile.skills = skills;
     if (bio) profile.bio = bio;
-    if (portfolio !== undefined) profile.portfolio = portfolio;
+    // Update portfolio - handle new file, deletion, or no change
+    if (portfolio !== undefined) {
+      if (portfolio === null) {
+        // Explicitly delete portfolio
+        profile.portfolio = null;
+      } else if (typeof portfolio === 'object' && Object.keys(portfolio).length > 0 && portfolio.filename) {
+        // Update with new portfolio metadata
+        profile.portfolio = portfolio;
+      }
+      // If empty object, don't update
+    }
 
     await profile.save();
 

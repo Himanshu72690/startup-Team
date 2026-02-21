@@ -66,6 +66,16 @@
 
     .social-links a { display: flex; align-items: center; gap: 12px; padding: 12px; background: #f8fafc; border-radius: 12px; text-decoration: none; color: #1e293b; font-size: 14px; font-weight: 600; margin-bottom: 10px; border: 1px solid #eef2f6; transition: 0.2s; }
     .social-links a:hover { border-color: #6366f1; color: #6366f1; padding-left: 18px; }
+
+    /* PORTFOLIO PREVIEW */
+    .portfolio-preview { display: flex; align-items: center; gap: 15px; background: #f0fdf4; padding: 15px; border-radius: 12px; border: 1px solid #dcfce7; }
+    .portfolio-icon { width: 50px; height: 50px; border-radius: 10px; background: #22c55e; color: white; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0; }
+    .portfolio-info-text { flex: 1; }
+    .portfolio-info-text p { font-size: 13px; color: #166534; margin: 2px 0; }
+    .portfolio-info-text strong { color: #166534; font-weight: 600; }
+    .portfolio-download-btn { background: #22c55e; color: white; border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: 600; transition: 0.2s; text-decoration: none; display: flex; align-items: center; gap: 6px; }
+    .portfolio-download-btn:hover { background: #16a34a; transform: translateY(-2px); }
+    .portfolio-empty { text-align: center; padding: 20px; color: #94a3b8; font-size: 13px; }
   </style>
 </head>
 <body>
@@ -76,10 +86,10 @@
     <div class="logo">Startup<span>Team</span></div>
     <nav>
       <a href="member-dashboard.html"><i data-lucide="layout-dashboard"></i> <span>Dashboard</span></a>
-      <a href="explore-startups.html"><i data-lucide="search"></i> <span>Explore Teams</span></a>
+      <a href="posted-roles.html"><i data-lucide="users"></i> <span>Explore Opportunities</span></a>
+      <a href="startup-details.html"><i data-lucide="search"></i> <span>Explore Dreams</span></a>
       <a href="join-requests.html"><i data-lucide="send"></i> <span>My Applications</span></a>
-      <a href="my-profile.html" class="active"><i data-lucide="user"></i> <span>Professional Profile</span></a>
-      <a href="members-list.html"><i data-lucide="users"></i> <span>Explore Members</span></a>
+      <a href="my-profile.html" class="active"><i data-lucide="user"></i> <span>Profile</span></a>
     </nav>
     <button onclick="window.logoutUser()" class="logout-btn"><i data-lucide="log-out"></i> <span>Log Out</span></button>
   </aside>
@@ -120,6 +130,11 @@
           <div class="label-title"><i data-lucide="mail" size="14"></i> Contact Information</div>
           <p style="font-size: 14px; font-weight: 600;" id="dispEmail">email@example.com</p>
         </div>
+
+        <div class="info-box">
+          <div class="label-title"><i data-lucide="file" size="14"></i> My Portfolio</div>
+          <div id="portfolioPreview"></div>
+        </div>
       </div>
 
       <div class="right-col">
@@ -133,7 +148,6 @@
           <div class="social-links">
             <a href="#" id="linkIn" target="_blank"><i data-lucide="linkedin" size="16"></i> LinkedIn</a>
             <a href="#" id="linkGh" target="_blank"><i data-lucide="github" size="16"></i> GitHub</a>
-            <a href="#" id="linkPf" target="_blank"><i data-lucide="globe" size="16"></i> Portfolio</a>
           </div>
         </div>
       </div>
@@ -175,7 +189,173 @@
 
   lucide.createIcons();
 
-  window.onload = () => {
+  async function loadProfile() {
+    try {
+      const token = localStorage.getItem('token') || localStorage.getItem('accessToken');
+
+      if (!token) {
+        console.error('No authentication token found');
+        loadFallbackProfile();
+        return;
+      }
+
+      // Get logged-in user basic info
+      const loggedInUserStr = localStorage.getItem('loggedInUser') || localStorage.getItem('user');
+      let loggedInUser = {};
+      
+      if (loggedInUserStr) {
+        try {
+          loggedInUser = JSON.parse(loggedInUserStr);
+        } catch (e) {
+          console.error('Error parsing logged-in user data:', e);
+        }
+      }
+
+      // Fetch member profile from backend with cache busting
+      const response = await fetch(`http://localhost:5000/api/member/profile?t=${Date.now()}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      let profileData = loggedInUser;
+
+      if (response.ok) {
+        const result = await response.json();
+        const backendData = result.data || result;
+        // Merge backend data with logged-in user info
+        profileData = { ...loggedInUser, ...backendData };
+      } else {
+        console.warn('Could not fetch extended profile data, using basic user info');
+      }
+
+      // Display profile data
+      displayProfile(profileData);
+    } catch (error) {
+      console.error('Error loading profile:', error);
+      loadFallbackProfile();
+    }
+  }
+
+  function displayProfile(data) {
+    const name = data.name || data.fullName || 'User Name';
+    const role = data.role || data.designation || 'Professional Role';
+    const bio = data.bio || data.about || 'Update your bio to attract founders.';
+    const email = data.email || 'email@example.com';
+    const company = data.company || data.currentCompany || 'Freelance';
+    const experience = data.yearsOfExperience || data.experience || data.exp || '0';
+    const skills = data.skills || data.techStack || 'General';
+    const linkedin = data.linkedin || data.linkedinUrl || '';
+    const github = data.github || data.githubUrl || '';
+    const portfolio = data.portfolio || data.portfolioUrl || '';
+
+    document.getElementById('dispName').innerText = name;
+    document.getElementById('dispInit').innerText = name.charAt(0).toUpperCase();
+    document.getElementById('dispRole').innerText = role;
+    document.getElementById('dispBio').innerText = bio;
+    document.getElementById('dispEmail').innerText = email;
+    document.getElementById('dispExpHeading').innerText = `${experience} Years Experience`;
+    document.getElementById('dispCompany').innerText = `Current @ ${company}`;
+
+    if (linkedin) document.getElementById('linkIn').href = linkedin;
+    if (github) document.getElementById('linkGh').href = github;
+    
+    // Handle portfolio file preview
+    const portfolioPreviewContainer = document.getElementById('portfolioPreview');
+    
+    // If portfolio is null or empty, clear localStorage file data and show empty state
+    if (!portfolio || (typeof portfolio === 'object' && Object.keys(portfolio).length === 0)) {
+      localStorage.removeItem('portfolioFile');
+      portfolioPreviewContainer.innerHTML = `
+        <div class="portfolio-empty">
+          <p style="margin: 10px 0;">No portfolio uploaded yet</p>
+          <p style="font-size: 12px; opacity: 0.7;">Upload PDF or Word documents in your profile settings</p>
+        </div>
+      `;
+    } else if (portfolio && typeof portfolio === 'object' && portfolio.filename) {
+      // We have portfolio metadata from backend
+      let fileName = portfolio.filename;
+      const fileExt = fileName.split('.').pop().toLowerCase();
+      const isPDF = fileExt === 'pdf';
+      const isWord = ['doc', 'docx'].includes(fileExt);
+      
+      let icon = '📄';
+      if (isPDF) {
+        icon = '📕';
+      } else if (isWord) {
+        icon = '📘';
+      }
+      
+      // Try to get the actual file data from localStorage
+      const storedFile = localStorage.getItem('portfolioFile');
+      let downloadUrl = '';
+      
+      if (storedFile) {
+        try {
+          const fileData = JSON.parse(storedFile);
+          if (fileData && fileData.filedata) {
+            downloadUrl = fileData.filedata;
+          }
+        } catch (e) {
+          console.warn('Could not parse stored portfolio file:', e);
+        }
+      }
+      
+      portfolioPreviewContainer.innerHTML = `
+        <div class="portfolio-preview">
+          <div class="portfolio-icon">${icon}</div>
+          <div class="portfolio-info-text">
+            <strong>${fileName}</strong>
+            <p>${isPDF ? 'PDF Document' : 'Word Document'}</p>
+          </div>
+          <button class="portfolio-download-btn" id="downloadPortfolioBtn" title="Download Portfolio" style="border: none; background: #22c55e; color: white; padding: 8px 15px; border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: 600; transition: 0.2s; display: flex; align-items: center; gap: 6px;">
+            <i data-lucide="download" size="14"></i> Download
+          </button>
+        </div>
+      `;
+      
+      // Set up download button handler
+      const downloadBtn = document.getElementById('downloadPortfolioBtn');
+      if (downloadBtn && downloadUrl) {
+        downloadBtn.onclick = function(e) {
+          e.preventDefault();
+          const link = document.createElement('a');
+          link.href = downloadUrl;
+          link.download = fileName;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        };
+      } else if (downloadBtn) {
+        downloadBtn.style.opacity = '0.6';
+        downloadBtn.style.cursor = 'not-allowed';
+        downloadBtn.title = 'Portfolio data not available';
+      }
+      
+      // Re-initialize Lucide icons
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+    } else {
+      portfolioPreviewContainer.innerHTML = `
+        <div class="portfolio-empty">
+          <p style="margin: 10px 0;">No portfolio uploaded yet</p>
+          <p style="font-size: 12px; opacity: 0.7;">Upload PDF or Word documents in your profile settings</p>
+        </div>
+      `;
+    }
+
+    const skillsArray = Array.isArray(skills) ? skills : skills.split(',');
+    document.getElementById('dispSkills').innerHTML = skillsArray
+      .map(s => `<span class="skill-tag">${typeof s === 'string' ? s.trim() : s}</span>`)
+      .join('');
+
+    lucide.createIcons();
+  }
+
+  function loadFallbackProfile() {
     const data = JSON.parse(localStorage.getItem("memberProfile")) || {
       name: "User Name",
       role: "Professional Role",
@@ -185,24 +365,10 @@
       exp: "0",
       skills: "General"
     };
-
-    document.getElementById('dispName').innerText = data.name;
-    document.getElementById('dispInit').innerText = data.name.charAt(0);
-    document.getElementById('dispRole').innerText = data.role || 'Professional Role';
-    document.getElementById('dispBio').innerText = data.bio || 'Update your bio to attract founders.';
-    document.getElementById('dispEmail').innerText = data.email;
-    document.getElementById('dispExpHeading').innerText = `${data.exp || '0'} Years Experience`;
-    document.getElementById('dispCompany').innerText = `Current @ ${data.company || 'Not Specified'}`;
-
-    if(data.linkedin) document.getElementById('linkIn').href = data.linkedin;
-    if(data.github) document.getElementById('linkGh').href = data.github;
-    if(data.portfolio) document.getElementById('linkPf').href = data.portfolio;
-
-    const skills = data.skills.split(',');
-    document.getElementById('dispSkills').innerHTML = skills.map(s => `<span class="skill-tag">${s.trim()}</span>`).join('');
-    
-    lucide.createIcons();
+    displayProfile(data);
   }
+
+  window.onload = loadProfile;
 
   // ADDED LOGOUT FUNCTION
   function logout() {

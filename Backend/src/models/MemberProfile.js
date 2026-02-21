@@ -25,12 +25,28 @@ const memberProfileSchema = new mongoose.Schema({
   linkedin: {
     type: String,
     trim: true,
-    match: [/^(https?:\/\/)?(www\.)?linkedin\.com\/.*$/, 'Please provide a valid LinkedIn URL']
+    validate: {
+      validator: function(v) {
+        // Allow empty/null values
+        if (!v) return true;
+        // If provided, must match LinkedIn URL pattern
+        return /^(https?:\/\/)?(www\.)?linkedin\.com\/.*$/.test(v);
+      },
+      message: 'Please provide a valid LinkedIn URL'
+    }
   },
   github: {
     type: String,
     trim: true,
-    match: [/^(https?:\/\/)?(www\.)?github\.com\/.*$/, 'Please provide a valid GitHub URL']
+    validate: {
+      validator: function(v) {
+        // Allow empty/null values
+        if (!v) return true;
+        // If provided, must match GitHub URL pattern
+        return /^(https?:\/\/)?(www\.)?github\.com\/.*$/.test(v);
+      },
+      message: 'Please provide a valid GitHub URL'
+    }
   },
   skills: [{
     type: String,
@@ -42,9 +58,8 @@ const memberProfileSchema = new mongoose.Schema({
     maxlength: [1000, 'Bio cannot exceed 1000 characters']
   },
   portfolio: {
-    type: String,
-    trim: true,
-    match: [/^(https?:\/\/).*/, 'Please provide a valid URL']
+    type: mongoose.Schema.Types.Mixed,
+    default: null
   },
   completionStatus: {
     type: Boolean,

@@ -366,7 +366,66 @@
       background: var(--textaccent);
     }
 
-    /* LOGIN MODAL */
+    .view-btn.applied {
+      background: #10b981;
+      cursor: not-allowed;
+    }
+
+    .view-btn.applied:hover {
+      background: #059669;
+    }
+
+    /* TOAST NOTIFICATION */
+    .toast-notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: white;
+      border-left: 4px solid var(--primary);
+      padding: 16px 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      max-width: 400px;
+      z-index: 2000;
+      animation: slideIn 0.3s ease-out;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-main);
+    }
+
+    .toast-notification.error {
+      border-left-color: #ef4444;
+    }
+
+    .toast-notification.success {
+      border-left-color: #10b981;
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateX(400px);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes slideOut {
+      from {
+        transform: translateX(0);
+        opacity: 1;
+      }
+      to {
+        transform: translateX(400px);
+        opacity: 0;
+      }
+    }
+
+    .toast-notification.removing {
+      animation: slideOut 0.3s ease-out;
+    }
     .modal-overlay {
       position: fixed;
       top: 0;
@@ -513,17 +572,69 @@
     </div>
   </div>
 
+  <!-- TOAST NOTIFICATION CONTAINER -->
+  <div id="toastContainer"></div>
+
   <script>
     // Initialize lucide icons immediately
     lucide.createIcons();
 
+    // Toast notification system
+    function showNotification(message, type = 'success', duration = 4000) {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = `toast-notification ${type}`;
+      toast.textContent = message;
+      
+      container.appendChild(toast);
+      
+      setTimeout(() => {
+        toast.classList.add('removing');
+        setTimeout(() => {
+          toast.remove();
+        }, 300);
+      }, duration);
+    }
+
     // Check if user is logged in
     function isUserLoggedIn() {
-      const user = localStorage.getItem('user');
+      const user = localStorage.getItem('user') || 
+                   localStorage.getItem('loggedInUser') || 
+                   localStorage.getItem('token') || 
+                   localStorage.getItem('accessToken');
       return !!user;
     }
 
     let allRoles = []; // Store all roles for filtering
+    let userAppliedRoles = []; // Store role IDs user has already applied for
+
+    // Load user's existing applications
+    async function loadUserApplications() {
+      try {
+        const token = localStorage.getItem('token') || localStorage.getItem('accessToken');
+        if (!token) return; // Not logged in
+
+        const response = await fetch('http://localhost:5000/api/member/applications', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          const applications = data.data || [];
+          userAppliedRoles = applications.map(app => {
+            const id = app.roleId?._id || app.roleId;
+            return String(id);
+          });
+          console.log('Loaded applied roles:', userAppliedRoles);
+        }
+      } catch (error) {
+        console.error('Error loading user applications:', error);
+      }
+    }
 
     // Load all roles from all startups
     async function loadRoles() {
@@ -591,7 +702,17 @@
         return;
       }
 
-      rolesGrid.innerHTML = roles.map(role => `
+      rolesGrid.innerHTML = roles.map(role => {
+        const roleId = String(role._id || role.id);
+        const isApplied = userAppliedRoles.includes(roleId);
+        const buttonText = isApplied ? 'Applied' : 'Apply';
+        const buttonClass = isApplied ? 'view-btn applied' : 'view-btn';
+        
+        if (isApplied) {
+          console.log('Role marked as applied:', roleId);
+        }
+        
+        return `
         <div class="role-card">
           <div class="role-icon">${role.title.charAt(0).toUpperCase()}</div>
           <h3 class="role-title">${role.title}</h3>
@@ -604,10 +725,11 @@
             <div class="role-meta">
               <i data-lucide="clock" size="14"></i> ${role.exp || 'Experience required'}
             </div>
-            <button class="view-btn" onclick="applyForRole('${role._id || role.id}')">Apply</button>
+            <button class="${buttonClass}" data-role-id="${roleId}" onclick="applyForRole('${roleId}')">${buttonText}</button>
           </div>
         </div>
-      `).join('');
+      `;
+      }).join('');
 
       lucide.createIcons();
     }
@@ -634,14 +756,87 @@
     }
 
     function applyForRole(roleId) {
+      const roleIdStr = String(roleId);
       if (!isUserLoggedIn()) {
         document.getElementById('loginModal').classList.add('active');
+      } else if (userAppliedRoles.includes(roleIdStr)) {
+        showNotification('You have already applied for this role!', 'error');
       } else {
-        alert('Application submitted for the role!');
+        submitApplication(roleIdStr);
       }
     }
 
-    window.onload = loadRoles;
+    async function submitApplication(roleId) {
+      try {
+        // Get token from localStorage
+        const token = localStorage.getItem('token') || localStorage.getItem('accessToken');
+        
+        if (!token) {
+          showNotification('Authentication error. Please log in again.', 'error');
+          setTimeout(() => {
+            window.location.href = './login.html';
+          }, 2000);
+          return;
+        }
+
+        const response = await fetch('http://localhost:5000/api/member/applications', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            roleId: roleId,
+            coverLetter: 'Interested in this position'
+          })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          // Add to applied roles list
+          const roleIdStr = String(roleId);
+          console.log('Application submitted for role:', roleIdStr);
+          console.log('Before:', userAppliedRoles);
+          
+          if (!userAppliedRoles.includes(roleIdStr)) {
+            userAppliedRoles.push(roleIdStr);
+          }
+          
+          console.log('After:', userAppliedRoles);
+          
+          // Force re-render to update button states
+          const currentRoles = allRoles.filter(r => {
+            const searchInput = document.querySelector('.search-container input[placeholder="Search by role, skill..."]').value.toLowerCase();
+            const locationInput = document.querySelector('.search-container input[placeholder="Location..."]').value.toLowerCase();
+            const typeSelect = document.querySelector('.search-container select').value;
+            
+            const matchesSearch = !searchInput || 
+              r.title.toLowerCase().includes(searchInput) ||
+              (r.skills && r.skills.some(skill => skill.toLowerCase().includes(searchInput))) ||
+              r.companyName.toLowerCase().includes(searchInput);
+            const matchesLocation = !locationInput || (r.location && r.location.toLowerCase().includes(locationInput));
+            const matchesType = typeSelect === 'all' || r.type === typeSelect;
+            
+            return matchesSearch && matchesLocation && matchesType;
+          });
+          
+          displayRoles(currentRoles);
+          
+          showNotification('Application submitted successfully! View it on your dashboard.', 'success');
+        } else {
+          showNotification(data.message || 'Failed to submit application', 'error');
+        }
+      } catch (error) {
+        console.error('Error submitting application:', error);
+        showNotification('Error submitting application. Please try again.', 'error');
+      }
+    }
+
+    window.onload = async function() {
+      await loadUserApplications();
+      loadRoles();
+    };
 
     // Close modal when clicking outside
     document.addEventListener('DOMContentLoaded', function() {
