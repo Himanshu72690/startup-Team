@@ -133,6 +133,35 @@
     .role-name { font-weight: 600; color: #1e293b; font-size: 15px; }
     .role-meta { font-size: 12px; color: #94a3b8; }
     .status-active { color: #22c55e; background: #f0fdf4; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; }
+
+    /* ACTIVE MEMBERS SECTION */
+    .members-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+    .member-card {
+      background: #fff; padding: 20px; border-radius: 12px; border: 1px solid #f1f5f9;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04); transition: 0.3s;
+    }
+    .member-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.08); transform: translateY(-2px); }
+    .member-header { display: flex; align-items: center; gap: 12px; margin-bottom: 15px; }
+    .member-avatar {
+      width: 48px; height: 48px; border-radius: 50%; background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 18px;
+    }
+    .member-info h4 { font-size: 15px; font-weight: 600; color: #1e293b; }
+    .member-info p { font-size: 12px; color: #94a3b8; margin-top: 2px; }
+    .member-actions {
+      display: flex; gap: 8px; margin-top: 15px; padding-top: 15px; border-top: 1px solid #f1f5f9;
+      flex-wrap: wrap;
+    }
+    .btn-action {
+      flex: 1; padding: 8px 12px; border: none; border-radius: 6px; font-size: 12px; font-weight: 600;
+      cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 6px;
+    }
+    .btn-view { background: #e0e7ff; color: #6366f1; }
+    .btn-view:hover { background: #c7d2fe; }
+    .btn-remove { background: #fee2e2; color: #ef4444; }
+    .btn-remove:hover { background: #fecaca; }
+    .btn-message { background: #dbeafe; color: #3b82f6; }
+    .btn-message:hover { background: #bfdbfe; }
   </style>
   <script type="module" src="../assets/js/logout.js"></script>
 </head>
@@ -177,10 +206,10 @@
         </div>
       </div>
       <div class="stat-card">
-        <div class="card-icon icon-orange"><i data-lucide="zap" size="24"></i></div>
+        <div class="card-icon icon-orange"><i data-lucide="users" size="24"></i></div>
         <div class="stat-info">
-          <h3>Active</h3>
-          <p>Startup Status</p>
+          <h3 id="activeMemebersCountStat">0</h3>
+          <p>Active Members</p>
         </div>
       </div>
     </div>
@@ -194,6 +223,11 @@
         <div class="activity-card" id="recentRolesList"></div>
         <div class="activity-card" id="recentRequestsList"></div>
       </div>
+    </div>
+
+    <div style="margin-top: 40px;">
+      <div class="section-title">Active Members <span id="activeMembersCount" style="color: #6366f1; font-size: 14px;">(0)</span></div>
+      <div id="activeMembersContainer" class="members-grid"></div>
     </div>
   </main>
 </div>
@@ -224,160 +258,226 @@
   window.onload = async () => {
     restoreSidebarState();
     lucide.createIcons();
-    // Get user from localStorage
+    
     const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
-    console.log("=== DASHBOARD DEBUG ===");
-    console.log("Logged in user from localStorage:", loggedInUser);
-    console.log("localStorage keys:", Object.keys(localStorage));
+    const token = localStorage.getItem('token');
+    let userName = loggedInUser?.name || loggedInUser?.email?.split('@')[0] || "Founder";
     
-    // Try to get name from different possible locations
-    let userName = "Founder";
-    if (loggedInUser?.name) {
-      userName = loggedInUser.name;
-    } else if (loggedInUser?.email) {
-      // Fallback: use first part of email
-      userName = loggedInUser.email.split('@')[0];
-    }
-    
-    console.log("Display name:", userName);
     document.getElementById('welcomeText').innerText = `Welcome back, ${userName}!`;
 
+    // If no token, cannot fetch from backend
+    if (!token) {
+      console.error("No token available - cannot fetch from backend");
+      return;
+    }
+
+    try {
+      // 1. Fetch Founder Profile
+      const profileResponse = await fetch('http://localhost:5000/api/founder/profile', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      if (profileResponse.ok) {
+        const profileResult = await profileResponse.json();
+        const backendUserName = profileResult.data?.userId?.name || userName;
+        document.getElementById('welcomeText').innerText = `Welcome back, ${backendUserName}!`;
+        
+        if (profileResult.data?.userId?.name) {
+          const updated = JSON.parse(localStorage.getItem("loggedInUser")) || {};
+          updated.name = profileResult.data.userId.name;
+          localStorage.setItem("loggedInUser", JSON.stringify(updated));
+        }
+      } else {
+        console.error("Failed to fetch profile:", profileResponse.status);
+      }
+    } catch (error) {
+      console.error("Error fetching profile:", error);
+    }
+
+    try {
+      // 2. Fetch Roles
+      const rolesResponse = await fetch('http://localhost:5000/api/founder/roles', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      if (rolesResponse.ok) {
+        const rolesResult = await rolesResponse.json();
+        const roles = rolesResult.data || [];
+        document.getElementById('totalRolesCount').innerText = roles.length;
+
+        const recentList = document.getElementById('recentRolesList');
+        if (roles.length === 0) {
+          recentList.innerHTML = `<p style="text-align:center; color:#94a3b8; font-size:14px;">No roles posted yet. Start hiring!</p>`;
+        } else {
+          recentList.innerHTML = roles.slice(-3).reverse().map(role => `
+            <div class="role-item">
+              <div>
+                <div class="role-name">${role.title}</div>
+                <div class="role-meta">${role.jobType || role.type || 'Full-time'} • ${role.experience || role.exp || 'Entry'}</div>
+              </div>
+              <span class="status-active">Live</span>
+            </div>
+          `).join('');
+        }
+      } else {
+        console.error("Failed to fetch roles:", rolesResponse.status);
+        document.getElementById('recentRolesList').innerHTML = `<p style="text-align:center; color:#ef4444; font-size:14px;">Error loading roles from backend</p>`;
+      }
+    } catch (error) {
+      console.error("Error fetching roles:", error);
+      document.getElementById('recentRolesList').innerHTML = `<p style="text-align:center; color:#ef4444; font-size:14px;">Error loading roles: ${error.message}</p>`;
+    }
+
+    try {
+      // 3. Fetch Member Requests/Applications
+      const requestsResponse = await fetch('http://localhost:5000/api/founder/applications', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      if (requestsResponse.ok) {
+        const requestsResult = await requestsResponse.json();
+        const requests = requestsResult.data || [];
+        
+        // Update the requests stat card with actual count
+        document.getElementById('totalRequestsCount').innerText = requests.length;
+        
+        const requestList = document.getElementById('recentRequestsList');
+        if (requests.length === 0) {
+          requestList.innerHTML = `<p style="text-align:center; color:#94a3b8; font-size:14px;">No member requests yet.</p>`;
+        } else {
+          requestList.innerHTML = requests.reverse().map(req => `
+            <div class="role-item">
+              <div>
+                <div class="role-name">${req.memberId?.name || req.memberName || 'Member'}</div>
+                <div class="role-meta">${req.roleId?.title || req.role || 'Role'} • ${req.status}</div>
+              </div>
+              <span class="status-active">${req.status}</span>
+            </div>
+          `).join('');
+        }
+      } else {
+        console.error("Failed to fetch applications:", requestsResponse.status);
+        document.getElementById('recentRequestsList').innerHTML = `<p style="text-align:center; color:#ef4444; font-size:14px;">Error loading applications from backend</p>`;
+      }
+    } catch (error) {
+      console.error("Error fetching applications:", error);
+      document.getElementById('recentRequestsList').innerHTML = `<p style="text-align:center; color:#ef4444; font-size:14px;">Error loading applications: ${error.message}</p>`;
+    }
+
+    try {
+      // 4. Fetch Active Members (Accepted Applications)
+      const activeResponse = await fetch('http://localhost:5000/api/founder/applications', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      if (activeResponse.ok) {
+        const activeResult = await activeResponse.json();
+        const allApplications = activeResult.data || [];
+        const activeMembers = allApplications.filter(app => app.status === 'accepted');
+        
+        document.getElementById('activeMemebersCountStat').innerText = activeMembers.length;
+        document.getElementById('activeMembersCount').innerText = `(${activeMembers.length})`;
+
+        const membersContainer = document.getElementById('activeMembersContainer');
+        if (activeMembers.length === 0) {
+          membersContainer.innerHTML = `<p style="text-align:center; color:#94a3b8; font-size:14px; grid-column: 1/-1;">No active members yet.</p>`;
+        } else {
+          membersContainer.innerHTML = activeMembers.map(member => {
+            const memberName = member.memberId?.name || member.memberName || 'Unknown Member';
+            const memberInitial = memberName.charAt(0).toUpperCase();
+            const roleName = member.roleId?.title || member.role || 'Role';
+            const memberId = member.memberId?._id || member.memberId;
+            
+            return `
+              <div class="member-card">
+                <div class="member-header">
+                  <div class="member-avatar">${memberInitial}</div>
+                  <div class="member-info">
+                    <h4>${memberName}</h4>
+                    <p>${roleName}</p>
+                  </div>
+                </div>
+                <div class="member-actions">
+                  <button class="btn-action btn-view" onclick="viewMemberProfile('${memberId}')">
+                    <i data-lucide="eye" size="14"></i> View
+                  </button>
+                  <button class="btn-action btn-message" onclick="contactMember('${memberId}')">
+                    <i data-lucide="message-square" size="14"></i> Contact
+                  </button>
+                  <button class="btn-action btn-remove" onclick="removeMember('${member._id}', '${memberName}')">
+                    <i data-lucide="trash-2" size="14"></i> Remove
+                  </button>
+                </div>
+              </div>
+            `;
+          }).join('');
+          lucide.createIcons();
+        }
+      } else {
+        console.error("Failed to fetch active members:", activeResponse.status);
+        document.getElementById('activeMembersContainer').innerHTML = `<p style="text-align:center; color:#ef4444; font-size:14px; grid-column: 1/-1;">Error loading active members</p>`;
+      }
+    } catch (error) {
+      console.error("Error fetching active members:", error);
+      document.getElementById('activeMembersContainer').innerHTML = `<p style="text-align:center; color:#ef4444; font-size:14px; grid-column: 1/-1;">Error: ${error.message}</p>`;
+    }
+  }
+
+  // Active Members Action Functions
+  async function removeMember(applicationId, memberName) {
+    if (!confirm(`Are you sure you want to remove ${memberName} from active members?`)) {
+      return;
+    }
+
     const token = localStorage.getItem('token');
-    console.log("Token exists:", !!token);
-
-    // Only try backend calls if token exists
-    if (token) {
-      try {
-        const response = await fetch('http://localhost:5000/api/founder/profile', {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-        
-        if (response.ok) {
-          const result = await response.json();
-          console.log("Backend profile response:", result);
-          
-          const backendUserName = result.data?.userId?.name || userName;
-          console.log("Backend user name:", backendUserName);
-          document.getElementById('welcomeText').innerText = `Welcome back, ${backendUserName}!`;
-          
-          // Update localStorage with fresh data
-          if (result.data?.userId?.name) {
-            const updated = JSON.parse(localStorage.getItem("loggedInUser")) || {};
-            updated.name = result.data.userId.name;
-            localStorage.setItem("loggedInUser", JSON.stringify(updated));
-          }
+    try {
+      const response = await fetch(`http://localhost:5000/api/founder/applications/${applicationId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
         }
-      } catch (error) {
-        console.error("Error fetching profile:", error);
+      });
+
+      if (response.ok) {
+        showNotification(`${memberName} has been removed from active members`, 'success');
+        setTimeout(() => location.reload(), 1500);
+      } else {
+        showNotification('Failed to remove member', 'error');
       }
+    } catch (error) {
+      showNotification(`Error: ${error.message}`, 'error');
     }
+  }
 
-    // 2. Fetch roles
-    if (token) {
-      try {
-        const response = await fetch('http://localhost:5000/api/founder/roles', {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-        
-        if (response.ok) {
-          const result = await response.json();
-          const roles = result.data || [];
-          document.getElementById('totalRolesCount').innerText = roles.length;
+  function viewMemberProfile(memberId) {
+    // Store the member ID and redirect to member profile view
+    localStorage.setItem('viewMemberId', memberId);
+    window.location.href = 'members-list.html';
+  }
 
-          const recentList = document.getElementById('recentRolesList');
-          if (roles.length === 0) {
-            recentList.innerHTML = `<p style="text-align:center; color:#94a3b8; font-size:14px;">No roles posted yet. Start hiring!</p>`;
-          } else {
-            recentList.innerHTML = roles.slice(-3).reverse().map(role => `
-              <div class="role-item">
-                <div>
-                  <div class="role-name">${role.title}</div>
-                  <div class="role-meta">${role.jobType} • ${role.experience}</div>
-                </div>
-                <span class="status-active">Live</span>
-              </div>
-            `).join('');
-          }
-          return;
-        }
-      } catch (error) {
-        console.error("Error fetching roles:", error);
-      }
-    }
+  function contactMember(memberId) {
+    showNotification('Contact feature coming soon!', 'info');
+  }
 
-    // Fallback: use localStorage for roles
-    const roles = JSON.parse(localStorage.getItem("startup_roles")) || [];
-    document.getElementById('totalRolesCount').innerText = roles.length;
-
-    const recentList = document.getElementById('recentRolesList');
-    if (roles.length === 0) {
-      recentList.innerHTML = `<p style="text-align:center; color:#94a3b8; font-size:14px;">No roles posted yet. Start hiring!</p>`;
-    } else {
-      recentList.innerHTML = roles.slice(-3).reverse().map(role => `
-        <div class="role-item">
-          <div>
-            <div class="role-name">${role.title}</div>
-            <div class="role-meta">${role.type} • ${role.exp}</div>
-          </div>
-          <span class="status-active">Live</span>
-        </div>
-      `).join('');
-    }
-
-    // 3. Fetch member requests
-    if (token) {
-      try {
-        const response = await fetch('http://localhost:5000/api/founder/applications', {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-        
-        if (response.ok) {
-          const result = await response.json();
-          const requests = result.data || [];
-          
-          const requestList = document.getElementById('recentRequestsList');
-          if (requests.length === 0) {
-            requestList.innerHTML = `<p style="text-align:center; color:#94a3b8; font-size:14px;">No member requests yet.</p>`;
-          } else {
-            requestList.innerHTML = requests.slice(-3).reverse().map(req => `
-              <div class="role-item">
-                <div>
-                  <div class="role-name">${req.memberId?.name || 'Member'}</div>
-                  <div class="role-meta">${req.roleId?.title || 'Role'} • ${req.status}</div>
-                </div>
-                <span class="status-active">${req.status}</span>
-              </div>
-            `).join('');
-          }
-          return;
-        }
-      } catch (error) {
-        console.error("Error fetching requests:", error);
-      }
-    }
-
-    // Fallback: use localStorage for requests
-    const requests = JSON.parse(localStorage.getItem("member_applications")) || [];
-    const requestList = document.getElementById('recentRequestsList');
-    if (requests.length === 0) {
-      requestList.innerHTML = `<p style="text-align:center; color:#94a3b8; font-size:14px;">No member requests yet.</p>`;
-    } else {
-      requestList.innerHTML = requests.slice(-3).reverse().map(req => `
-        <div class="role-item">
-          <div>
-            <div class="role-name">${req.memberName || 'Member'}</div>
-            <div class="role-meta">${req.role || 'Role'} • ${req.status || 'Pending'}</div>
-          </div>
-          <span class="status-active">${req.status || 'Pending'}</span>
-        </div>
-      `).join('');
-    }
+  function showNotification(message, type = 'success') {
+    const notification = document.createElement('div');
+    notification.style.cssText = `
+      position: fixed; top: 20px; right: 20px; background: white;
+      padding: 16px 20px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      border-left: 4px solid ${type === 'success' ? '#22c55e' : type === 'error' ? '#ef4444' : '#3b82f6'};
+      font-size: 14px; font-weight: 500; z-index: 9999;
+    `;
+    notification.innerText = message;
+    document.body.appendChild(notification);
+    setTimeout(() => notification.remove(), 3000);
   }
 
   /* function logout() {

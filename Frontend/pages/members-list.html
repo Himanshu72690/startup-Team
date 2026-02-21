@@ -385,27 +385,22 @@
   <script>
     lucide.createIcons();
 
-    const members = [
-      { id: 1, name: "Arjun Mehta", cat: "Engineering", role: "Software Architect", skills: ["Go", "React", "AWS", "Docker", "K8s"], loc: "Bangalore", initial: "A" },
-      { id: 2, name: "Isha Malhotra", cat: "Design", role: "UI/UX Designer", skills: ["Figma", "Design Ops", "Prototyping"], loc: "Remote", initial: "I" },
-      { id: 3, name: "Vikram Seth", cat: "Engineering", role: "Full Stack Dev", skills: ["Python", "Django", "React", "PostgreSQL"], loc: "Delhi", initial: "V" },
-      { id: 4, name: "Sneha Roy", cat: "Design", role: "Sr. Designer", skills: ["Branding", "Illustrator", "Figma", "Motion Design"], loc: "Mumbai", initial: "S" }
-    ];
+    let allMembers = [];
 
     function render(list) {
       const grid = document.getElementById('mainGrid');
       // Staggered delay applied here using 'index'
       grid.innerHTML = list.map((m, index) => `
       <div class="m-card" style="animation-delay: ${index * 0.1}s">
-        <div class="avatar">${m.initial}</div>
-        <h3 style="font-size:20px; font-weight:800;">${m.name}</h3>
-        <p style="color:var(--primary); font-size:13px; font-weight:800; margin-bottom:10px;">${m.role}</p>
+        <div class="avatar">${m.avatar || m.name?.charAt(0).toUpperCase() || 'M'}</div>
+        <h3 style="font-size:20px; font-weight:800;">${m.name || 'Unknown'}</h3>
+        <p style="color:var(--primary); font-size:13px; font-weight:800; margin-bottom:10px;">${m.title || m.role || 'Professional'}</p>
         <div class="skills-flex">
-          ${m.skills.map(s => `<span class="skill-tag">${s}</span>`).join('')}
+          ${(m.skills || []).map(s => `<span class="skill-tag">${typeof s === 'string' ? s : s.name || s}</span>`).join('')}
         </div>
         <div class="card-footer">
-          <span style="font-size:12px; color:var(--text-muted); font-weight:600;"><i data-lucide="map-pin" size="14"></i> ${m.loc}</span>
-          <a href="javascript:void(0)" onclick="handleProfileView(${m.id})" class="btn-view">View Profile</a>
+          <span style="font-size:12px; color:var(--text-muted); font-weight:600;"><i data-lucide="map-pin" size="14"></i> ${m.location || m.loc || 'Location Unknown'}</span>
+          <a href="javascript:void(0)" onclick="handleProfileView('${m._id || m.id}')" class="btn-view">View Profile</a>
         </div>
       </div>
     `).join('');
@@ -413,7 +408,8 @@
     }
 
     function handleProfileView(id) {
-      const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+      const token = localStorage.getItem("token");
+      const isLoggedIn = !!token;
 
       if (isLoggedIn) {
         window.location.href = `member-profile-view.html?id=${id}`;
@@ -449,11 +445,42 @@
       const name = document.getElementById('nameInp').value.toLowerCase();
       const loc = document.getElementById('locInp').value.toLowerCase();
       const cat = document.getElementById('catInp').value;
-      const filtered = members.filter(m => (cat === 'all' || m.cat === cat) && (m.name.toLowerCase().includes(name) || m.skills.some(s => s.toLowerCase().includes(name))) && m.loc.toLowerCase().includes(loc));
+      const filtered = allMembers.filter(m => {
+        const matchesCategory = cat === 'all' || (m.category === cat);
+        const matchesName = (m.name && m.name.toLowerCase().includes(name)) || 
+                           (m.skills && m.skills.some(s => (typeof s === 'string' ? s : s.name || s).toLowerCase().includes(name)));
+        const matchesLocation = !loc || (m.location && m.location.toLowerCase().includes(loc)) || (m.loc && m.loc.toLowerCase().includes(loc));
+        return matchesCategory && matchesName && matchesLocation;
+      });
       render(filtered);
     }
 
-    window.onload = () => render(members);
+    async function fetchMembers() {
+      try {
+        const response = await fetch('http://localhost:5000/api/public/members', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (response.ok) {
+          const result = await response.json();
+          allMembers = result.data || result || [];
+          render(allMembers);
+        } else {
+          console.error('Failed to fetch members:', response.status);
+          document.getElementById('mainGrid').innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: var(--text-muted);">Unable to load members. Please try again later.</p>';
+        }
+      } catch (error) {
+        console.error('Error fetching members:', error);
+        document.getElementById('mainGrid').innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: var(--text-muted);">Error loading members: ' + error.message + '</p>';
+      }
+    }
+
+    window.onload = () => {
+      fetchMembers();
+    };
   </script>
 </body>
 

@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Startup = require('../models/Startup');
 const Role = require('../models/Role');
+const MemberProfile = require('../models/MemberProfile');
 
 // Get all active startups with their roles (public endpoint - no authentication required)
 router.get('/startups', async (req, res) => {
@@ -76,6 +77,60 @@ router.get('/startups', async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Failed to fetch startups'
+    });
+  }
+});
+
+// Get all members with basic public information
+router.get('/members', async (req, res) => {
+  try {
+    const { search, location } = req.query;
+
+    // Build filter for member profiles
+    const filter = {};
+
+    if (search) {
+      filter.$or = [
+        { currentRole: { $regex: search, $options: 'i' } },
+        { skills: { $regex: search, $options: 'i' } }
+      ];
+    }
+
+    if (location) {
+      filter.location = { $regex: location, $options: 'i' };
+    }
+
+    // Fetch member profiles with user data
+    const members = await MemberProfile.find(filter)
+      .populate('userId', 'name email avatar')
+      .select('userId currentRole location yearsExperience skills category')
+      .limit(100)
+      .lean();
+
+    // Format response to match frontend expectations
+    const formattedMembers = members.map(member => ({
+      _id: member._id || member.userId._id,
+      name: member.userId?.name || 'Unknown',
+      title: member.currentRole || 'Professional',
+      role: member.currentRole || 'Professional',
+      location: member.location || 'Location Unknown',
+      loc: member.location || 'Location Unknown',
+      skills: member.skills || [],
+      yearsOfExperience: member.yearsExperience || 0,
+      category: member.category || 'Engineering',
+      avatar: member.userId?.avatar || member.userId?.name?.charAt(0).toUpperCase() || 'M'
+    }));
+
+    res.status(200).json({
+      success: true,
+      data: formattedMembers
+    });
+  } catch (error) {
+    console.error('Error fetching public members:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch members',
+      error: error.message
     });
   }
 });
