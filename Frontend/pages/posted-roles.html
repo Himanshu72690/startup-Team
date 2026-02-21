@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>All Startups | StartupTeam</title>
+  <title>Startup Details | StartupTeam</title>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
     rel="stylesheet">
   <script src="https://unpkg.com/lucide@latest"></script>
@@ -244,21 +244,21 @@
       vertical-align: middle;
     }
 
-    /* STARTUPS GRID */
-    .startups-section {
+    /* ROLES GRID */
+    .roles-section {
       max-width: 1400px;
       margin: 0 auto;
       padding: 0 20px 60px;
     }
 
-    .startups-grid {
+    .roles-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
       gap: 25px;
     }
 
-    /* STARTUP CARD */
-    .startup-card {
+    /* ROLE CARD */
+    .role-card {
       background: var(--card-bg);
       border: 1px solid var(--border);
       border-radius: 28px;
@@ -268,19 +268,19 @@
       cursor: pointer;
       display: flex;
       flex-direction: column;
+      position: relative;
       align-items: center;
       text-align: center;
-      position: relative;
-      min-height: 420px;
+      min-height: 380px;
     }
 
-    .startup-card:hover {
+    .role-card:hover {
       border-color: var(--accent);
       box-shadow: 0 10px 30px rgba(79, 70, 229, 0.12);
       transform: translateY(-4px);
     }
 
-    .startup-icon {
+    .role-icon {
       width: 100px;
       height: 100px;
       background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
@@ -295,46 +295,25 @@
       box-shadow: 0 2px 8px rgba(79, 70, 229, 0.1);
     }
 
-    .startup-name {
-      font-size: 20px;
+    .role-title {
+      font-size: 18px;
       font-weight: 700;
       margin-bottom: 8px;
-      color: var(--primary);
     }
 
-    .startup-tagline {
-      font-size: 14px;
-      color: var(--text-muted);
-      margin-bottom: 15px;
-      font-weight: 500;
-      min-height: 40px;
-      line-height: 1.4;
+    .role-type {
+      font-size: 13px;
+      color: var(--accent);
+      font-weight: 700;
+      margin-bottom: 24px;
     }
 
-    .startup-tags {
+    /* SKILLS/TAGS */
+    .role-tags {
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
       margin-bottom: 20px;
-      justify-content: center;
-    }
-
-    .startup-meta {
-      font-size: 13px;
-      color: var(--text-muted);
-      font-weight: 600;
-      margin-bottom: 20px;
-    }
-
-    /* LOADING SPINNER */
-    #loadingSpinner {
-      text-align: center;
-      padding: 60px 20px;
-      color: var(--text-muted);
-    }
-
-    #loadingSpinner p {
-      font-size: 16px;
     }
 
     .tag {
@@ -352,19 +331,17 @@
     }
 
     /* FOOTER INFO */
-    .card-footer {
+    .role-footer {
       margin-top: auto;
       padding-top: 18px;
       border-top: 1px dashed var(--border);
       display: flex;
-      flex-direction: column;
+      justify-content: space-between;
       align-items: center;
-      justify-content: center;
-      gap: 12px;
       width: 100%;
     }
 
-    .footer-info {
+    .role-meta {
       display: flex;
       align-items: center;
       gap: 6px;
@@ -489,34 +466,30 @@
 <body>
 
   <div class="header">
-    <h1 class="header-title">Explore <span class="accent">Dreams</span></h1>
-    <p class="header-subtitle">Discover startups created by founders and their open roles.</p>
+    <h1 class="header-title">All Open <span class="accent">Roles</span></h1>
+    <p class="header-subtitle" id="headerSubtitle">Discover exciting opportunities across all startups.</p>
   </div>
 
   <!-- SEARCH & FILTERS -->
   <div class="search-section">
     <div class="filter-card">
       <div class="search-container">
-        <div class="input-wrap"><i data-lucide="search"></i><input type="text" id="searchInput" placeholder="Search by startup, industry..." onkeyup="filterStartups()"></div>
-        <div class="input-wrap"><i data-lucide="map-pin"></i><input type="text" id="locationInput" placeholder="Location..." onkeyup="filterStartups()"></div>
-        <div class="input-wrap"><select id="stageFilter" onchange="filterStartups()">
-            <option value="all">All Stages</option>
-            <option value="Pre-Seed">Pre-Seed</option>
-            <option value="Seed">Seed</option>
-            <option value="Series A">Series A</option>
-            <option value="Series B">Series B</option>
+        <div class="input-wrap"><i data-lucide="search"></i><input type="text" placeholder="Search by role, skill..." onkeyup="filter()"></div>
+        <div class="input-wrap"><i data-lucide="map-pin"></i><input type="text" placeholder="Location..." onkeyup="filter()"></div>
+        <div class="input-wrap"><select onchange="filter()">
+            <option value="all">All Types</option>
+            <option value="Full-Time">Full-Time</option>
+            <option value="Contract">Contract</option>
+            <option value="Part-Time">Part-Time</option>
           </select></div>
       </div>
     </div>
   </div>
 
-  <!-- STARTUPS GRID -->
-  <div class="startups-section">
-    <div id="loadingSpinner">
-      <p>Loading startups...</p>
-    </div>
-    <div class="startups-grid" id="startupsGrid">
-      <!-- Startups will be populated here -->
+  <!-- ROLES GRID -->
+  <div class="roles-section">
+    <div class="roles-grid" id="rolesGrid">
+      <!-- Roles will be populated here -->
     </div>
   </div>
 
@@ -544,114 +517,131 @@
     // Initialize lucide icons immediately
     lucide.createIcons();
 
-    let allStartups = [];
-    let filteredStartups = [];
+    // Check if user is logged in
+    function isUserLoggedIn() {
+      const user = localStorage.getItem('user');
+      return !!user;
+    }
 
-    // Fetch all startups from the API
-    async function loadStartups() {
-      const spinner = document.getElementById('loadingSpinner');
-      const grid = document.getElementById('startupsGrid');
+    let allRoles = []; // Store all roles for filtering
+
+    // Load all roles from all startups
+    async function loadRoles() {
+      const rolesGrid = document.getElementById('rolesGrid');
+      rolesGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 60px 20px;"><p style="color: var(--text-muted);">Loading roles...</p></div>';
 
       try {
-        const response = await fetch('http://localhost:5000/api/public/startups', {
+        const response = await fetch(`http://localhost:5000/api/public/startups`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json'
           }
         });
 
-        if (!response.ok) throw new Error('Failed to fetch startups');
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(errorData.message || `Failed to fetch startups (${response.status})`);
+        }
         
         const data = await response.json();
-        allStartups = data.data || data || [];
-        
-        if (!Array.isArray(allStartups)) {
-          allStartups = [];
+        const startups = Array.isArray(data.data) ? data.data : (Array.isArray(data) ? data : []);
+
+        // Aggregate all roles from all startups
+        allRoles = [];
+        startups.forEach(startup => {
+          if (startup.roles && Array.isArray(startup.roles)) {
+            startup.roles.forEach(role => {
+              allRoles.push({
+                ...role,
+                companyName: startup.companyName,
+                startupId: startup._id,
+                location: startup.location,
+                stage: startup.stage,
+                industry: startup.industry
+              });
+            });
+          }
+        });
+
+        if (allRoles.length > 0) {
+          displayRoles(allRoles);
+        } else {
+          rolesGrid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 60px 20px; color: var(--text-muted);">
+            <p style="font-size: 18px;">No open positions available</p>
+          </div>`;
         }
 
-        spinner.style.display = 'none';
-        displayStartups(allStartups);
+        lucide.createIcons();
       } catch (error) {
-        console.error('Error loading startups:', error);
-        spinner.innerHTML = `<p>Unable to load startups. Please refresh the page.</p>`;
+        console.error('Error loading roles:', error);
+        rolesGrid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 60px 20px; color: var(--text-muted);">
+          <p style="font-size: 18px; margin-bottom: 10px;">Unable to load roles</p>
+          <p style="font-size: 14px;">${error.message || 'Please try again later'}</p>
+        </div>`;
       }
-
-      lucide.createIcons();
     }
 
-    function displayStartups(startups) {
-      const grid = document.getElementById('startupsGrid');
+    function displayRoles(roles) {
+      const rolesGrid = document.getElementById('rolesGrid');
       
-      if (startups.length === 0) {
-        grid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 60px 20px; color: var(--text-muted);">
-          <p style="font-size: 18px; margin-bottom: 10px;">No startups found</p>
-          <p style="font-size: 14px;">Try adjusting your search filters</p>
+      if (roles.length === 0) {
+        rolesGrid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 60px 20px; color: var(--text-muted);">
+          <p style="font-size: 18px;">No roles match your filters</p>
         </div>`;
         return;
       }
 
-      grid.innerHTML = startups.map(startup => {
-        const rolesCount = startup.roles ? startup.roles.length : 0;
-        
-        return `
-          <div class="startup-card" onclick="viewStartup('${startup._id || startup.id}')">
-            <div class="startup-icon">${startup.companyName ? startup.companyName.charAt(0).toUpperCase() : 'S'}</div>
-            <h3 class="startup-name">${startup.companyName || 'Startup'}</h3>
-            <p class="startup-tagline">${startup.tagline || startup.description || 'Innovative startup'}</p>
-            <div class="startup-tags">
-              ${startup.industry ? `<span class="tag">${startup.industry}</span>` : ''}
-              ${startup.stage ? `<span class="tag">${startup.stage}</span>` : ''}
-              ${startup.location ? `<span class="tag">${startup.location}</span>` : ''}
-            </div>
-            <div class="startup-meta">
-              ${rolesCount} open position${rolesCount !== 1 ? 's' : ''}
-            </div>
-            <div class="card-footer">
-              <div class="footer-info">
-                <i data-lucide="briefcase" size="14"></i> ${rolesCount} role${rolesCount !== 1 ? 's' : ''}
-              </div>
-              <button class="view-btn" onclick="event.stopPropagation(); viewStartup('${startup._id || startup.id}')">View</button>
-            </div>
+      rolesGrid.innerHTML = roles.map(role => `
+        <div class="role-card">
+          <div class="role-icon">${role.title.charAt(0).toUpperCase()}</div>
+          <h3 class="role-title">${role.title}</h3>
+          <div class="role-company" style="color: var(--primary); font-weight: 600; font-size: 13px; margin: 8px 0;">${role.companyName}</div>
+          <div class="role-type">${role.type}</div>
+          <div class="role-tags">
+            ${role.skills ? role.skills.map(skill => `<span class="tag">${skill}</span>`).join('') : ''}
           </div>
-        `;
-      }).join('');
+          <div class="role-footer">
+            <div class="role-meta">
+              <i data-lucide="clock" size="14"></i> ${role.exp || 'Experience required'}
+            </div>
+            <button class="view-btn" onclick="applyForRole('${role._id || role.id}')">Apply</button>
+          </div>
+        </div>
+      `).join('');
 
       lucide.createIcons();
     }
 
-    function filterStartups() {
-      const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-      const locationTerm = document.getElementById('locationInput').value.toLowerCase();
-      const stageFilter = document.getElementById('stageFilter').value;
+    function filter() {
+      const searchInput = document.querySelector('.search-container input[placeholder="Search by role, skill..."]').value.toLowerCase();
+      const locationInput = document.querySelector('.search-container input[placeholder="Location..."]').value.toLowerCase();
+      const typeSelect = document.querySelector('.search-container select').value;
 
-      filteredStartups = allStartups.filter(startup => {
-        const matchesSearch = !searchTerm || 
-          (startup.companyName && startup.companyName.toLowerCase().includes(searchTerm)) ||
-          (startup.description && startup.description.toLowerCase().includes(searchTerm)) ||
-          (startup.industry && startup.industry.toLowerCase().includes(searchTerm)) ||
-          (startup.tagline && startup.tagline.toLowerCase().includes(searchTerm));
-        
-        const matchesLocation = !locationTerm || 
-          (startup.location && startup.location.toLowerCase().includes(locationTerm));
-        
-        const matchesStage = stageFilter === 'all' || 
-          startup.stage === stageFilter;
+      const filtered = allRoles.filter(role => {
+        const matchesSearch = !searchInput || 
+          role.title.toLowerCase().includes(searchInput) ||
+          (role.skills && role.skills.some(skill => skill.toLowerCase().includes(searchInput))) ||
+          role.companyName.toLowerCase().includes(searchInput);
 
-        return matchesSearch && matchesLocation && matchesStage;
+        const matchesLocation = !locationInput || (role.location && role.location.toLowerCase().includes(locationInput));
+
+        const matchesType = typeSelect === 'all' || role.type === typeSelect;
+
+        return matchesSearch && matchesLocation && matchesType;
       });
 
-      displayStartups(filteredStartups);
+      displayRoles(filtered);
     }
 
-    function viewStartup(startupId) {
-      window.location.href = `posted-roles.html?id=${startupId}`;
+    function applyForRole(roleId) {
+      if (!isUserLoggedIn()) {
+        document.getElementById('loginModal').classList.add('active');
+      } else {
+        alert('Application submitted for the role!');
+      }
     }
 
-    function isUserLoggedIn() {
-      return !!localStorage.getItem('user');
-    }
-
-    window.onload = loadStartups;
+    window.onload = loadRoles;
 
     // Close modal when clicking outside
     document.addEventListener('DOMContentLoaded', function() {

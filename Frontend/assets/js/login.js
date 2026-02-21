@@ -54,12 +54,15 @@ document.addEventListener("DOMContentLoaded", () => {
                     const userData = {
                         uid: user.uid,
                         email: user.email,
-                        name: user.displayName,
-                        role: data.data.role // Use role from backend
+                        name: data.data.user.name || user.displayName,
+                        role: data.data.user.role // Use role from backend
                     };
                     
                     localStorage.setItem(`user_${user.uid}`, JSON.stringify(userData));
                     localStorage.setItem("isLoggedIn", "true");
+                    localStorage.setItem("loggedInUser", JSON.stringify(userData));
+                    localStorage.setItem("token", data.data.accessToken); // CRITICAL: Save JWT token from backend
+                    localStorage.setItem("refreshToken", data.data.refreshToken);
                     
                     alert(`✅ Welcome back, ${userData.name}!`);
                     
@@ -120,27 +123,41 @@ document.addEventListener("DOMContentLoaded", () => {
                     })
                 });
                 
+                const data = await response.json();
+                console.log('Backend response status:', response.status);
+                console.log('Backend response data:', JSON.stringify(data, null, 2)); // DEBUG - Pretty print
+                console.log('Response structure check:');
+                console.log('  - data.data exists:', !!data.data);
+                console.log('  - data.data.user exists:', !!data.data?.user);
+                console.log('  - data.data.user.role:', data.data?.user?.role);
+                console.log('  - data.data.accessToken:', !!data.data?.accessToken);
+                
                 if (response.ok) {
-                    const data = await response.json();
-                    
-                    console.log('Backend response:', data); // DEBUG
-                    
                     // Ensure data structure is valid
-                    if (!data.data || !data.data.role) {
-                        console.error('Missing role in backend response', data);
-                        throw new Error("User role not found in server response");
+                    if (!data.data || !data.data.user || !data.data.user.role) {
+                        console.error('Missing user data in backend response', data);
+                        console.error('Expected structure: data.data.user.role');
+                        console.error('Actual data.data:', data.data);
+                        throw new Error("User role not found in server response. Check console for details.");
                     }
                     
                     const userData = {
                         uid: user.uid,
                         email: user.email,
-                        name: data.data.name || user.displayName,
-                        role: data.data.role // CRITICAL: Get role from backend
+                        name: data.data.user.name || user.displayName,
+                        role: data.data.user.role // CRITICAL: Get role from backend
                     };
                     
                     localStorage.setItem("isLoggedIn", "true");
                     localStorage.setItem("loggedInUser", JSON.stringify(userData));
+                    localStorage.setItem("token", data.data.accessToken); // CRITICAL: Save JWT token from backend
+                    localStorage.setItem("refreshToken", data.data.refreshToken);
                     localStorage.setItem(`user_${user.uid}`, JSON.stringify(userData));
+
+                    console.log("Saved to localStorage:", {
+                        loggedInUser: userData,
+                        tokenExists: !!data.data.accessToken
+                    });
 
                     alert(`✅ Welcome back, ${userData.name}!`);
                     
@@ -150,10 +167,15 @@ document.addEventListener("DOMContentLoaded", () => {
                         window.location.replace("member-dashboard.html");
                     }
                 } else {
-                     throw new Error("Could not retrieve user profile");
+                    // Handle non-200 responses
+                    console.error('Backend returned non-OK status:', response.status);
+                    console.error('Error response:', data);
+                    throw new Error(data.message || "Backend returned an error");
                 }
             } catch (backendError) {
                 console.error("Backend fetch error:", backendError);
+                console.error("Full error object:", backendError);
+                console.error("Error stack:", backendError.stack);
                 // Fallback only if backend is down
                 alert("Login successful but could not load profile. Using default member view.\nError: " + backendError.message);
                 // improving debugging by not auto-redirecting if there's an error,

@@ -9,6 +9,7 @@ const session = require('express-session');
 
 // Import routes
 const authRoutes = require('./src/routes/authRoutes');
+const publicRoutes = require('./src/routes/publicRoutes');
 const founderRoutes = require('./src/routes/founderRoutes');
 const memberRoutes = require('./src/routes/memberRoutes');
 const uploadRoutes = require('./src/routes/uploadRoutes');
@@ -95,6 +96,7 @@ app.get('/', (req, res) => {
 });
 
 app.use('/api/auth', authRoutes);
+app.use('/api/public', publicRoutes);
 app.use('/api/founder', founderRoutes);
 app.use('/api/member', memberRoutes);
 app.use('/api/upload', uploadRoutes);

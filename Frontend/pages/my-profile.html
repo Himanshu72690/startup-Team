@@ -14,16 +14,24 @@
     .app { display: flex; min-height: 100vh; }
 
     /* MODERN SIDEBAR (Same as Application Tracker) */
-    .sidebar { width: 260px; background: #0f172a; color: #fff; padding: 30px 20px; display: flex; flex-direction: column; position: sticky; top: 0; height: 100vh; }
-    .logo { font-size: 24px; font-weight: 700; margin-bottom: 40px; padding-left: 10px; }
+    .sidebar { width: 260px; background: #0f172a; color: #fff; padding: 30px 20px; display: flex; flex-direction: column; position: sticky; top: 0; height: 100vh; transition: width 0.3s ease; }
+    .sidebar.collapsed { width: 80px; padding: 20px 10px; }
+    .toggle-sidebar { background: none; border: none; color: #fff; cursor: pointer; font-size: 20px; margin-bottom: 30px; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 8px; transition: 0.3s; }
+    .toggle-sidebar:hover { background: rgba(255,255,255,0.1); }
+    .logo { font-size: 24px; font-weight: 700; margin-bottom: 40px; padding-left: 10px; transition: 0.3s; }
+    .sidebar.collapsed .logo { font-size: 0; margin-bottom: 20px; padding-left: 0; }
     .logo span { color: #6366f1; }
     .sidebar nav { flex: 1; }
-    .sidebar a { display: flex; align-items: center; gap: 12px; color: #94a3b8; text-decoration: none; padding: 12px 15px; border-radius: 10px; margin-bottom: 8px; transition: 0.3s; font-size: 14px; font-weight: 500; }
+    .sidebar a { display: flex; align-items: center; gap: 12px; color: #94a3b8; text-decoration: none; padding: 12px 15px; border-radius: 10px; margin-bottom: 8px; transition: 0.3s; font-size: 14px; font-weight: 500; white-space: nowrap; }
+    .sidebar.collapsed a { padding: 12px; justify-content: center; gap: 0; }
+    .sidebar.collapsed a span { display: none; }
     .sidebar a:hover { background: rgba(255,255,255,0.05); color: #fff; }
     .sidebar a.active { background: #6366f1; color: white; box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3); }
 
     /* NEW LOGOUT BUTTON STYLE */
-    .logout-btn { background: #ef4444; color: white; border: none; padding: 12px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 600; transition: 0.3s; margin-top: auto; }
+    .logout-btn { background: #ef4444; color: white; border: none; padding: 12px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 600; transition: 0.3s; margin-top: auto; white-space: nowrap; }
+    .sidebar.collapsed .logout-btn { gap: 0; }
+    .sidebar.collapsed .logout-btn span { display: none; }
     .logout-btn:hover { background: #dc2626; transform: translateY(-2px); }
 
     /* MAIN CONTENT */
@@ -64,14 +72,16 @@
 
 <div class="app">
   <aside class="sidebar">
+    <button class="toggle-sidebar" onclick="toggleSidebar()"><i data-lucide="chevrons-left"></i></button>
     <div class="logo">Startup<span>Team</span></div>
     <nav>
-      <a href="member-dashboard.html"><i data-lucide="layout-dashboard"></i> Dashboard</a>
-      <a href="explore-startups.html"><i data-lucide="search"></i> Explore Teams</a>
-      <a href="join-requests.html"><i data-lucide="send"></i> My Applications</a>
-      <a href="my-profile.html" class="active"><i data-lucide="user"></i> Professional Profile</a>
+      <a href="member-dashboard.html"><i data-lucide="layout-dashboard"></i> <span>Dashboard</span></a>
+      <a href="explore-startups.html"><i data-lucide="search"></i> <span>Explore Teams</span></a>
+      <a href="join-requests.html"><i data-lucide="send"></i> <span>My Applications</span></a>
+      <a href="my-profile.html" class="active"><i data-lucide="user"></i> <span>Professional Profile</span></a>
+      <a href="members-list.html"><i data-lucide="users"></i> <span>Explore Members</span></a>
     </nav>
-    <button onclick="logout()" class="logout-btn"><i data-lucide="log-out"></i> Log Out</button>
+    <button onclick="window.logoutUser()" class="logout-btn"><i data-lucide="log-out"></i> <span>Log Out</span></button>
   </aside>
 
   <main class="main">
@@ -132,6 +142,37 @@
 </div>
 
 <script>
+  // Sidebar toggle functionality
+  function toggleSidebar() {
+    const sidebar = document.querySelector('.sidebar');
+    const icon = document.querySelector('.toggle-sidebar i');
+    sidebar.classList.toggle('collapsed');
+    if (sidebar.classList.contains('collapsed')) {
+      icon.setAttribute('data-lucide', 'chevrons-right');
+      localStorage.setItem('sidebarCollapsed', 'true');
+    } else {
+      icon.setAttribute('data-lucide', 'chevrons-left');
+      localStorage.setItem('sidebarCollapsed', 'false');
+    }
+    lucide.createIcons();
+  }
+
+  function restoreSidebarState() {
+    const isCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+    const sidebar = document.querySelector('.sidebar');
+    const icon = document.querySelector('.toggle-sidebar i');
+    if (isCollapsed) {
+      sidebar.classList.add('collapsed');
+      icon.setAttribute('data-lucide', 'chevrons-right');
+    } else {
+      sidebar.classList.remove('collapsed');
+      icon.setAttribute('data-lucide', 'chevrons-left');
+    }
+  }
+
+  // Call restore before page fully loads
+  restoreSidebarState();
+
   lucide.createIcons();
 
   window.onload = () => {
@@ -169,5 +210,6 @@
     window.location.href = "../index.html";
   }
 </script>
+<script type="module" src="../assets/js/logout.js"></script>
 </body>
 </html>

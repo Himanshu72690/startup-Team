@@ -15,16 +15,67 @@
     .sidebar {
       width: 260px; background: #0f172a; color: #fff; padding: 30px 20px;
       display: flex; flex-direction: column; position: sticky; top: 0; height: 100vh;
+      transition: width 0.3s ease;
     }
-    .logo { font-size: 24px; font-weight: 700; margin-bottom: 40px; padding-left: 10px; }
+    
+    .sidebar.collapsed {
+      width: 80px;
+      padding: 20px 10px;
+    }
+
+    .toggle-sidebar {
+      background: none; border: none; color: #fff; cursor: pointer; 
+      font-size: 20px; margin-bottom: 30px; display: flex; align-items: center; 
+      justify-content: center; width: 40px; height: 40px;
+      border-radius: 8px; transition: 0.3s;
+    }
+    .toggle-sidebar:hover { background: rgba(255,255,255,0.1); }
+
+    .logo { font-size: 24px; font-weight: 700; margin-bottom: 40px; padding-left: 10px; transition: 0.3s; }
     .logo span { color: #6366f1; }
+
+    .sidebar.collapsed .logo {
+      font-size: 0;
+      margin-bottom: 20px;
+      padding-left: 0;
+    }
+
     .sidebar a {
       display: flex; align-items: center; gap: 12px; color: #94a3b8; text-decoration: none;
       padding: 12px 15px; border-radius: 8px; margin-bottom: 5px; transition: 0.3s; font-size: 14px;
+      white-space: nowrap;
     }
+
+    .sidebar.collapsed a {
+      padding: 12px;
+      justify-content: center;
+      gap: 0;
+    }
+
+    .sidebar.collapsed a span {
+      display: none;
+    }
+
     .sidebar a:hover, .sidebar a.active { background: rgba(255,255,255,0.05); color: #fff; }
     .sidebar a.active { background: #6366f1; color: white; }
-    .logout-btn { margin-top: auto; background: #ef4444; color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 600; }
+
+    .logout-btn { 
+      margin-top: auto; background: #ef4444; color: white; border: none; padding: 12px; 
+      border-radius: 8px; cursor: pointer; display: flex; align-items: center; 
+      justify-content: center; gap: 8px; font-weight: 600; transition: 0.3s;
+      white-space: nowrap;
+    }
+
+    .sidebar.collapsed .logout-btn {
+      gap: 0;
+      width: 40px;
+      height: 40px;
+      padding: 0;
+    }
+
+    .sidebar.collapsed .logout-btn span {
+      display: none;
+    }
 
     /* MAIN CONTENT */
     .main { flex: 1; padding: 40px; }
@@ -75,16 +126,19 @@
 
 <div class="app">
   <aside class="sidebar">
+    <button class="toggle-sidebar" onclick="toggleSidebar()"><i data-lucide="chevrons-left"></i></button>
     <div class="logo">Startup<span>Team</span></div>
     <nav>
-      <a href="founder-dashboard.html"><i data-lucide="layout-dashboard"></i> Dashboard</a>
-      <a href="founder-profile.html"><i data-lucide="user"></i> Founder Profile</a>
-      <a href="startup-profile.html"><i data-lucide="rocket"></i> Startup Profile</a>
-      <a href="post-role.html"><i data-lucide="plus-circle"></i> Post Role</a>
-      <a href="roles-list.html"><i data-lucide="briefcase"></i> Roles</a>
-      <a href="members-requests.html" class="active"><i data-lucide="users"></i> Member Requests</a>
+      <a href="founder-dashboard.html"><i data-lucide="layout-dashboard"></i> <span>Dashboard</span></a>
+      <a href="founder-profile.html"><i data-lucide="user"></i> <span>Founder Profile</span></a>
+      <a href="startup-profile.html"><i data-lucide="rocket"></i> <span>Startup Profile</span></a>
+      <a href="post-role.html"><i data-lucide="plus-circle"></i> <span>Post Role</span></a>
+      <a href="roles-list.html"><i data-lucide="briefcase"></i> <span>Roles</span></a>
+      <a href="members-requests.html" class="active"><i data-lucide="users"></i> <span>Member Requests</span></a>
+      <a href="members-list.html"><i data-lucide="search"></i> <span>Explore Members</span></a>
+      <a href="explore-startups.html"><i data-lucide="zap"></i> <span>Explore Startups</span></a>
     </nav>
-    <button onclick="logout()" class="logout-btn"><i data-lucide="log-out"></i> Logout</button>
+    <button onclick="window.logoutUser()" class="logout-btn"><i data-lucide="log-out"></i> <span>Logout</span></button>
   </aside>
 
   <main class="main">
@@ -101,105 +155,163 @@
 <script>
 lucide.createIcons();
 
-// Demo data with phone added
-let demoRequests = [
-  { 
-    id: 1,
-    name: "Rahul Sharma", 
-    role: "Fullstack Developer", 
-    exp: "3 Years", 
-    bio: "Passionate about building scalable web apps with Node.js and React.", 
-    skills: ["React", "Node", "AWS"],
-    phone: "919876543210",
-    status: "Pending"
-  },
-  { 
-    id: 2,
-    name: "Priya Singh", 
-    role: "UI/UX Designer", 
-    exp: "2 Years", 
-    bio: "Focus on creating user-centric designs and high-fidelity prototypes.", 
-    skills: ["Figma", "Adobe XD", "Prototyping"],
-    phone: "919812345678",
-    status: "Pending"
-  }
-];
+let applicationsData = [];
 
-window.onload = () => {
-  render();
+function toggleSidebar() {
+  const sidebar = document.querySelector('.sidebar');
+  const toggle = document.querySelector('.toggle-sidebar i');
+  
+  sidebar.classList.toggle('collapsed');
+  
+  // Rotate the icon
+  toggle.setAttribute('data-lucide', sidebar.classList.contains('collapsed') ? 'chevrons-right' : 'chevrons-left');
+  lucide.createIcons();
+  
+  // Save preference to localStorage
+  localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
+}
+
+// Restore sidebar state on page load
+function restoreSidebarState() {
+  const isCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+  if (isCollapsed) {
+    document.querySelector('.sidebar').classList.add('collapsed');
+    document.querySelector('.toggle-sidebar i').setAttribute('data-lucide', 'chevrons-right');
+  }
+}
+
+window.onload = async () => {
+  restoreSidebarState();
+  lucide.createIcons();
+  await fetchApplications();
 };
 
-function render(){
+async function fetchApplications() {
+  const token = localStorage.getItem('token');
+  const container = document.getElementById('requestsList');
+  
+  try {
+    // Fetch applications from backend
+    const response = await fetch('http://localhost:5000/api/founder/applications', {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
 
+    if (response.ok) {
+      const data = await response.json();
+      if (data.success && data.data.length > 0) {
+        applicationsData = data.data;
+        
+        // Fetch member profiles for additional details
+        for (let app of applicationsData) {
+          try {
+            const profileRes = await fetch(`http://localhost:5000/api/member/profile/${app.memberId._id}`, {
+              headers: {
+                'Authorization': `Bearer ${token}`
+              }
+            });
+            if (profileRes.ok) {
+              const profileData = await profileRes.json();
+              if (profileData.success) {
+                app.memberProfile = profileData.data;
+              }
+            }
+          } catch (err) {
+            console.warn('Could not fetch member profile:', err);
+          }
+        }
+        
+        render();
+        return;
+      }
+    }
+    
+    // Fallback if API fails
+    renderEmpty();
+  } catch (error) {
+    console.error('Error fetching applications:', error);
+    renderEmpty();
+  }
+}
+
+function renderEmpty() {
+  const container = document.getElementById('requestsList');
+  container.innerHTML = `
+    <div class="empty-state">
+      <i data-lucide="user-plus" size="48" style="opacity:0.2; margin-bottom:15px;"></i>
+      <p>No pending requests at the moment.</p>
+    </div>`;
+  lucide.createIcons();
+}
+
+function render() {
   const container = document.getElementById('requestsList');
 
-  if (demoRequests.length === 0) {
-    container.innerHTML = `
-      <div class="empty-state">
-        <i data-lucide="user-plus" size="48" style="opacity:0.2; margin-bottom:15px;"></i>
-        <p>No pending requests at the moment.</p>
-      </div>`;
-    lucide.createIcons();
+  if (applicationsData.length === 0) {
+    renderEmpty();
     return;
   }
 
-  container.innerHTML = demoRequests.map(req => {
-
+  container.innerHTML = applicationsData.map((app, index) => {
+    const member = app.memberId;
+    const role = app.roleId;
+    const profile = app.memberProfile || {};
+    
     let actionButtons = "";
-
-    if(req.status === "Pending"){
+    
+    if (app.status === "pending") {
       actionButtons = `
-        <button class="btn btn-accept" onclick="accept(${req.id})">
+        <button class="btn btn-accept" onclick="acceptApp(${index})">
           <i data-lucide="user-check" size="16"></i> Accept
         </button>
-        <button class="btn btn-reject" onclick="reject(${req.id})">
+        <button class="btn btn-reject" onclick="rejectApp(${index})">
           <i data-lucide="user-x" size="16"></i> Reject
         </button>
       `;
-    }
-
-    if(req.status === "Accepted"){
+    } else if (app.status === "accepted") {
       actionButtons = `
-        <a href="#" onclick="openWhatsApp('${req.phone}','${req.name}','${req.role}')" 
-           class="btn btn-accept">
+        <a href="#" onclick="openWhatsApp('${member.phone}','${member.name}','${role.title}')" 
+           class="btn btn-accept" style="grid-column: 1/-1;">
           <i data-lucide="message-circle" size="16"></i> Chat on WhatsApp
         </a>
       `;
-    }
-
-    if(req.status === "Rejected"){
+    } else {
       actionButtons = `
-        <span style="color:#ef4444;font-weight:600;">Rejected</span>
+        <span style="color:#ef4444;font-weight:600; grid-column: 1/-1;">${app.status.charAt(0).toUpperCase() + app.status.slice(1)}</span>
       `;
     }
 
     return `
       <div class="request-card">
         <div class="user-profile">
-          <div class="avatar">${req.name.charAt(0)}</div>
+          <div class="avatar" style="background: #f5f3ff; color: #8b5cf6;">${member.name.charAt(0)}</div>
           <div class="user-info">
-            <h4>${req.name}</h4>
-            <p>${req.role}</p>
+            <h4>${member.name}</h4>
+            <p>${role.title}</p>
           </div>
         </div>
 
         <div class="meta-info">
           <div class="meta-tag">
             <i data-lucide="briefcase" size="14" class="icon-highlight"></i>
-            ${req.exp} Exp
+            ${profile.yearsExperience || '?'} Yrs Exp
           </div>
           <div class="meta-tag">
             <i data-lucide="check-circle" size="14" class="icon-highlight"></i>
-            ${req.status}
+            ${app.status.charAt(0).toUpperCase() + app.status.slice(1)}
           </div>
         </div>
 
         <div class="skills-box">
-          ${req.skills.map(skill => `<span class="skill-pill">${skill}</span>`).join('')}
+          ${profile.skills && profile.skills.length > 0 
+            ? profile.skills.slice(0, 5).map(skill => `<span class="skill-pill">${skill}</span>`).join('')
+            : '<span class="skill-pill">View Full Profile</span>'
+          }
         </div>
 
         <p style="font-size: 13px; color: #64748b; line-height: 1.6; margin-bottom: 20px;">
-          ${req.bio}
+          ${profile.bio || app.coverLetter || 'No additional information provided.'}
         </p>
 
         <div class="action-group">
@@ -207,47 +319,82 @@ function render(){
         </div>
       </div>
     `;
-
   }).join('');
 
   lucide.createIcons();
 }
 
-/* ======================
-   ACCEPT FUNCTION
-====================== */
+/* Accept Application */
+async function acceptApp(index) {
+  const app = applicationsData[index];
+  const token = localStorage.getItem('token');
+  
+  try {
+    const response = await fetch(`http://localhost:5000/api/founder/applications/${app._id}/accept`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({ notes: 'Accepted by founder' })
+    });
 
-function accept(id){
-  const req = demoRequests.find(r => r.id === id);
-  req.status = "Accepted";
-  render();
-
-  // 🔥 Auto open WhatsApp
-  openWhatsApp(req.phone, req.name, req.role);
+    if (response.ok) {
+      app.status = 'accepted';
+      render();
+      
+      // Auto open WhatsApp
+      openWhatsApp(app.memberId.phone, app.memberId.name, app.roleId.title);
+    } else {
+      alert('Failed to accept application');
+    }
+  } catch (error) {
+    console.error('Error accepting application:', error);
+    alert('Error: ' + error.message);
+  }
 }
 
-/* ======================
-   REJECT FUNCTION
-====================== */
+/* Reject Application */
+async function rejectApp(index) {
+  const app = applicationsData[index];
+  const token = localStorage.getItem('token');
+  
+  if (!confirm('Are you sure you want to reject this application?')) return;
+  
+  try {
+    const response = await fetch(`http://localhost:5000/api/founder/applications/${app._id}/reject`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({ notes: 'Rejected by founder' })
+    });
 
-function reject(id){
-  const req = demoRequests.find(r => r.id === id);
-  req.status = "Rejected";
-  render();
+    if (response.ok) {
+      app.status = 'rejected';
+      render();
+    } else {
+      alert('Failed to reject application');
+    }
+  } catch (error) {
+    console.error('Error rejecting application:', error);
+    alert('Error: ' + error.message);
+  }
 }
 
-/* ======================
-   WHATSAPP OPEN
-====================== */
-
-function openWhatsApp(phone, name, role){
-
+/* Open WhatsApp */
+function openWhatsApp(phone, name, role) {
+  if (!phone) {
+    alert('Phone number not available for WhatsApp contact');
+    return;
+  }
+  
   const message = encodeURIComponent(
     `Hi ${name}, your application for ${role} has been accepted. Let's discuss further.`
   );
 
   const url = `https://wa.me/${phone}?text=${message}`;
-
   window.open(url, "_blank");
 }
 </script>

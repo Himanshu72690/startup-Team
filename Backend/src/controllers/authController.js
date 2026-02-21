@@ -39,13 +39,31 @@ exports.registerFirebase = async (req, res) => {
          }
       }
       
+      // Ensure Firebase users have verified email
+      if (!user.emailVerified && provider === 'firebase') {
+        user.emailVerified = true;
+      }
+      
+      // Generate JWT tokens for authentication
+      const { accessToken, refreshToken } = generateTokenPair(user._id);
+      
+      // Save refresh token
+      user.refreshTokens.push({ token: refreshToken });
+      user.lastLogin = Date.now();
+      await user.save();
+      
       return res.status(200).json({
         success: true,
         message: 'User already registered',
         data: {
-          id: user._id,
-          email: user.email,
-          role: user.role
+          user: {
+            _id: user._id,
+            name: user.name,
+            email: user.email,
+            role: user.role
+          },
+          accessToken,
+          refreshToken
         }
       });
     }
@@ -58,7 +76,7 @@ exports.registerFirebase = async (req, res) => {
       role: role || 'member',
       authProvider: provider || 'firebase',
       providerId: uid, // Storing Firebase UID
-      emailVerified: provider === 'google', // Google is verified, email/pass needs link
+      emailVerified: true, // Firebase users are already authenticated
       lastLogin: Date.now()
     });
 
@@ -71,13 +89,25 @@ exports.registerFirebase = async (req, res) => {
       await MemberProfile.create({ userId: user._id });
     }
 
+    // Generate JWT tokens for authentication
+    const { accessToken, refreshToken } = generateTokenPair(user._id);
+    
+    // Save refresh token
+    user.refreshTokens.push({ token: refreshToken });
+    await user.save();
+
     res.status(201).json({
       success: true,
       message: 'User registered in backend',
       data: {
-        id: user._id,
-        email: user.email,
-        role: user.role
+        user: {
+          _id: user._id,
+          name: user.name,
+          email: user.email,
+          role: user.role
+        },
+        accessToken,
+        refreshToken
       }
     });
 

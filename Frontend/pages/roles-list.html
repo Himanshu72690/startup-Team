@@ -7,159 +7,455 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/lucide@latest"></script>
   <style>
-    /* EXACT SIDEBAR THEME */
+    /* DESIGN SYSTEM */
+    :root {
+      --primary: #6366f1;
+      --primary-light: #818cf8;
+      --dark: #0f172a;
+      --light: #f8fafc;
+      --text: #1e293b;
+      --text-secondary: #64748b;
+      --border: #f1f5f9;
+      --success: #22c55e;
+      --warning: #eab308;
+      --danger: #ef4444;
+    }
+
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Poppins', sans-serif; background: #f8fafc; color: #1e293b; }
+    body { font-family: 'Poppins', sans-serif; background: var(--light); color: var(--text); }
     .app { display: flex; min-height: 100vh; }
 
+    /* SIDEBAR */
     .sidebar {
-      width: 260px; background: #0f172a; color: #fff; padding: 30px 20px;
+      width: 260px; background: var(--dark); color: #fff; padding: 30px 20px;
       display: flex; flex-direction: column; position: sticky; top: 0; height: 100vh;
+      transition: width 0.3s ease;
     }
-    .logo { font-size: 24px; font-weight: 700; margin-bottom: 40px; padding-left: 10px; }
-    .logo span { color: #6366f1; }
+    .sidebar.collapsed {
+      width: 80px; padding: 20px 10px;
+    }
+    .toggle-sidebar {
+      background: none; border: none; color: #fff; cursor: pointer; font-size: 20px;
+      margin-bottom: 30px; display: flex; align-items: center; justify-content: center;
+      width: 40px; height: 40px; border-radius: 8px; transition: 0.3s;
+    }
+    .toggle-sidebar:hover { background: rgba(255,255,255,0.1); }
+    .logo { font-size: 24px; font-weight: 700; margin-bottom: 40px; padding-left: 10px; transition: 0.3s; }
+    .sidebar.collapsed .logo { font-size: 0; margin-bottom: 20px; padding-left: 0; }
+    .logo span { color: var(--primary); }
     .sidebar a {
       display: flex; align-items: center; gap: 12px; color: #94a3b8; text-decoration: none;
-      padding: 12px 15px; border-radius: 8px; margin-bottom: 5px; transition: 0.3s; font-size: 14px;
+      padding: 12px 15px; border-radius: 8px; margin-bottom: 5px; transition: 0.3s; font-size: 14px; white-space: nowrap;
     }
+    .sidebar.collapsed a {
+      padding: 12px; justify-content: center; gap: 0;
+    }
+    .sidebar.collapsed a span { display: none; }
     .sidebar a:hover, .sidebar a.active { background: rgba(255,255,255,0.05); color: #fff; }
-    .sidebar a.active { background: #6366f1; color: white; }
-    .logout-btn { margin-top: auto; background: #ef4444; color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 600; }
+    .sidebar a.active { background: var(--primary); color: white; }
+    .logout-btn { margin-top: auto; background: var(--danger); color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 600; white-space: nowrap; transition: 0.3s; }
+    .sidebar.collapsed .logout-btn { gap: 0; }
+    .sidebar.collapsed .logout-btn span { display: none; }
 
     /* MAIN CONTENT */
-    .main { flex: 1; padding: 40px; }
-    .header-section { display: flex; justify-content: space-between; align-items: center; margin-bottom: 35px; }
-    .header-section h2 { font-size: 28px; font-weight: 700; }
+    .main { flex: 1; padding: 40px; overflow-y: auto; }
+    .header-section { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 35px; }
+    .header-left h2 { font-size: 28px; font-weight: 700; margin-bottom: 5px; }
+    .header-left p { color: var(--text-secondary); font-size: 14px; }
+    
+    .header-right { display: flex; gap: 15px; align-items: center; }
     
     .btn-post {
-      background: #6366f1; color: white; padding: 10px 20px; border-radius: 10px;
+      background: var(--primary); color: white; padding: 10px 20px; border-radius: 10px;
       text-decoration: none; font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 8px;
+      transition: 0.3s; border: none; cursor: pointer;
     }
+    .btn-post:hover { background: var(--primary-light); }
 
-    /* ATTRACTIVE ROLE CARDS */
-    .roles-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); gap: 25px; }
+    .view-toggle { 
+      display: flex; gap: 8px; background: white; border-radius: 8px; border: 1px solid var(--border); padding: 5px;
+    }
+    .view-btn { 
+      background: none; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600;
+      color: var(--text-secondary); transition: 0.3s;
+    }
+    .view-btn.active { background: var(--border); color: var(--primary); }
+
+    /* ROLES CONTAINER */
+    .roles-container { margin-top: 25px; }
+
+    /* CARD VIEW */
+    .roles-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 20px; }
     
     .role-card {
-      background: #fff; padding: 30px; border-radius: 16px; border: 1px solid #f1f5f9;
-      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); transition: 0.3s; position: relative;
+      background: white; border: 1px solid var(--border); border-radius: 14px; padding: 25px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.04); transition: 0.3s; position: relative;
+      display: flex; flex-direction: column;
     }
-    .role-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.08); }
-
-    .role-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
-    .role-title { font-size: 18px; font-weight: 700; color: #0f172a; }
-    .post-date { font-size: 11px; color: #94a3b8; font-weight: 600; text-transform: uppercase; }
-
-    /* HIGHLIGHTED ICONS ROW */
-    .info-row { display: flex; flex-wrap: wrap; gap: 15px; margin-bottom: 20px; }
-    .info-tag { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: #475569; }
-    
-    .icon-sm { 
-      width: 28px; height: 28px; border-radius: 6px; 
-      display: flex; align-items: center; justify-content: center; 
+    .role-card:hover { 
+      box-shadow: 0 8px 16px rgba(0,0,0,0.08); transform: translateY(-3px);
     }
-    .bg-blue { background: #eff6ff; color: #3b82f6; }
-    .bg-purple { background: #f5f3ff; color: #8b5cf6; }
-    .bg-green { background: #f0fdf4; color: #22c55e; }
 
-    .skills-section { border-top: 1px solid #f1f5f9; padding-top: 15px; margin-top: 15px; }
+    .role-card-header { 
+      display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;
+    }
+    .role-title { font-size: 17px; font-weight: 700; color: var(--dark); flex: 1; }
+    .role-badge { 
+      background: #ecfdf5; color: var(--success); padding: 4px 10px; border-radius: 6px; 
+      font-size: 11px; font-weight: 700; text-transform: uppercase;
+    }
+
+    .role-meta { 
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 18px; padding-bottom: 18px;
+      border-bottom: 1px solid var(--border);
+    }
+    .meta-item { display: flex; align-items: center; gap: 8px; font-size: 12px; }
+    .meta-icon {
+      width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center;
+    }
+    .icon-purple { background: #f5f3ff; color: #8b5cf6; }
+    .icon-green { background: #f0fdf4; color: var(--success); }
+    .icon-blue { background: #eff6ff; color: #3b82f6; }
+    .meta-label { font-size: 11px; color: var(--text-secondary); font-weight: 600; text-transform: uppercase; }
+    .meta-value { font-size: 13px; font-weight: 600; color: var(--text); }
+
+    .role-description { 
+      color: var(--text-secondary); font-size: 13px; line-height: 1.6; margin-bottom: 15px; flex-grow: 1;
+    }
+
+    .skills-wrapper { margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid var(--border); }
+    .skills-label { font-size: 11px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 8px; display: block; }
+    .skills-list { display: flex; flex-wrap: wrap; gap: 6px; }
     .skill-badge {
-      display: inline-block; background: #f1f5f9; color: #475569;
-      padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; margin-right: 5px; margin-bottom: 5px;
+      background: var(--border); color: var(--text); padding: 4px 10px; border-radius: 6px; 
+      font-size: 12px; font-weight: 600;
     }
 
-    .no-roles { text-align: center; padding: 60px; color: #94a3b8; }
+    .role-actions { 
+      display: flex; gap: 10px; justify-content: space-between;
+    }
+    .btn-view {
+      flex: 1; background: var(--primary); color: white; border: none; padding: 10px; border-radius: 8px;
+      font-size: 13px; font-weight: 700; cursor: pointer; transition: 0.3s;
+    }
+    .btn-view:hover { background: var(--primary-light); }
+    .btn-delete {
+      background: none; border: 1px solid var(--danger); color: var(--danger); padding: 10px 15px; 
+      border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; transition: 0.3s;
+    }
+    .btn-delete:hover { background: rgba(239,68,68,0.05); }
+
+    /* TABLE VIEW */
+    .roles-table-wrapper { display: none; }
+    .roles-table-wrapper.active { display: block; }
+    .roles-table {
+      width: 100%; border-collapse: collapse; background: white; border-radius: 12px; overflow: hidden;
+      border: 1px solid var(--border); box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+    }
+    .roles-table thead {
+      background: #f8fafc; border-bottom: 1px solid var(--border);
+    }
+    .roles-table th {
+      padding: 14px 16px; text-align: left; font-weight: 700; font-size: 12px; 
+      text-transform: uppercase; color: var(--text-secondary);
+    }
+    .roles-table td {
+      padding: 14px 16px; border-bottom: 1px solid var(--border); font-size: 13px;
+    }
+    .roles-table tr:hover { background: #f8fafc; }
+    .roles-table tr:last-child td { border-bottom: none; }
+    .role-name-cell { font-weight: 700; color: var(--text); }
+    .cell-badge { 
+      background: #ecfdf5; color: var(--success); padding: 4px 8px; border-radius: 4px; 
+      font-size: 11px; font-weight: 700; display: inline-block;
+    }
+
+    /* EMPTY STATE */
+    .empty-state {
+      text-align: center; padding: 80px 40px; background: white; border-radius: 14px; border: 1px solid var(--border);
+    }
+    .empty-icon { 
+      width: 80px; height: 80px; margin: 0 auto 20px; background: var(--border); 
+      border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--text-secondary);
+    }
+    .empty-title { font-size: 20px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+    .empty-text { color: var(--text-secondary); font-size: 14px; margin-bottom: 25px; }
+
+    @media (max-width: 768px) {
+      .sidebar { width: 200px; padding: 20px 15px; }
+      .main { padding: 20px; }
+      .header-section { flex-direction: column; gap: 15px; }
+      .header-right { width: 100%; }
+      .roles-grid { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
 <body>
 
 <div class="app">
   <aside class="sidebar">
+    <button class="toggle-sidebar" onclick="toggleSidebar()"><i data-lucide="chevrons-left"></i></button>
     <div class="logo">Startup<span>Team</span></div>
     <nav>
-      <a href="founder-dashboard.html"><i data-lucide="layout-dashboard"></i> Dashboard</a>
-      <a href="founder-profile.html"><i data-lucide="user"></i> Founder Profile</a>
-      <a href="startup-profile.html"><i data-lucide="rocket"></i> Startup Profile</a>
-      <a href="post-role.html"><i data-lucide="plus-circle"></i> Post Role</a>
-      <a href="roles-list.html" class="active"><i data-lucide="briefcase"></i> Roles</a>
-      <a href="members-requests.html"><i data-lucide="users"></i> Member Requests</a>
+      <a href="founder-dashboard.html"><i data-lucide="layout-dashboard"></i> <span>Dashboard</span></a>
+      <a href="founder-profile.html"><i data-lucide="user"></i> <span>Founder Profile</span></a>
+      <a href="startup-profile.html"><i data-lucide="rocket"></i> <span>Startup Profile</span></a>
+      <a href="post-role.html"><i data-lucide="plus-circle"></i> <span>Post Role</span></a>
+      <a href="roles-list.html" class="active"><i data-lucide="briefcase"></i> <span>Roles</span></a>
+      <a href="members-requests.html"><i data-lucide="users"></i> <span>Member Requests</span></a>
+      <a href="members-list.html"><i data-lucide="search"></i> <span>Explore Members</span></a>
+      <a href="explore-startups.html"><i data-lucide="zap"></i> <span>Explore Startups</span></a>
     </nav>
-    <button onclick="logout()" class="logout-btn"><i data-lucide="log-out"></i> Logout</button>
+    <button onclick="window.logoutUser()" class="logout-btn"><i data-lucide="log-out"></i> <span>Logout</span></button>
   </aside>
 
   <main class="main">
     <div class="header-section">
-      <div>
+      <div class="header-left">
         <h2>Active Openings</h2>
-        <p style="color: #64748b; font-size: 14px;">Manage your startup's hiring requirements.</p>
+        <p>Manage your startup's hiring pipeline and track applications.</p>
       </div>
-      <a href="post-role.html" class="btn-post"><i data-lucide="plus" size="18"></i> Post New Role</a>
+      <div class="header-right">
+        <div class="view-toggle">
+          <button class="view-btn active" onclick="switchView('card')"><i data-lucide="grid-3x3" size="16"></i></button>
+          <button class="view-btn" onclick="switchView('table')"><i data-lucide="list" size="16"></i></button>
+        </div>
+        <a href="post-role.html" class="btn-post"><i data-lucide="plus" size="16"></i> Post Role</a>
+      </div>
     </div>
 
-    <div class="roles-grid" id="rolesList">
+    <div class="roles-container">
+      <div class="roles-grid" id="rolesGrid"></div>
+      <div class="roles-table-wrapper" id="rolesTableWrapper">
+        <table class="roles-table">
+          <thead>
+            <tr>
+              <th>Role</th>
+              <th>Experience</th>
+              <th>Type</th>
+              <th>Salary</th>
+              <th>Skills</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="rolesTableBody"></tbody>
+        </table>
       </div>
+      <div id="emptyState"></div>
+    </div>
   </main>
 </div>
 
 <script>
   lucide.createIcons();
+  let rolesData = [];
 
-  window.onload = () => {
-    // Post Role se data fetch
-    const roles = JSON.parse(localStorage.getItem("startup_roles")) || [];
-    const container = document.getElementById('rolesList');
+  function toggleSidebar() {
+    const sidebar = document.querySelector('.sidebar');
+    const toggle = document.querySelector('.toggle-sidebar i');
+    
+    sidebar.classList.toggle('collapsed');
+    
+    toggle.setAttribute('data-lucide', sidebar.classList.contains('collapsed') ? 'chevrons-right' : 'chevrons-left');
+    lucide.createIcons();
+    
+    localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
+  }
 
-    if (roles.length === 0) {
-      container.innerHTML = `<div class="no-roles"><i data-lucide="briefcase" size="48" style="margin-bottom:15px; opacity:0.3;"></i><p>No roles posted yet.</p></div>`;
-      lucide.createIcons();
-      return;
+  function restoreSidebarState() {
+    const isCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+    if (isCollapsed) {
+      document.querySelector('.sidebar').classList.add('collapsed');
+      document.querySelector('.toggle-sidebar i').setAttribute('data-lucide', 'chevrons-right');
     }
+  }
 
-    container.innerHTML = roles.map((role, index) => `
+  function switchView(view) {
+    document.querySelectorAll('.view-btn').forEach(btn => btn.classList.remove('active'));
+    event.target.closest('.view-btn').classList.add('active');
+    
+    if (view === 'card') {
+      document.getElementById('rolesGrid').style.display = 'grid';
+      document.getElementById('rolesTableWrapper').classList.remove('active');
+    } else {
+      document.getElementById('rolesGrid').style.display = 'none';
+      document.getElementById('rolesTableWrapper').classList.add('active');
+      // Ensure table is populated when switching to table view
+      if (rolesData.length > 0) {
+        renderTable(rolesData);
+      }
+    }
+  }
+
+  function renderEmptyState() {
+    const emptyState = document.getElementById('emptyState');
+    emptyState.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon"><i data-lucide="briefcase" size="40"></i></div>
+        <h3 class="empty-title">No Roles Posted Yet</h3>
+        <p class="empty-text">Start building your team by posting your first role. Create a detailed job description to attract the right talent.</p>
+        <a href="post-role.html" class="btn-post"><i data-lucide="plus" size="16"></i> Post Your First Role</a>
+      </div>
+    `;
+    lucide.createIcons();
+  }
+
+  function renderCards(roles) {
+    const rolesGrid = document.getElementById('rolesGrid');
+    document.getElementById('emptyState').innerHTML = '';
+    
+    rolesGrid.innerHTML = roles.map((role, index) => `
       <div class="role-card">
-        <div class="role-header">
+        <div class="role-card-header">
           <div class="role-title">${role.title}</div>
-          <div class="post-date">Posted on ${role.date || 'Today'}</div>
+          <span class="role-badge">Open</span>
         </div>
 
-        <div class="info-row">
-          <div class="info-tag">
-            <div class="icon-sm bg-purple"><i data-lucide="medal" size="14"></i></div>
-            ${role.exp}
+        <div class="role-meta">
+          <div class="meta-item">
+            <div class="meta-icon icon-purple"><i data-lucide="medal" size="14"></i></div>
+            <div>
+              <div class="meta-label">Experience</div>
+              <div class="meta-value">${role.exp}</div>
+            </div>
           </div>
-          <div class="info-tag">
-            <div class="icon-sm bg-green"><i data-lucide="dollar-sign" size="14"></i></div>
-            ${role.salary || 'Competitive'}
+          <div class="meta-item">
+            <div class="meta-icon icon-green"><i data-lucide="dollar-sign" size="14"></i></div>
+            <div>
+              <div class="meta-label">Salary</div>
+              <div class="meta-value">${role.salary || 'Competitive'}</div>
+            </div>
           </div>
-          <div class="info-tag">
-            <div class="icon-sm bg-blue"><i data-lucide="clock" size="14"></i></div>
-            ${role.type}
+          <div class="meta-item">
+            <div class="meta-icon icon-blue"><i data-lucide="clock" size="14"></i></div>
+            <div>
+              <div class="meta-label">Type</div>
+              <div class="meta-value">${role.type}</div>
+            </div>
           </div>
         </div>
 
-        <p style="font-size: 13px; color: #64748b; line-height: 1.6; margin-bottom: 15px;">
-          ${role.desc ? role.desc.substring(0, 120) + '...' : 'No description provided.'}
-        </p>
+        <p class="role-description">${role.desc ? role.desc.substring(0, 140) + '...' : 'No description provided.'}</p>
 
-        <div class="skills-section">
-          ${role.skills ? role.skills.split(',').map(s => `<span class="skill-badge">${s.trim()}</span>`).join('') : '<span class="skill-badge">General Skills</span>'}
+        <div class="skills-wrapper">
+          <span class="skills-label">Required Skills</span>
+          <div class="skills-list">
+            ${role.skills ? role.skills.split(',').slice(0, 3).map(s => `<span class="skill-badge">${s.trim()}</span>`).join('') : '<span class="skill-badge">General Skills</span>'}
+            ${role.skills && role.skills.split(',').length > 3 ? `<span class="skill-badge">+${role.skills.split(',').length - 3} more</span>` : ''}
+          </div>
         </div>
-        
-        <button onclick="deleteRole(${index})" style="margin-top:20px; background:none; border:none; color:#ef4444; font-size:12px; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:5px;">
-          <i data-lucide="trash-2" size="14"></i> Delete Role
-        </button>
+
+        <div class="role-actions">
+          <button class="btn-view" onclick="viewRole(${index})"><i data-lucide="external-link" size="14"></i> View Details</button>
+          <button class="btn-delete" onclick="deleteRole(${index})"><i data-lucide="trash-2" size="14"></i></button>
+        </div>
       </div>
     `).join('');
     lucide.createIcons();
   }
 
+  function renderTable(roles) {
+    const tbody = document.getElementById('rolesTableBody');
+    document.getElementById('emptyState').innerHTML = '';
+    
+    tbody.innerHTML = roles.map((role, index) => `
+      <tr>
+        <td>
+          <div class="role-name-cell">${role.title}</div>
+          <div style="font-size: 11px; color: #94a3b8;">Posted ${role.date}</div>
+        </td>
+        <td>${role.exp}</td>
+        <td>${role.type}</td>
+        <td>${role.salary || 'Competitive'}</td>
+        <td>
+          <div style="font-size: 12px;">
+            ${role.skills ? role.skills.split(',').slice(0, 2).map(s => `<span class="skill-badge">${s.trim()}</span>`).join(' ') : '-'}
+          </div>
+        </td>
+        <td><span class="cell-badge">Open</span></td>
+        <td>
+          <div style="display: flex; gap: 8px; align-items: center;">
+            <button onclick="viewRole(${index})" style="background: none; border: none; color: #6366f1; cursor: pointer; font-weight: 700; font-size: 12px;">View</button>
+            <button onclick="deleteRole(${index})" style="background: none; border: none; color: #ef4444; cursor: pointer; font-weight: 700; font-size: 12px;">Delete</button>
+          </div>
+        </td>
+      </tr>
+    `).join('');
+    lucide.createIcons();
+  }
+
+  function viewRole(index) {
+    const role = rolesData[index];
+    alert(`📋 ${role.title}\n\n${role.desc}\n\nExperience: ${role.exp}\nType: ${role.type}\nSalary: ${role.salary || 'Competitive'}`);
+  }
+
   function deleteRole(index) {
-    if(confirm("Are you sure you want to delete this role?")) {
-      let roles = JSON.parse(localStorage.getItem("startup_roles")) || [];
-      roles.splice(index, 1);
-      localStorage.setItem("startup_roles", JSON.stringify(roles));
-      window.location.reload();
+    if(confirm("Delete this role? This action cannot be undone.")) {
+      rolesData.splice(index, 1);
+      localStorage.setItem('startup_roles', JSON.stringify(rolesData));
+      if (rolesData.length === 0) {
+        renderEmptyState();
+      } else {
+        renderCards(rolesData);
+      }
+    }
+  }
+
+  window.onload = async () => {
+    restoreSidebarState();
+    lucide.createIcons();
+    const token = localStorage.getItem('token');
+    
+    try {
+      // Fetch roles from backend
+      const response = await fetch('http://localhost:5000/api/founder/roles', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success && data.data.length > 0) {
+          // Map backend field names to frontend display names
+          rolesData = data.data.map(role => ({
+            _id: role._id,
+            title: role.title,
+            exp: role.experienceLevel,
+            salary: role.salaryRange,
+            type: role.employmentType,
+            skills: Array.isArray(role.skills) ? role.skills.join(', ') : role.skills || '',
+            desc: role.description,
+            date: new Date(role.postedDate).toLocaleDateString()
+          }));
+          // Save to localStorage for offline viewing
+          localStorage.setItem('startup_roles', JSON.stringify(rolesData));
+        }
+      } else {
+        // Fallback to localStorage if API fails
+        rolesData = JSON.parse(localStorage.getItem("startup_roles")) || [];
+      }
+
+      if (rolesData.length === 0) {
+        renderEmptyState();
+      } else {
+        renderCards(rolesData);
+        renderTable(rolesData);
+      }
+    } catch (error) {
+      console.error('Error fetching roles:', error);
+      // Fallback to localStorage
+      rolesData = JSON.parse(localStorage.getItem("startup_roles")) || [];
+      if (rolesData.length === 0) {
+        renderEmptyState();
+      } else {
+        renderCards(rolesData);
+        renderTable(rolesData);
+      }
     }
   }
 </script>
+<script type="module" src="../assets/js/logout.js"></script>
 </body>
 </html>

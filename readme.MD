@@ -217,7 +217,7 @@ startup-Team/
 │       ├── member-dashboard.html
 │       ├── member-profile-view.html
 │       ├── explore-startups.html
-│       ├── startup-details.html
+│       ├── posted-roles.html
 │       ├── post-role.html
 │       ├── roles-list.html
 │       ├── join-requests.html

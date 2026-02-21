@@ -2,6 +2,7 @@ const FounderProfile = require('../models/FounderProfile');
 const Startup = require('../models/Startup');
 const Role = require('../models/Role');
 const Application = require('../models/Application');
+const User = require('../models/User');
 const emailService = require('../services/emailService');
 const whatsappService = require('../services/whatsappService');
 
@@ -39,7 +40,7 @@ exports.getProfile = async (req, res) => {
 // @access  Private (Founder only)
 exports.updateProfile = async (req, res) => {
   try {
-    const { experience, bio, skills, linkedin, portfolio } = req.body;
+    const { name, experience, bio, skills, linkedin, portfolio } = req.body;
 
     let profile = await FounderProfile.findOne({ userId: req.user._id });
 
@@ -50,7 +51,7 @@ exports.updateProfile = async (req, res) => {
       });
     }
 
-    // Update fields
+    // Update profile fields
     if (experience) profile.experience = experience;
     if (bio) profile.bio = bio;
     if (skills) profile.skills = skills;
@@ -59,10 +60,24 @@ exports.updateProfile = async (req, res) => {
 
     await profile.save();
 
+    // Also update user name if provided
+    if (name) {
+      const user = await User.findByIdAndUpdate(
+        req.user._id,
+        { name },
+        { new: true }
+      );
+      console.log('Updated user name to:', name);
+    }
+
+    // Fetch updated profile with user data
+    const updatedProfile = await FounderProfile.findOne({ userId: req.user._id })
+      .populate('userId', 'name email phone avatar');
+
     res.json({
       success: true,
       message: 'Profile updated successfully',
-      data: profile
+      data: updatedProfile
     });
   } catch (error) {
     console.error('Update founder profile error:', error);
