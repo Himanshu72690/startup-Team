@@ -1,18 +1,53 @@
-// ROLE + LOGIN GUARD
-const user = JSON.parse(localStorage.getItem("loggedInUser"));
-if(!user || user.role !== "founder"){
-  window.location.replace("../login.html");
+// COMPREHENSIVE AUTH GUARD FOR FOUNDER PAGES
+function validateFounderAuth() {
+  const user = JSON.parse(localStorage.getItem("loggedInUser"));
+  const token = localStorage.getItem("token");
+  
+  // Check if user exists and is a founder
+  if (!user || user.role !== "founder" || !token) {
+    console.warn("Auth validation failed - redirecting to login");
+    localStorage.clear();
+    sessionStorage.clear();
+    window.location.replace("login.html?redirect=founder-dashboard");
+    return false;
+  }
+  return true;
 }
 
-// BFCache / Back Button Protection
+// Immediate validation on page load
+if (!validateFounderAuth()) {
+  throw new Error("Not authenticated as founder");
+}
+
+// Listen for storage changes (logout from another tab)
+window.addEventListener('storage', function(event) {
+  if (event.key === 'loggedInUser' && event.newValue === null) {
+    console.warn("Logout detected from another tab");
+    window.location.replace("login.html?redirect=founder-dashboard");
+  }
+});
+
+// BFCache / Back Button Protection with popstate
 window.addEventListener('pageshow', function(event) {
-    if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
-        // Page was loaded from back/forward cache, re-run auth check
-        const userCheck = JSON.parse(localStorage.getItem("loggedInUser"));
-        if(!userCheck || userCheck.role !== "founder"){
-             window.location.replace("../login.html");
-        }
+  if (event.persisted) {
+    // Page was restored from back-forward cache
+    if (!validateFounderAuth()) {
+      window.location.replace("login.html?redirect=founder-dashboard");
     }
+  }
+});
+
+// Prevent going back to this page after logout
+window.addEventListener('pagehide', function(event) {
+  // Push a new history entry to prevent back navigation
+  window.history.pushState(null, null, window.location.href);
+});
+
+window.addEventListener('popstate', function(event) {
+  // If user tries to go back, check auth
+  if (!validateFounderAuth()) {
+    window.history.forward();
+  }
 });
 
 /* DEFAULT STORAGE */

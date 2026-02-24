@@ -1,0 +1,132 @@
+/* ================================================================
+   Shared Footer — StartupTeam
+   Used by: members-list, posted-roles, startup-details, about, contact
+================================================================ */
+
+.st-footer {
+    position: relative;
+    background: #07071a;
+    padding: 28px 0 16px;
+    overflow: hidden;
+    border-top: 1px solid rgba(99, 102, 241, 0.18);
+    width: 100%;
+    box-sizing: border-box;
+    font-family: 'Plus Jakarta Sans', 'Poppins', sans-serif;
+}
+
+.st-footer-glow {
+    position: absolute;
+    width: 100%;
+    height: 1px;
+    top: 0;
+    background: linear-gradient(90deg, transparent, #6366f1, transparent);
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.st-footer-inner {
+    width: 92%;
+    max-width: 1280px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(99, 102, 241, 0.1);
+    margin-bottom: 12px;
+}
+
+/* Brand */
+.st-footer-brand .footer-logo {
+    font-size: 20px;
+    font-weight: 800;
+    color: #818cf8;
+    text-decoration: none;
+    display: inline-block;
+    margin-bottom: 4px;
+    letter-spacing: -0.3px;
+}
+.st-footer-brand .footer-logo span {
+    color: #a78bfa;
+}
+.st-footer-brand p {
+    font-size: 13px;
+    color: #5050a0;
+    max-width: 210px;
+    line-height: 1.5;
+    margin: 0;
+}
+
+/* Nav links */
+.st-footer-links {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+.st-footer-links a {
+    color: #6060a0;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+.st-footer-links a:hover {
+    color: #818cf8;
+}
+
+/* Social icons */
+.st-footer-socials {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+.st-social-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(99, 102, 241, 0.22);
+    color: #6060a0;
+    font-size: 15px;
+    text-decoration: none;
+    transition: all 0.25s ease;
+}
+.st-social-icon:hover {
+    background: rgba(99, 102, 241, 0.18);
+    border-color: rgba(99, 102, 241, 0.55);
+    color: #a5b4fc;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(99, 102, 241, 0.25);
+}
+
+/* Copyright */
+.st-footer-copy {
+    text-align: center;
+    color: #3a3a6a;
+    font-size: 12px;
+    width: 92%;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding-bottom: 4px;
+}
+
+/* Responsive */
+@media (max-width: 700px) {
+    .st-footer-inner {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+    .st-footer-links {
+        justify-content: center;
+    }
+    .st-footer-brand p {
+        max-width: 100%;
+    }
+}

@@ -4,6 +4,24 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Member Requests | StartupTeam</title>
+  <script>
+    (function(){
+      // Immediate Auth Check on page load
+      const user = JSON.parse(localStorage.getItem("loggedInUser"));
+      const token = localStorage.getItem("token");
+      if(!user || user.role !== "founder" || !token){
+        window.location.replace("login.html");
+      }
+      // Prevent back button access after logout
+      window.addEventListener('popstate', function(event) {
+        const userCheck = JSON.parse(localStorage.getItem("loggedInUser"));
+        const tokenCheck = localStorage.getItem("token");
+        if(!userCheck || userCheck.role !== "founder" || !tokenCheck){
+          window.location.replace("login.html");
+        }
+      });
+    })();
+  </script>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/lucide@latest"></script>
   <style>
@@ -121,6 +139,7 @@
 
     .empty-state { text-align: center; padding: 80px; color: #94a3b8; }
   </style>
+  <script src="../assets/js/logout.js"></script>
 </head>
 <body>
 

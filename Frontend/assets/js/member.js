@@ -1,19 +1,53 @@
-// MEMBER AUTH GUARD
-const user = JSON.parse(localStorage.getItem("loggedInUser"));
-if(!user || user.role !== "member"){
-    // If not logged in or wrong role, redirect immediately
-    window.location.replace("login.html");
+// COMPREHENSIVE AUTH GUARD FOR MEMBER PAGES
+function validateMemberAuth() {
+  const user = JSON.parse(localStorage.getItem("loggedInUser"));
+  const token = localStorage.getItem("token");
+  
+  // Check if user exists and is a member
+  if (!user || user.role !== "member" || !token) {
+    console.warn("Auth validation failed - redirecting to login");
+    localStorage.clear();
+    sessionStorage.clear();
+    window.location.replace("login.html?redirect=member-dashboard");
+    return false;
+  }
+  return true;
 }
 
-// BFCache / Back Button Protection
+// Immediate validation on page load
+if (!validateMemberAuth()) {
+  throw new Error("Not authenticated as member");
+}
+
+// Listen for storage changes (logout from another tab)
+window.addEventListener('storage', function(event) {
+  if (event.key === 'loggedInUser' && event.newValue === null) {
+    console.warn("Logout detected from another tab");
+    window.location.replace("login.html?redirect=member-dashboard");
+  }
+});
+
+// BFCache / Back Button Protection with popstate
 window.addEventListener('pageshow', function(event) {
-    if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
-        // Page was loaded from back/forward cache, re-run auth check
-        const userCheck = JSON.parse(localStorage.getItem("loggedInUser"));
-        if(!userCheck || userCheck.role !== "member"){
-             window.location.replace("login.html");
-        }
+  if (event.persisted) {
+    // Page was restored from back-forward cache
+    if (!validateMemberAuth()) {
+      window.location.replace("login.html?redirect=member-dashboard");
     }
+  }
+});
+
+// Prevent going back to this page after logout
+window.addEventListener('pagehide', function(event) {
+  // Push a new history entry to prevent back navigation
+  window.history.pushState(null, null, window.location.href);
+});
+
+window.addEventListener('popstate', function(event) {
+  // If user tries to go back, check auth
+  if (!validateMemberAuth()) {
+    window.history.forward();
+  }
 });
 
 function logout() {

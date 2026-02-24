@@ -3,6 +3,24 @@
 <head>
   <meta charset="UTF-8">
   <title>Professional Profile | StartupTeam</title>
+  <script>
+    (function(){
+      // Immediate Auth Check on page load
+      const user = JSON.parse(localStorage.getItem("loggedInUser"));
+      const token = localStorage.getItem("token");
+      if(!user || user.role !== "member" || !token){
+        window.location.replace("login.html");
+      }
+      // Prevent back button access after logout
+      window.addEventListener('popstate', function(event) {
+        const userCheck = JSON.parse(localStorage.getItem("loggedInUser"));
+        const tokenCheck = localStorage.getItem("token");
+        if(!userCheck || userCheck.role !== "member" || !tokenCheck){
+          window.location.replace("login.html");
+        }
+      });
+    })();
+  </script>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/lucide@latest"></script>
   <style>
@@ -369,13 +387,7 @@
   }
 
   window.onload = loadProfile;
-
-  // ADDED LOGOUT FUNCTION
-  function logout() {
-    localStorage.removeItem("loggedIn");
-    window.location.href = "../index.html";
-  }
 </script>
-<script type="module" src="../assets/js/logout.js"></script>
+<script src="../assets/js/logout.js"></script>
 </body>
 </html>

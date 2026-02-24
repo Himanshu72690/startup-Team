@@ -1,21 +1,125 @@
-// Shared logout functionality with Firebase support
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-app.js";
-import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-auth.js";
+// Shared logout functionality
+// Firebase is loaded from external CDN via script tags (see login.html)
 
-// Firebase configuration
-const firebaseConfig = {
-    apiKey: "AIzaSyAzHlKKF_1h2SR9AweAn9QDo5918o_l8Gg",
-    authDomain: "startup-team-86ecf.firebaseapp.com",
-    projectId: "startup-team-86ecf",
-    storageBucket: "startup-team-86ecf.firebasestorage.app",
-    messagingSenderId: "1013114845391",
-    appId: "1:1013114845391:web:7130c2d253dd35110cdfba",
-    measurementId: "G-KFSH747WBE"
+// Global logout function
+window.logoutUser = async function() {
+    // Create modal overlay
+    const overlay = document.createElement('div');
+    overlay.className = 'logout-modal-overlay';
+    
+    // Create modal content
+    const modal = document.createElement('div');
+    modal.className = 'logout-modal';
+    modal.innerHTML = `
+        <div class="logout-modal-icon">👋</div>
+        <h3>Confirm Logout</h3>
+        <p>Are you sure you want to logout? You'll need to login again to access your account.</p>
+        <div class="logout-modal-buttons">
+            <button class="logout-modal-btn logout-btn-cancel" id="cancelLogout">Cancel</button>
+            <button class="logout-modal-btn logout-btn-confirm" id="confirmLogout">Logout</button>
+        </div>
+    `;
+    
+    overlay.appendChild(modal);
+    document.body.appendChild(overlay);
+    
+    // Handle cancel button
+    document.getElementById('cancelLogout').addEventListener('click', function() {
+        overlay.remove();
+    });
+    
+    // Handle confirm button
+    document.getElementById('confirmLogout').addEventListener('click', async function() {
+        try {
+            // Try to sign out from Firebase if available
+            if (typeof firebase !== 'undefined' && firebase.auth) {
+                try {
+                    await firebase.auth().signOut();
+                } catch (firebaseError) {
+                    console.warn("Firebase signout error (non-fatal):", firebaseError);
+                }
+            }
+            
+            // Clear ALL localStorage data comprehensively
+            localStorage.removeItem("isLoggedIn");
+            localStorage.removeItem("loggedInUser");
+            localStorage.removeItem("token");
+            localStorage.removeItem("accessToken");
+            localStorage.removeItem("refreshToken");
+            localStorage.removeItem("founderProfile");
+            localStorage.removeItem("startup");
+            localStorage.removeItem("requests");
+            localStorage.removeItem("user");
+            localStorage.removeItem("viewMemberId");
+            
+            // Clear any user-specific data
+            const keys = Object.keys(localStorage);
+            keys.forEach(key => {
+                if (key.startsWith("user_") || key.startsWith("startup_") || key.startsWith("member_")) {
+                    localStorage.removeItem(key);
+                }
+            });
+            
+            // Also clear sessionStorage
+            sessionStorage.clear();
+            
+            console.log("Logged out successfully - all data cleared");
+            
+            // Prevent back button from showing cached page
+            try {
+                window.history.pushState(null, null, window.location.href);
+                window.addEventListener('popstate', function(event) {
+                    // Redirect back to login if user tries back button
+                    window.location.href = './login.html';
+                });
+            } catch (historyError) {
+                console.warn("History manipulation failed:", historyError);
+            }
+            
+            // Redirect to login page with cache busting
+            // Use different URLs depending on current page structure
+            const currentPath = window.location.pathname;
+            let loginPath = './login.html';
+            
+            // If not in /pages/ directory, try to navigate appropriately
+            if (!currentPath.includes('/pages/')) {
+                loginPath = 'pages/login.html';
+            }
+            
+            try {
+                window.location.href = loginPath + '?logout=' + Date.now();
+            } catch (err) {
+                console.warn("Location redirect failed, trying fallback:", err);
+                try {
+                    window.location.replace(loginPath);
+                } catch (err2) {
+                    console.error("All redirects failed:", err2);
+                    // Still clear data even if redirect fails
+                }
+            }
+        } catch (error) {
+            console.error("Logout error:", error);
+            // Create error modal
+            const errorOverlay = document.createElement('div');
+            errorOverlay.className = 'logout-modal-overlay';
+            const errorModal = document.createElement('div');
+            errorModal.className = 'logout-modal';
+            errorModal.innerHTML = `
+                <div class="logout-modal-icon" style="background: #fee2e2; color: #ef4444;">⚠️</div>
+                <h3>Logout Error</h3>
+               <p>An error occurred while logging out. Please try again.</p>
+                <div class="logout-modal-buttons">
+                    <button class="logout-modal-btn logout-btn-confirm" id="closeError" style="background: #6366f1;">Close</button>
+                </div>
+            `;
+            errorOverlay.appendChild(errorModal);
+            document.body.appendChild(errorOverlay);
+            document.getElementById('closeError').addEventListener('click', function() {
+                errorOverlay.remove();
+            });
+        }
+    });
 };
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const auth = getAuth();
 
 // Create custom modal styles
 const style = document.createElement('style');
@@ -115,78 +219,3 @@ style.textContent = `
   }
 `;
 document.head.appendChild(style);
-
-// Global logout function
-window.logoutUser = async function() {
-    // Create modal overlay
-    const overlay = document.createElement('div');
-    overlay.className = 'logout-modal-overlay';
-    
-    // Create modal content
-    const modal = document.createElement('div');
-    modal.className = 'logout-modal';
-    modal.innerHTML = `
-        <div class="logout-modal-icon">👋</div>
-        <h3>Confirm Logout</h3>
-        <p>Are you sure you want to logout? You'll need to login again to access your account.</p>
-        <div class="logout-modal-buttons">
-            <button class="logout-modal-btn logout-btn-cancel" id="cancelLogout">Cancel</button>
-            <button class="logout-modal-btn logout-btn-confirm" id="confirmLogout">Logout</button>
-        </div>
-    `;
-    
-    overlay.appendChild(modal);
-    document.body.appendChild(overlay);
-    
-    // Handle cancel button
-    document.getElementById('cancelLogout').addEventListener('click', function() {
-        overlay.remove();
-    });
-    
-    // Handle confirm button
-    document.getElementById('confirmLogout').addEventListener('click', async function() {
-        try {
-            // Sign out from Firebase
-            await signOut(auth);
-            
-            // Clear all localStorage data
-            localStorage.removeItem("isLoggedIn");
-            localStorage.removeItem("loggedInUser");
-            localStorage.removeItem("token");
-            localStorage.removeItem("founderProfile");
-            
-            // Clear any user-specific data
-            const keys = Object.keys(localStorage);
-            keys.forEach(key => {
-                if (key.startsWith("user_")) {
-                    localStorage.removeItem(key);
-                }
-            });
-            
-            console.log("Logged out successfully");
-            
-            // Redirect to login page
-            window.location.replace("login.html");
-        } catch (error) {
-            console.error("Logout error:", error);
-            // Create error modal
-            const errorOverlay = document.createElement('div');
-            errorOverlay.className = 'logout-modal-overlay';
-            const errorModal = document.createElement('div');
-            errorModal.className = 'logout-modal';
-            errorModal.innerHTML = `
-                <div class="logout-modal-icon" style="background: #fee2e2; color: #ef4444;">⚠️</div>
-                <h3>Logout Error</h3>
-                <p>An error occurred while logging out. Please try again.</p>
-                <div class="logout-modal-buttons">
-                    <button class="logout-modal-btn logout-btn-confirm" id="closeError" style="background: #6366f1;">Close</button>
-                </div>
-            `;
-            errorOverlay.appendChild(errorModal);
-            document.body.appendChild(errorOverlay);
-            document.getElementById('closeError').addEventListener('click', function() {
-                errorOverlay.remove();
-            });
-        }
-    });
-}

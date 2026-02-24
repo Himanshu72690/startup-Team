@@ -7,15 +7,30 @@
   <meta http-equiv="Expires" content="0">
   <script>
     (function(){
-      // Immediate Auth Check
+      // Immediate Auth Check on page load
       const user = JSON.parse(localStorage.getItem("loggedInUser"));
-      if(!user || user.role !== "member"){
+      const token = localStorage.getItem("token");
+      if(!user || user.role !== "member" || !token){
         window.location.replace("login.html");
       }
+      
       // BFCache Check
       window.addEventListener('pageshow', function(event) {
         if (event.persisted) {
-            window.location.reload();
+            const userCheck = JSON.parse(localStorage.getItem("loggedInUser"));
+            const tokenCheck = localStorage.getItem("token");
+            if(!userCheck || userCheck.role !== "member" || !tokenCheck){
+              window.location.replace("login.html");
+            }
+        }
+      });
+      
+      // Prevent back button access after logout
+      window.addEventListener('popstate', function(event) {
+        const userCheck = JSON.parse(localStorage.getItem("loggedInUser"));
+        const tokenCheck = localStorage.getItem("token");
+        if(!userCheck || userCheck.role !== "member" || !tokenCheck){
+          window.location.replace("login.html");
         }
       });
     })();
@@ -81,8 +96,7 @@
     .startup-mini-card { display: flex; align-items: center; gap: 12px; margin-bottom: 15px; }
     .mini-logo { width: 40px; height: 40px; background: #f1f5f9; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 700; color: #6366f1; }
   </style>
-  <script type="module" src="../assets/js/logout.js"></script>
-  <script type="module" src="../assets/js/logout.js"></script>
+  <script src="../assets/js/logout.js"></script>
 </head>
 <body>
 
